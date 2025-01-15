@@ -5,18 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Artwork;
+use App\Models\Order;
 
-class Category extends Model
+class ShippingCondition extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
+        'title',
+        'cost',
         'description',
     ];
 
-    public function artworks(){
-        return $this->hasMany(Artwork::class);
+    public function orders(){
+        return $this->hasMany(Order::class);
     }
 }
