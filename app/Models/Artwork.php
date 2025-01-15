@@ -33,6 +33,6 @@ class Artwork extends Model
 
     public function promotions()
     {
-        return $this->belongsToMany(Promotion::class, 'artwork_promotions');
+        return $this->belongsToMany(Promotion::class, 'artwork_promotions')->withTimestamps();
     }
 }
