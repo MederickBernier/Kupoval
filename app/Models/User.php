@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Artwork;
+use App\Models\Notification;
 
 class User extends Authenticatable
 {
@@ -48,5 +49,9 @@ class User extends Authenticatable
     public function wishlist()
     {
         return $this->belongsToMany(Artwork::class, 'wishlist')->withTimestamps();
+    }
+
+    public function notifications(){
+        return $this->hasMany(Notification::class);
     }
 }
