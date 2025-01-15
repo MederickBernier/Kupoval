@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Category;
 use App\Models\Order;
 use App\Models\Promotion;
+use App\Models\User;
 
 class Artwork extends Model
 {
@@ -34,5 +35,10 @@ class Artwork extends Model
     public function promotions()
     {
         return $this->belongsToMany(Promotion::class, 'artwork_promotions')->withTimestamps();
+    }
+
+    public function wishlistedBy()
+    {
+        return $this->belongsToMany(User::class, 'wishlist')->withTimestamps();
     }
 }
