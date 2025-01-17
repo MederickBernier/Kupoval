@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('payment_method');
             $table->decimal('amount', 10,2);
             $table->string('status')->default('pending');
-            $table->strirng('transaction_id')->nullable();
+            $table->string('transaction_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
