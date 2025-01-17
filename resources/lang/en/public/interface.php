@@ -14,4 +14,6 @@ return [
     'social_linkedin' => 'LinkedIn',
     'social_facebook' => 'Facebook',
     'social_instagram' => 'Instagram',
+    'dashboard' => 'Dashboard',
+    'logout' => 'Logout',
 ];
