@@ -30,7 +30,7 @@ export default {
                 emerald: '0 4px 6px rgba(46,139,87,0.1)',   //Emerald Shadow
             },
             fontFamily: {
-                title: ['Cinzel', 'serif'], //Primary Font for titles
+                title: ['Lora', 'serif'], //Primary Font for titles
                 body: ['Open Sans', 'sans-serif'],  // Secondary Font for body text
                 accent: ['Dancing Script', 'cursive'],  //Accent Font
             },

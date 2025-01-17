@@ -10,3 +10,49 @@
 .btn-secondary {
     @apply px-4 py-2 bg-accent text-white rounded hover:bg-cta transition;
 }
+
+.carousel {
+    position: relative;
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.carousel-item {
+    flex: 0 0 100%;
+    transform: translateX(0%);
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item.hidden {
+    display: none;
+}
+
+.carousel-controls {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    pointer-events: none;
+}
+
+.carousel-controls button {
+    pointer-events: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.carousel-controls button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}

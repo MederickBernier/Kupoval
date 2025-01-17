@@ -2,7 +2,7 @@
     <div class="container mx-auto flex justify-between items-center py-4 px-4 md:px-6">
         <!-- Logo -->
         <div>
-            <a href="{{ route('home') }}" class="text-2xl font-title tracking-wide text-heading">
+            <a href="#" class="text-2xl font-title tracking-wide text-heading drop-shadow-lg">
                 Kupoval
             </a>
         </div>
@@ -23,13 +23,34 @@
 
         <!-- Navigation Links (Desktop) -->
         <div class="hidden md:flex space-x-6">
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.home') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.gallery') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.events') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.bio') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.shop') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.about') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.contact') }}</a>
+            <a href="#" class="relative hover:text-navbar-hover group">
+                <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                {{ __('public/interface.home') }}
+            </a>
+            <a href="#" class="relative hover:text-navbar-hover group">
+                <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                {{ __('public/interface.gallery') }}
+            </a>
+            <a href="#" class="relative hover:text-navbar-hover group">
+                <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                {{ __('public/interface.events') }}
+            </a>
+            <a href="#" class="relative hover:text-navbar-hover group">
+                <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                {{ __('public/interface.bio') }}
+            </a>
+            <a href="#" class="relative hover:text-navbar-hover group">
+                <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                {{ __('public/interface.shop') }}
+            </a>
+            <a href="#" class="relative hover:text-navbar-hover group">
+                <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                {{ __('public/interface.about') }}
+            </a>
+            <a href="#" class="relative hover:text-navbar-hover group">
+                <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
+                {{ __('public/interface.contact') }}
+            </a>
         </div>
 
         <!-- Authentication Links (Desktop) -->
