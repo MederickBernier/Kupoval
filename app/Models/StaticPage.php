@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Setting extends Model
+class StaticPage extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'key',
-        'value',
+        'slug',
+        'title',
+        'content',
+        'meta_description',
     ];
 }

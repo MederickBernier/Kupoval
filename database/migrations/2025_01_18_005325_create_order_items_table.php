@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->string('type');
-            $table->text('message');
-            $table->boolean('is_read')->default(false);
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->foreignId('artwork_id')->constrained()->onDelete('cascade');
+            $table->unsignedInteger('quantity')->default(1);
+            $table->decimal('price', 10, 2)->default(0.00);
             $table->timestamps();
-            $table->softDeletes();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -29,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('order_items');
     }
 };

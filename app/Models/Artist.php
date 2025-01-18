@@ -6,16 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Artwork;
 
-class Category extends Model
+class Artist extends Model
 {
     use SoftDeletes;
 
     protected $fillable = [
+        'first_name',
+        'last_name',
         'name',
-        'description',
+        'bio',
+        'photo',
     ];
 
-    public function artworks(){
-        return $this->belongsToMany(Artwork::class, 'artwork_categories');
+    public function artworks()
+    {
+        return $this->hasMany(Artwork::class);
     }
 }

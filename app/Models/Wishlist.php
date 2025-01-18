@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Wishlist extends Model
 {
@@ -13,4 +13,12 @@ class Wishlist extends Model
         'user_id',
         'artwork_id',
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
+
+    public function artwork(){
+        return $this->belongsTo(Artwork::class);
+    }
 }

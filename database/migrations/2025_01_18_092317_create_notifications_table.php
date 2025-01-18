@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('notifications', function (Blueprint $table) {
             $table->id();
-            $table->string('key')->unique();
-            $table->text('value');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('type', 255);
+            $table->json('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('notifications');
     }
 };

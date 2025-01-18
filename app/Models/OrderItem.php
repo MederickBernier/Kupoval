@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class OrderItem extends Model
 {
@@ -15,4 +15,12 @@ class OrderItem extends Model
         'quantity',
         'price',
     ];
+
+    public function order(){
+        return $this->belongsTo(Order::class);
+    }
+
+    public function artwork(){
+        return $this->belongsTo(Artwork::class);
+    }
 }

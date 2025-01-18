@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('promotions', function (Blueprint $table) {
+        Schema::create('artists', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->text('description')->nullable();
-            $table->decimal('discount',5,2);
-            $table->enum('discount_type',['percentage', 'fixed'])->default('percentage');
-            $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->string('first_name',100);
+            $table->string('last_name',100);
+            $table->string('name',255)->nullable();
+            $table->text('bio')->nullable();
+            $table->string('photo',100)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('promotions');
+        Schema::dropIfExists('artists');
     }
 };

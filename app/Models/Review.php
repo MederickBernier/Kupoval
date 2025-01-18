@@ -4,19 +4,16 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\User;
-use App\Models\Artwork;
 
 class Review extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
         'artwork_id',
-        'review',
         'rating',
+        'comment',
     ];
 
     public function user(){

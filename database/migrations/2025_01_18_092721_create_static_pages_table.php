@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('shipping_conditions', function (Blueprint $table) {
+        Schema::create('static_pages', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->decimal('cost',10,2);
-            $table->text('description')->nullable();
+            $table->string('slug', 255)->unique()->comment('URL identifier');
+            $table->string('title', 255);
+            $table->text('content');
+            $table->string('meta_description', 255)->nullable();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('shipping_conditions');
+        Schema::dropIfExists('static_pages');
     }
 };

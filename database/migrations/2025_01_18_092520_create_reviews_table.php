@@ -13,15 +13,11 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('artwork_id');
-            $table->text('review');
-            $table->tinyInteger('rating')->unsigned();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('artwork_id')->constrained('artworks')->onDelete('cascade');
+            $table->unsignedTinyInteger('rating')->comment('Rating from 1 to 5');
+            $table->text('comment')->nullable();
             $table->timestamps();
-            $table->softDeletes();
-
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('artwork_id')->references('id')->on('artworks')->onDelete('cascade');
         });
     }
 

@@ -2,19 +2,23 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Notification extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
         'type',
-        'message',
-        'is_read',
+        'data',
+        'read_at',
+    ];
+
+    protected $casts = [
+        'data' => 'array',
+        'read_at' => 'datetime',
     ];
 
     public function user(){

@@ -2,43 +2,40 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Artist;
 use App\Models\Category;
-use App\Models\Order;
-use App\Models\Promotion;
-use App\Models\User;
+use App\Models\Event;
 
 class Artwork extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'title',
+        'artist_id',
+        'name',
         'description',
-        'price',
-        'image_path',
-        'category_id',
+        'height',
+        'width',
+        'image',
+        'initial_price',
+        'is_on_sale',
+        'is_featured',
+        'is_for_event',
+        'event_id',
     ];
 
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
+    public function artist(){
+        return $this->belongsTo(Artist::class);
     }
 
-    public function orders()
-    {
-        return $this->belongsToMany(Order::class, 'order_items');
+    public function categories(){
+        return $this->belongsToMany(Category::class, 'artwork_categories');
     }
 
-    public function promotions()
-    {
-        return $this->belongsToMany(Promotion::class, 'artwork_promotions')->withTimestamps();
-    }
-
-    public function wishlistedBy()
-    {
-        return $this->belongsToMany(User::class, 'wishlist')->withTimestamps();
+    public function event(){
+        return $this->belongsTo(Event::class);
     }
 }

@@ -13,12 +13,9 @@ return new class extends Migration
     {
         Schema::create('artwork_promotions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('artwork_id');
-            $table->unsignedBigInteger('promotion_id');
+            $table->foreignId('artwork_id')->constrained()->onDelete('cascade');
+            $table->foreignId('promotion_id')->constrained()->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('artwork_id')->references('id')->on('artworks')->onDelete('cascade');
-            $table->foreign('promotion_id')->references('id')->on('promotions')->onDelete('cascade');
         });
     }
 
