@@ -2,7 +2,7 @@
     <div class="container mx-auto flex justify-between items-center py-4 px-4 md:px-6">
         <!-- Logo -->
         <div>
-            <a href="#" class="text-2xl font-title tracking-wide text-heading drop-shadow-lg">
+            <a href="{{ route('home') }}" class="text-2xl font-title tracking-wide text-heading drop-shadow-lg">
                 Kupoval
             </a>
         </div>
@@ -23,7 +23,7 @@
 
         <!-- Navigation Links (Desktop) -->
         <div class="hidden md:flex space-x-6">
-            <a href="#" class="relative hover:text-navbar-hover group">
+            <a href="{{ route('home') }}" class="relative hover:text-navbar-hover group">
                 <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 {{ __('public/interface.home') }}
             </a>
@@ -35,7 +35,7 @@
                 <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 {{ __('public/interface.events') }}
             </a>
-            <a href="#" class="relative hover:text-navbar-hover group">
+            <a href="{{ route('bio') }}" class="relative hover:text-navbar-hover group">
                 <span class="absolute inset-x-0 -bottom-1 h-0.5 bg-cta scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                 {{ __('public/interface.bio') }}
             </a>

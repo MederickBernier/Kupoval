@@ -19,40 +19,38 @@
     max-width: 800px;
     margin: 0 auto;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-item {
     flex: 0 0 100%;
-    transform: translateX(0%);
-    transition: transform 0.5s ease-in-out;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-.carousel-item.hidden {
-    display: none;
-}
-
-.carousel-controls {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    pointer-events: none;
+.carousel-item:not(.hidden) {
+    opacity: 1;
+    transform: scale(1);
 }
 
 .carousel-controls button {
-    pointer-events: auto;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
+    background-color: rgba(0, 0, 0, 0.6);
     border: none;
-    padding: 10px;
-    border-radius: 50%;
+    color: white;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-controls button:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.carousel-indicator {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.carousel-indicator:hover {
+    background-color: #049191;
 }

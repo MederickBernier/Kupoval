@@ -23,7 +23,6 @@
             {!! __('public/interface.footer_copyright') !!}
         </p>
         <div class="flex justify-center space-x-6 mt-4">
-            <a href="#" class="text-link hover:underline">{{ __('public/interface.social_linkedin') }}</a>
             <a href="#" class="text-link hover:underline">{{ __('public/interface.social_facebook') }}</a>
             <a href="#" class="text-link hover:underline">{{ __('public/interface.social_instagram') }}</a>
         </div>
