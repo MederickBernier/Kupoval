@@ -56,17 +56,17 @@
         <!-- Authentication Links (Desktop) -->
         <div class="hidden md:flex space-x-4">
             @guest
-                <a href="#" class="px-4 py-2 bg-cta text-white rounded-full hover:bg-navbar-hover transition">
+                <a href="{{ route('login') }}" class="px-4 py-2 bg-cta text-white rounded-full hover:bg-navbar-hover transition">
                     {{ __('public/interface.login') }}
                 </a>
-                <a href="#" class="px-4 py-2 bg-accent text-white rounded-full hover:bg-navbar-hover transition">
+                <a href="{{ route('register') }}" class="px-4 py-2 bg-accent text-white rounded-full hover:bg-navbar-hover transition">
                     {{ __('public/interface.register') }}
                 </a>
             @else
                 <a href="#" class="px-4 py-2 bg-accent text-white rounded-full hover:bg-navbar-hover transition">
                     {{ __('public/interface.dashboard') }}
                 </a>
-                <form action="#" method="POST" class="inline">
+                <form action="{{ route('logout') }}" method="POST" class="inline">
                     @csrf
                     <button type="submit" class="px-4 py-2 bg-cta text-white rounded-full hover:bg-navbar-hover transition">
                         {{ __('public/interface.logout') }}

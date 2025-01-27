@@ -10,7 +10,11 @@ class EventController extends Controller
 {
     public function show($id){
         try{
-
+            $event = Event::findOrFail($id);
+            return view('public.event.show',
+            [
+                'event' => $event
+            ]);
         }catch(ModelNotFoundException $e){
             throwError('Event not found', 404,['event_id' => $id]);
         }catch(\Exception $e){
