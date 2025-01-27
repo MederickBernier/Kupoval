@@ -51,6 +51,11 @@ return [
     */
 
     'channels' => [
+        'custom_exceptions' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/custom_exceptions.log'),
+            'level' => 'error',
+        ],
 
         'stack' => [
             'driver' => 'stack',
