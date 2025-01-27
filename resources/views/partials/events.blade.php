@@ -19,7 +19,7 @@
                     <p class="text-sm text-gray-500">
                         <strong>{{ __('public/interface.date') }}:</strong> {{ \Carbon\Carbon::parse($event['date'])->format('F j, Y') }}
                     </p>
-                    <a href="#" class="inline-block mt-4 px-6 py-2 bg-cta text-white rounded-full hover:bg-navbar-hover">
+                    <a href="{{ route('events.show',['id' => $event->id]) }}" class="inline-block mt-4 px-6 py-2 bg-cta text-white rounded-full hover:bg-navbar-hover">
                         {{ __('public/interface.learn_more') }}
                     </a>
                 </article>

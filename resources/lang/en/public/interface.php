@@ -42,4 +42,7 @@ return [
     'bio_heading' => 'About the Artist',
     'bio_subheading' => 'Discover the journey and inspirations of Valérie Labelle.',
     'contact_artist' => 'Contact the Artist',
+    'event_subheading' => 'Explore the details of this event.',
+    'event_details' => 'Event Details',
+    'back_to_events' => 'Back to Events',
 ];

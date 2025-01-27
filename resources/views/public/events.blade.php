@@ -8,14 +8,14 @@
     @else
         <div class="w-full max-w-4xl mx-auto">
             @foreach ($eventsByMonth as $month => $events)
-                <!-- Séparateur du mois -->
+                <!-- Month Separator -->
                 <div class="flex items-center justify-center my-8">
                     <div class="border-t flex-grow border-gray-300"></div>
                     <h2 class="px-4 py-2 bg-neutral text-2xl font-bold text-accent rounded-lg shadow-md">{{ $month }}</h2>
                     <div class="border-t flex-grow border-gray-300"></div>
                 </div>
 
-                <!-- Liste des événements -->
+                <!-- List of Events -->
                 <ul class="space-y-6">
                     @foreach ($events as $event)
                         <li class="relative pl-8 border-l-4 border-accent">
@@ -33,6 +33,11 @@
                                     {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
                                     - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
                                 </p>
+                                <!-- View Details Button -->
+                                <a href="{{ route('events.show', ['id' => $event->id]) }}"
+                                   class="inline-block mt-4 px-6 py-2 bg-accent text-white font-bold rounded-full hover:bg-cta transition">
+                                    {{ __('View Details') }}
+                                </a>
                             </div>
                         </li>
                     @endforeach
