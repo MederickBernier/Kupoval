@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             EventsSeeder::class,
             ArtworkSeeder::class,
             SettingsSeeder::class,
+            StaticPageSeeder::class,
         ]);
     }
 }

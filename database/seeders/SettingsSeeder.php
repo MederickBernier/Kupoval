@@ -17,5 +17,20 @@ class SettingsSeeder extends Seeder
             'key' => 'site_name',
             'value' => 'Kupoval'
         ]);
+
+        Setting::create([
+            'key' => 'site_address',
+            'value' => '123 Rue Principale, Montréal, QC H2X 3L1'
+        ]);
+
+        Setting::create([
+            'key' => 'site_phone',
+            'value' => '+1 (514) 555-1234'
+        ]);
+
+        Setting::create([
+            'key' => 'site_email',
+            'value' => 'contact@kupoval.art',
+        ]);
     }
 }

@@ -18,7 +18,7 @@ class ArtistSeeder extends Seeder
             'last_name' => 'Labelle',
             'name' => 'Kupoval',
             'bio' => 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Cumque quod tempore rerum odit soluta corporis quis quibusdam assumenda quia unde aperiam fugit, ex nulla alias?',
-            'photo' => 'https://picsum.photos/seed/artist1/200/200',
+            'photo' => 'storage/artist/valerie_labelle.jpg',
         ]);
     }
 }

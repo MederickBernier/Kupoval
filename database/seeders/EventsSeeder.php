@@ -14,47 +14,30 @@ class EventsSeeder extends Seeder
      */
     public function run(): void
     {
-        // 2 past events
-        Event::create([
-            'name' => 'Spring Art Expo',
-            'description' => 'A celebration of art inspired by springtime.',
-            'start_date' => Carbon::now()->subMonths(2)->toDateString(),
-            'end_date' => Carbon::now()->subMonths(2)->addDays(2)->toDateString(),
-            'location' => 'Springfield Art Gallery',
-        ]);
+        $faker = \Faker\Factory::create();
+        $months = range(1, 12);
+        $totalEvents = 30;
+        $eventsPerMonth = array_fill_keys($months, 0);
 
-        Event::create([
-            'name' => 'Autumn Showcase',
-            'description' => 'A curated collection of autumn-inspired pieces.',
-            'start_date' => Carbon::now()->subMonths(1)->toDateString(),
-            'end_date' => Carbon::now()->subMonths(1)->addDays(3)->toDateString(),
-            'location' => 'Maple Leaf Center',
-        ]);
+        // Randomly distribute events across the months
+        for ($i = 0; $i < $totalEvents; $i++) {
+            $randomMonth = $faker->randomElement($months);
+            $eventsPerMonth[$randomMonth]++;
+        }
 
-        // 1 event happening today
-        Event::create([
-            'name' => 'Kupoval Exclusive',
-            'description' => 'An exclusive one-day exhibition of special works.',
-            'start_date' => Carbon::now()->toDateString(),
-            'end_date' => Carbon::now()->toDateString(),
-            'location' => 'Kupoval Studio',
-        ]);
+        foreach ($eventsPerMonth as $month => $count) {
+            for ($i = 0; $i < $count; $i++) {
+                $startDate = Carbon::createFromDate(2025, $month, $faker->numberBetween(1, 28));
+                $endDate = (clone $startDate)->addDays($faker->numberBetween(1, 5)); // Events last 1 to 5 days
 
-        // 2 upcoming events
-        Event::create([
-            'name' => 'Winter Wonderland Exhibition',
-            'description' => 'A festive gallery featuring winter-themed artworks.',
-            'start_date' => Carbon::now()->addWeeks(1)->toDateString(),
-            'end_date' => Carbon::now()->addWeeks(1)->addDays(4)->toDateString(),
-            'location' => 'Ice Palace',
-        ]);
-
-        Event::create([
-            'name' => 'Modern Art Gala',
-            'description' => 'A gala evening showcasing the best of modern art.',
-            'start_date' => Carbon::now()->addWeeks(3)->toDateString(),
-            'end_date' => Carbon::now()->addWeeks(3)->addDays(2)->toDateString(),
-            'location' => 'City Art Museum',
-        ]);
+                Event::create([
+                    'name' => ucfirst($faker->words(3, true)), // Random name
+                    'description' => $faker->sentence(), // Random description
+                    'start_date' => $startDate->toDateString(),
+                    'end_date' => $endDate->toDateString(),
+                    'location' => $faker->city() . ' ' . $faker->companySuffix(), // Random location
+                ]);
+            }
+        }
     }
 }
