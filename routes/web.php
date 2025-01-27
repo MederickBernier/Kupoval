@@ -39,3 +39,11 @@ Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+Route::get('/lang/{locale}', function($locale){
+    if(in_array($locale, ['en','fr'])){
+        Session::put('locale', $locale);
+        Cookie::queue('locale', $locale, 60*24*30);
+    }
+    return redirect()->back();
+})->name('setLocale');
