@@ -31,7 +31,7 @@ class RegisterController extends Controller
 
             $user->sendEmailVerificationNotification();
 
-            return redirect()->route('dashboard')->with('success',__('Registration successful.  Please check your email to verify your account.'));
+            return redirect()->route('user_profile')->with('success',__('Registration successful.  Please check your email to verify your account.'));
         }catch(\Exception $e){
             throwError(__('Registration failed.  Please try again.'),500,['exception' => $e->getMessage()]);
         }

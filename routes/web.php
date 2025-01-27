@@ -19,6 +19,10 @@ Route::middleware(['auth', 'verified'])->group(function(){
     Route::get('/dashboard', function(){
         return view('dashboard');
     })->name('dashboard');
+
+    Route::get('/user-profile', function(){
+        return view('public.user.profile');
+    })->name('user_profile');
 });
 
 //Email Validation Routes
