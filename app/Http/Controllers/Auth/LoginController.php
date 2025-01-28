@@ -37,6 +37,9 @@ class LoginController extends Controller
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
+
+            return redirect()->route('home');
+
         }catch(\Exception $e){
             throwError(__('Logout failed.  Please try again later.'),500,['exception' => $e->getMessage()]);
         }

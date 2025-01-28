@@ -1,9 +1,15 @@
 <aside class="w-64 bg-white shadow-lg">
     <div class="p-6 border-b">
-        <h1 class="text-lg font-semibold">Kupoval</h1>
+        <h1 class="text-lg font-semibold"><a href="{{ route('home') }}">Kupoval</a></h1>
     </div>
     <nav class="mt-4">
         <ul>
+            <li class="mb-2">
+                <a href="{{ route('home') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+                    <i class="bi bi-arrow-left mr-2"></i>
+                    Back to the Website
+                </a>
+            </li>
             <li class="mb-2">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
                     <i class="bi bi-house-door mr-2"></i>

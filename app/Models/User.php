@@ -32,4 +32,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin(){
         return $this->role === 'admin';
     }
+
+    public function profile()
+    {
+        return $this->hasOne(UserProfile::class);
+    }
 }
