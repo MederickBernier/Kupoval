@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 class VerificationController extends Controller
 {
     public function notice(){
-        return view('auth.verify-email');
+        return view('public.auth.verify-email');
     }
 
     public function verify(EmailVerificationRequest $request){

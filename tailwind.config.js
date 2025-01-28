@@ -12,6 +12,9 @@ export default {
     ],
     theme: {
         extend: {
+            spacing:{
+                '128': '32rem',
+            },
             colors:{
                 navbar:{
                     DEFAULT:'#049191', // Teal

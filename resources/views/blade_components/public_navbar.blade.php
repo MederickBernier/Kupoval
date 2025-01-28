@@ -54,7 +54,7 @@
         </div>
 
         <!-- Authentication Links (Desktop) -->
-        <div class="hidden md:flex space-x-4">
+        <div class="hidden md:flex space-x-4 relative">
             @guest
                 <a href="{{ route('login') }}" class="px-4 py-2 bg-cta text-white rounded-full hover:bg-navbar-hover transition">
                     {{ __('public/interface.login') }}
@@ -63,15 +63,29 @@
                     {{ __('public/interface.register') }}
                 </a>
             @else
-                <a href="#" class="px-4 py-2 bg-accent text-white rounded-full hover:bg-navbar-hover transition">
-                    {{ __('public/interface.dashboard') }}
-                </a>
-                <form action="{{ route('logout') }}" method="POST" class="inline">
-                    @csrf
-                    <button type="submit" class="px-4 py-2 bg-cta text-white rounded-full hover:bg-navbar-hover transition">
-                        {{ __('public/interface.logout') }}
+                <div class="relative group">
+                    <button class="px-4 py-2 bg-accent text-white rounded-full hover:bg-navbar-hover transition flex items-center">
+                        {{ Auth::user()->username }}
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
                     </button>
-                </form>
+
+                    <!-- Dropdown Menu -->
+                    <div class="absolute hidden group-hover:block bg-white text-gray-800 rounded-lg shadow-lg mt-2 w-48 right-0 z-10">
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 hover:bg-gray-100">{{ __('public/interface.dashboard') }}</a>
+                        @else
+                            <a href="{{ route('user_profile') }}" class="block px-4 py-2 hover:bg-gray-100">{{ __('public/interface.user_profile') }}</a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST" class="block">
+                            @csrf
+                            <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-100">
+                                {{ __('public/interface.logout') }}
+                            </button>
+                        </form>
+                    </div>
+                </div>
             @endguest
         </div>
     </div>
@@ -88,13 +102,13 @@
         @click.away="open = false"
         class="md:hidden bg-navbar text-white absolute inset-x-0 top-0 mt-16 shadow-md z-50">
         <div class="flex flex-col space-y-4 py-4 px-6">
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.home') }}</a>
+            <a href="{{ route('home') }}" class="hover:text-navbar-hover">{{ __('public/interface.home') }}</a>
             <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.gallery') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.events') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.bio') }}</a>
+            <a href="{{ route('events') }}" class="hover:text-navbar-hover">{{ __('public/interface.events') }}</a>
+            <a href="{{ route('bio') }}" class="hover:text-navbar-hover">{{ __('public/interface.bio') }}</a>
             <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.shop') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.about') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.contact') }}</a>
+            <a href="{{ route('about') }}" class="hover:text-navbar-hover">{{ __('public/interface.about') }}</a>
+            <a href="{{ route('contact') }}" class="hover:text-navbar-hover">{{ __('public/interface.contact') }}</a>
             @guest
                 <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.login') }}</a>
                 <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.register') }}</a>

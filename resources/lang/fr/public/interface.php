@@ -45,4 +45,6 @@ return [
     'event_subheading' => 'Découvrez les détails de cet événement.',
     'event_details' => 'Détails de l’événement',
     'back_to_events' => 'Retour aux événements',
+    'username_dropdown' => 'Bienvenue, :username',
+    'user_profile' => 'Profil Utilisateur',
 ];

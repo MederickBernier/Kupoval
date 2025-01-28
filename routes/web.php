@@ -1,11 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cookie;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Admin\AdminController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/bio', [HomeController::class, 'bio'])->name('bio');
@@ -16,14 +19,16 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
 
 Route::middleware(['auth', 'verified'])->group(function(){
-    Route::get('/dashboard', function(){
-        return view('dashboard');
-    })->name('dashboard');
-
     Route::get('/user-profile', function(){
         return view('public.user.profile');
     })->name('user_profile');
 });
+
+Route::middleware(['auth', 'verified'])
+    ->prefix('admin')
+    ->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    });
 
 //Email Validation Routes
 Route::get('/email/verify',[VerificationController::class,'notice'])->middleware('auth')->name('verification.notice');

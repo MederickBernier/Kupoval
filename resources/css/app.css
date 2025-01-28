@@ -11,46 +11,55 @@
     @apply px-4 py-2 bg-accent text-white rounded hover:bg-cta transition;
 }
 
-.carousel {
-    position: relative;
-    display: flex;
-    overflow: hidden;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-    border-radius: 10px;
-}
-
-.carousel-item {
-    flex: 0 0 100%;
-    opacity: 0;
-    transform: scale(0.95);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.carousel-item:not(.hidden) {
-    opacity: 1;
-    transform: scale(1);
-}
-
-.carousel-controls button {
+.glide__arrows button {
     background-color: rgba(0, 0, 0, 0.6);
-    border: none;
     color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 50%;
     cursor: pointer;
     transition: background-color 0.3s ease;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.carousel-controls button:hover {
+.glide__arrows button:hover {
     background-color: rgba(0, 0, 0, 0.9);
 }
 
-.carousel-indicator {
+.glide__bullets .glide__bullet {
+    width: 10px;
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 50%;
+    margin: 0 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.carousel-indicator:hover {
+.glide__bullets .glide__bullet:hover,
+.glide__bullets .glide__bullet--active {
     background-color: #049191;
+}
+
+.group:hover .group-hover\:block {
+    display: block;
+}
+
+.dropdown-menu {
+    right: 0;
+    z-index: 10;
+}
+
+.dropdown-button {
+    position: relative;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+    cursor: pointer;
 }

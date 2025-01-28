@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         \App\Http\Middleware\SetLocale::class;
+        \App\Http\Middleware\AdminMiddleware::class;
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
