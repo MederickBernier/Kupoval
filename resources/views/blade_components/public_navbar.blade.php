@@ -66,7 +66,7 @@
 
                     <!-- Dropdown Menu -->
                     <div x-show="dropdown" @click.away="dropdown = false" class="absolute bg-white text-gray-800 rounded-lg shadow-lg mt-2 w-48 right-0 z-10">
-                        <a href="{{ route('user_profile') }}" class="block px-4 py-2 hover:bg-gray-100">
+                        <a href="{{ route('user.profile') }}" class="block px-4 py-2 hover:bg-gray-100">
                             <i class="bi bi-person mr-2"></i> {{ __('public/interface.user_profile') }}
                         </a>
                         @if(Auth::user()->role === 'admin')
@@ -101,7 +101,7 @@
                 <a href="{{ route('login') }}" class="hover:text-navbar-hover">{{ __('public/interface.login') }}</a>
                 <a href="{{ route('register') }}" class="hover:text-navbar-hover">{{ __('public/interface.register') }}</a>
             @else
-                <a href="{{ route('user_profile') }}" class="hover:text-navbar-hover">
+                <a href="{{ route('user.profile') }}" class="hover:text-navbar-hover">
                     <i class="bi bi-person mr-2"></i> {{ __('public/interface.user_profile') }}
                 </a>
                 @if(Auth::user()->role === 'admin')

@@ -1,11 +1,12 @@
 <?php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class RegisterController extends Controller
 {
@@ -27,13 +28,14 @@ class RegisterController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            Auth::login($user);
-
+            // Envoie automatique du mail de vérification
             $user->sendEmailVerificationNotification();
 
-            return redirect()->route('user_profile')->with('success',__('Registration successful.  Please check your email to verify your account.'));
+            Auth::login($user);
+
+            return redirect()->route('user.profile')->with('success', __('Registration successful. Please verify your email address.'));
         }catch(\Exception $e){
-            throwError(__('Registration failed.  Please try again.'),500,['exception' => $e->getMessage()]);
+            return redirect()->route('register')->with('error', __('Registration failed. Please try again.'));
         }
     }
 }

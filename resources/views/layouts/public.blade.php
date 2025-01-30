@@ -12,8 +12,13 @@
     <!-- Optional Theme -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/css/glide.theme.min.css">
 
+    <!-- Bootstrap Icons CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/glide.min.js"></script>
+
+    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
     <title>@yield('title', 'Kupoval')</title>
     @livewireStyles
     @vite(['resources/css/app.css','resources/js/app.js'])
@@ -31,8 +36,8 @@
             {!! __('public/interface.footer_copyright') !!}
         </p>
         <div class="flex justify-center space-x-6 mt-4">
-            <a href="#" class="text-link hover:underline">{{ __('public/interface.social_facebook') }}</a>
-            <a href="#" class="text-link hover:underline">{{ __('public/interface.social_instagram') }}</a>
+            <a href="#" class="text-link hover:underline"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="text-link hover:underline"><i class="bi bi-instagram"></i></a>
         </div>
     </footer>
     @livewireScripts
