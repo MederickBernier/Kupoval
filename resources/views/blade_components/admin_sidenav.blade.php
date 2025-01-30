@@ -11,6 +11,12 @@
                 </a>
             </li>
             <li class="mb-2">
+                <a href="{{ route('home') }}" target="_blank" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+                    <i class="bi bi-arrow-left mr-2"></i>
+                    Back to website (New Tab)
+                </a>
+            </li>
+            <li class="mb-2">
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
                     <i class="bi bi-house-door mr-2"></i>
                     Dashboard

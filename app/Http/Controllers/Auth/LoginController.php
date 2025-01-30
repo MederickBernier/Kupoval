@@ -22,7 +22,7 @@ class LoginController extends Controller
             if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
                 $request->session()->regenerate();
 
-                return redirect()->intended(route('user_profile'))->with('success',__('Login successful.'));
+                return redirect()->intended(route('user.profile'))->with('success',__('Login successful.'));
             }
             return back()->withErrors([
                 'email' => __('The provided credentials do not match our records.'),
