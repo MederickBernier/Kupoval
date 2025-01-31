@@ -47,4 +47,12 @@ return [
     'back_to_events' => 'Retour aux événements',
     'username_dropdown' => 'Bienvenue, :username',
     'user_profile' => 'Profil Utilisateur',
+    'title' => 'Profil Utilisateur',
+    'personal_info' => 'Informations Personnelles',
+    'first_name' => 'Prénom',
+    'last_name' => 'Nom',
+    'email' => 'Email',
+    'username' => 'Nom d\'utilisateur',
+    'password' => 'Mot de passe',
+    'edit_password' => 'Modifier le mot de passe',
 ];

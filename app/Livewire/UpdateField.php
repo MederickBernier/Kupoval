@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class UpdateField extends Component
 {
-
     public $field;
     public $value;
     public $isEditing = false;
