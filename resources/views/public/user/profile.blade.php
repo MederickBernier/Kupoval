@@ -14,16 +14,47 @@
             <i class="bi bi-person text-accent text-lg mr-2"></i> {{ __('public/profile.personal_info') }}
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @foreach(['first_name', 'last_name', 'email', 'username'] as $field)
-                <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                    <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                        {{ __('public/profile.' . $field) }}:
-                    </label>
-                    <div class="md:w-2/3 w-full">
-                        <livewire:update-field field="{{ $field }}" :value="Auth::user()->profile->$field ?? Auth::user()->$field ?? ''" />
-                    </div>
+            <!-- First Name -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.first_name') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="first_name" :value="Auth::user()->profile->first_name ?? ''" />
                 </div>
-            @endforeach
+            </div>
+
+            <!-- Last Name -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.last_name') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="last_name" :value="Auth::user()->profile->last_name ?? ''" />
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.email') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="email" :value="Auth::user()->email ?? ''" />
+                </div>
+            </div>
+
+            <!-- Username -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.username') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="username" :value="Auth::user()->username ?? ''" disabled />
+                </div>
+            </div>
+
+            <!-- Password -->
             <div class="flex flex-col md:flex-row md:items-center gap-y-2">
                 <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
                     {{ __('public/profile.password') }}:
@@ -41,16 +72,65 @@
             <i class="bi bi-house text-accent text-lg mr-2"></i> {{ __('public/profile.billing_address') }}
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            @foreach(['address', 'city', 'zipcode', 'state', 'country', 'phone'] as $field)
-                <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                    <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                        {{ __('public/profile.' . $field) }}:
-                    </label>
-                    <div class="md:w-2/3 w-full">
-                        <livewire:update-field field="{{ $field }}" :value="Auth::user()->profile->$field ?? ''" />
-                    </div>
+            <!-- Address -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.address') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="address" :value="Auth::user()->profile->address ?? ''" />
                 </div>
-            @endforeach
+            </div>
+
+            <!-- ZIP Code -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.zip_code') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="zipcode" :value="Auth::user()->profile->zipcode ?? ''" />
+                </div>
+            </div>
+
+            <!-- Country -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.country') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="country" :value="Auth::user()->profile->country ?? ''" />
+                </div>
+            </div>
+
+            <!-- State -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.state') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="state" :value="Auth::user()->profile->state ?? ''" />
+                </div>
+            </div>
+
+            <!-- City -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.city') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="city" :value="Auth::user()->profile->city ?? ''" />
+                </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
+                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
+                    {{ __('public/profile.phone') }}:
+                </label>
+                <div class="md:w-2/3 w-full">
+                    <livewire:update-field field="phone" :value="Auth::user()->profile->phone ?? ''" />
+                </div>
+            </div>
         </div>
     </div>
 
@@ -66,9 +146,11 @@
                 <table class="w-full border rounded-lg">
                     <thead class="bg-gray-200">
                         <tr>
-                            @foreach(['order_number', 'order_date', 'order_total', 'order_status', 'order_action'] as $column)
-                                <th class="px-4 py-2 text-left">{{ __('public/profile.' . $column) }}</th>
-                            @endforeach
+                            <th class="px-4 py-2 text-left">{{ __('public/profile.order_number') }}</th>
+                            <th class="px-4 py-2 text-left">{{ __('public/profile.order_date') }}</th>
+                            <th class="px-4 py-2 text-left">{{ __('public/profile.order_total') }}</th>
+                            <th class="px-4 py-2 text-left">{{ __('public/profile.order_status') }}</th>
+                            <th class="px-4 py-2">{{ __('public/profile.order_action') }}</th>
                         </tr>
                     </thead>
                     <tbody>

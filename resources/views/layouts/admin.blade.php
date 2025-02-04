@@ -11,9 +11,11 @@
     <!-- Bootstrap Icons CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
-    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 </head>
-<body class="bg-gray-100 font-sans antialiased">
+<body class="bg-gray-100 font-sans antialiased" x-data="{ open: false }">
+
     <div class="flex h-screen">
         <!-- Sidebar -->
         @include('blade_components.admin_sidenav')
@@ -22,7 +24,12 @@
         <main class="flex-1 overflow-y-auto">
             <!-- Header -->
             <header class="bg-white shadow p-4 flex justify-between items-center">
-                <h2 class="text-lg font-semibold">@yield('page-title', 'Dashboard')</h2>
+                <div class="flex items-center space-x-4">
+                    <button @click="open = !open" class="md:hidden p-2 rounded bg-gray-200 hover:bg-gray-300">
+                        <i class="bi bi-list text-2xl"></i>
+                    </button>
+                    <h2 class="text-lg font-semibold">@yield('page-title', 'Dashboard')</h2>
+                </div>
                 <div class="flex items-center space-x-4">
                     <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                         <i class="bi bi-person text-gray-500"></i>
@@ -36,5 +43,6 @@
             </div>
         </main>
     </div>
+
 </body>
 </html>

@@ -30,4 +30,11 @@ return [
     'no_wishlist' => 'Votre liste de souhaits est vide.',
     'view_product' => 'Voir',
     'remove_product' => 'Retirer',
+
+    'select_country' => 'Sélectionnez un pays',
+    'select_state' => 'Sélectionnez un état/province',
+    'select_city' => 'Sélectionnez une ville',
+    'add_city' => 'Ajoutez une nouvelle ville si elle n\'est pas listée',
+    'enter_city' => 'Entrez le nom de la ville',
+    'add_city_button' => 'Ajouter la ville',
 ];

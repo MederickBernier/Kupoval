@@ -10,6 +10,7 @@ use Database\Seeders\CategorySeeder;
 use Database\Seeders\EventsSeeder;
 use Database\Seeders\ArtworkSeeder;
 use Database\Seeders\SettingsSeeder;
+use Database\Seeders\LocationSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,6 +28,6 @@ class DatabaseSeeder extends Seeder
             ArtworkSeeder::class,
             SettingsSeeder::class,
             StaticPageSeeder::class,
-        ]);
+                    ]);
     }
 }

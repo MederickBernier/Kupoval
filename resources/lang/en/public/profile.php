@@ -30,4 +30,11 @@ return [
     'no_wishlist' => 'Your wishlist is empty.',
     'view_product' => 'View',
     'remove_product' => 'Remove',
+
+    'select_country' => 'Select a Country',
+    'select_state' => 'Select a State/Province',
+    'select_city' => 'Select a City',
+    'add_city' => 'Add a new city if not listed',
+    'enter_city' => 'Enter new city name',
+    'add_city_button' => 'Add City',
 ];
