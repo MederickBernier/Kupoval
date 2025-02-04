@@ -42,7 +42,7 @@ Route::middleware('auth')->group(function () {
         ->name('verification.send');
 });
 
-// Profil utilisateur (HTMX inclus ici) - Nécessite un email vérifié
+// Profil utilisateur - Nécessite un email vérifié
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/user-profile', [UserProfileController::class, 'profile'])->name('user.profile');
     Route::put('/user-profile/update', [UserProfileController::class, 'updateProfile'])->name('user.profile.update');
@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified'])
     ->prefix('admin')
     ->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('/users', [AdminController::class, 'users'])->name('admin.users.list');
     })->middleware('verified');
 
 // Changement de langue
