@@ -12,12 +12,25 @@
     <!-- Navigation -->
     <nav class="mt-4">
         <ul class="space-y-1">
+            <!-- Return to Website -->
+            <li>
+                <a href="{{ route('home') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+                    <i class="bi bi-house-fill mr-2"></i> Return to Website
+                </a>
+            </li>
+            <!-- Return to Website (target=_blank) -->
+            <li>
+                <a href="{{ route('home') }}" target="_blank" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+                    <i class="bi bi-house-fill mr-2"></i> Return to Website (in new tab)
+                </a>
+            </li>
             <!-- Dashboard -->
             <li>
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
                     <i class="bi bi-house-door mr-2"></i> Dashboard
                 </a>
             </li>
+
 
             <!-- Events -->
             <li x-data="{ openSub: false }">

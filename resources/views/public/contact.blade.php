@@ -1,4 +1,5 @@
 @extends('layouts.public')
+
 @section('content')
 <section class="my-16">
     <!-- Titre principal -->
@@ -36,7 +37,7 @@
             </form>
         </div>
 
-        <!-- Informations de contact -->
+        <!-- Informations de contact et Google Map -->
         <div class="relative">
             <div class="bg-gradient-to-br from-page via-white to-neutral shadow-xl rounded-xl p-8">
                 <h2 class="text-2xl font-title text-heading mb-6 text-center">{{ __('public/interface.contact_info') }}</h2>
@@ -60,6 +61,19 @@
                         <span class="text-body">{{ __('public/interface.email') }}: <span class="font-bold">{{ $settings['site_email'] }}</span></span>
                     </li>
                 </ul>
+            </div>
+
+            <!-- Google Map -->
+            <div class="mt-6">
+                <iframe
+                    width="100%"
+                    height="300"
+                    style="border:0; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1);"
+                    loading="lazy"
+                    allowfullscreen
+                    referrerpolicy="no-referrer-when-downgrade"
+                    src="https://www.google.com/maps/embed/v1/place?key={{ env('GOOGLE_MAPS_API_KEY') }}&q={{ urlencode($settings['site_address']) }}">
+                </iframe>
             </div>
         </div>
     </div>
