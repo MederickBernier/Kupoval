@@ -77,7 +77,7 @@
                     <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openSub}"></i>
                 </button>
                 <ul x-show="openSub" class="pl-8 mt-1 space-y-1">
-                    <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">General Settings</a></li>
+                    <li><a href="{{ route('admin.settings.list') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">General Settings</a></li>
                     <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Social Media Links</a></li>
                 </ul>
             </li>

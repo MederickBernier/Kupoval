@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])
     ->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::get('/users', [AdminController::class, 'users'])->name('admin.users.list');
+        Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings.list');
     })->middleware('verified');
 
 // Changement de langue
