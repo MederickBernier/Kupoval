@@ -13,6 +13,8 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\Admin\AdminSettingsController;
+use App\Http\Controllers\Admin\AdminEventsController;
+use App\Http\Controllers\Admin\AdminArtworksController;
 // use App\Http\Controllers\LanguageController;
 
 // Pages publiques
@@ -75,5 +77,16 @@ Route::middleware(['auth', 'verified'])
         Route::post('/settings', [AdminSettingsController::class, 'store'])->name('admin.settings.store');
         Route::put('/settings/{id}', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
         Route::delete('/settings/{id}', [AdminSettingsController::class, 'destroy'])->name('admin.settings.destroy');
+
+        // Events Routes
+        Route::get('/events', [AdminEventsController::class,'index'])->name('admin.events.list');
+        Route::post('/events', [AdminEventsController::class, 'store'])->name('admin.events.store');
+        Route::put('/events/{id}', [AdminEventsController::class, 'update'])->name('admin.events.update');
+        Route::delete('/events/{id}', [AdminEventsController::class, 'destroy'])->name('admin.events.destroy');
+
+        // Gestion des événements supprimés
+        Route::get('/events/trashed', [AdminEventsController::class, 'trashed'])->name('admin.events.trashed');
+        Route::post('/events/restore/{id}', [AdminEventsController::class, 'restore'])->name('admin.events.restore');
+        Route::delete('/events/force-delete/{id}', [AdminEventsController::class, 'forceDelete'])->name('admin.events.force-delete');
     })->middleware('verified');
 

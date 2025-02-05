@@ -39,8 +39,8 @@
                     <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openSub}"></i>
                 </button>
                 <ul x-show="openSub" class="pl-8 mt-1 space-y-1">
-                    <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">List Events</a></li>
-                    <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Add Event</a></li>
+                    <li><a href="{{ route('admin.events.list') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">List Events</a></li>
+                    <li><a href="{{ route('admin.events.trashed') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Deactivated Events</a></li>
                 </ul>
             </li>
 
@@ -77,7 +77,7 @@
                     </li>
                     <li>
                         <a href="{{ route('admin.users.trashed') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">
-                            <i class="bi bi-archive mr-2"></i> Deleted Users
+                            <i class="bi bi-archive mr-2"></i> Deactivated Users
                         </a>
                     </li>
                 </ul>
