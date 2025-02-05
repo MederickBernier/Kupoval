@@ -12,6 +12,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\Admin\AdminSettingsController;
 // use App\Http\Controllers\LanguageController;
 
 // Pages publiques
@@ -60,11 +61,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::middleware(['auth', 'verified'])
     ->prefix('admin')
     ->group(function () {
+        // Dashboard
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+
+        // Users Routes
         Route::get('/users', [AdminUsersController::class, 'index'])->name('admin.users.list');
         Route::delete('/users/{id}', [AdminUsersController::class, 'destroy'])->name('admin.users.destroy');
         Route::get('/users/trashed', [AdminUsersController::class, 'trashed'])->name('admin.users.trashed');
         Route::post('/users/restore/{id}', [AdminUsersController::class, 'restore'])->name('admin.users.restore');
-        Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings.list');
+
+        // Settings Routes
+        Route::get('/settings', [AdminSettingsController::class, 'index'])->name('admin.settings.list');
+        Route::post('/settings', [AdminSettingsController::class, 'store'])->name('admin.settings.store');
+        Route::put('/settings/{id}', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
+        Route::delete('/settings/{id}', [AdminSettingsController::class, 'destroy'])->name('admin.settings.destroy');
     })->middleware('verified');
 
