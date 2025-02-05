@@ -12,6 +12,8 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, SoftDeletes;
 
+    protected $dates = ['deleted_at'];
+
     protected $fillable = [
         'email',
         'username',
@@ -35,7 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function profile()
     {
-        return $this->hasOne(UserProfile::class);
+        return $this->hasOne(UserProfile::class,'user_id', 'id');
     }
 
     public function orders()
@@ -46,5 +48,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function wishlist()
     {
         return $this->hasMany(Wishlist::class);
+    }
+
+    public function activeUsers(){
+        return self::whereNull('deleted_at')->get();
     }
 }

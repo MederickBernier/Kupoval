@@ -64,12 +64,24 @@
             </li>
 
             <!-- Users -->
-            <li>
-                <a href="{{ route('admin.users.list') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
+            <li x-data="{ openUsers: false }">
+                <button @click="openUsers = !openUsers" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
                     <i class="bi bi-people mr-2"></i> Users
-                </a>
+                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openUsers}"></i>
+                </button>
+                <ul x-show="openUsers" class="pl-8 mt-1 space-y-1">
+                    <li>
+                        <a href="{{ route('admin.users.list') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">
+                            <i class="bi bi-list-ul mr-2"></i> Active Users
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.users.trashed') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">
+                            <i class="bi bi-archive mr-2"></i> Deleted Users
+                        </a>
+                    </li>
+                </ul>
             </li>
-
             <!-- Settings -->
             <li x-data="{ openSub: false }">
                 <button @click="openSub = !openSub" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">

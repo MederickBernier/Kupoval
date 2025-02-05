@@ -14,57 +14,54 @@
             <i class="bi bi-person text-accent text-lg mr-2"></i> {{ __('public/profile.personal_info') }}
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- First Name -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.first_name') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="first_name" :value="Auth::user()->profile->first_name ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.first_name') }}:</label>
+                <livewire:update-field field="first_name" :value="Auth::user()->profile->first_name ?? ''" />
             </div>
-
-            <!-- Last Name -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.last_name') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="last_name" :value="Auth::user()->profile->last_name ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.last_name') }}:</label>
+                <livewire:update-field field="last_name" :value="Auth::user()->profile->last_name ?? ''" />
             </div>
-
-            <!-- Email -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.email') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="email" :value="Auth::user()->email ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.email') }}:</label>
+                <livewire:update-field field="email" :value="Auth::user()->email ?? ''" />
             </div>
-
-            <!-- Username -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.username') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="username" :value="Auth::user()->username ?? ''" disabled />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.username') }}:</label>
+                <livewire:update-field field="username" :value="Auth::user()->username ?? ''" disabled />
             </div>
-
-            <!-- Password -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.password') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-password />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.password') }}:</label>
+                <livewire:update-password />
             </div>
         </div>
     </div>
+
+    {{-- <div class="shadow-md p-6 rounded-lg bg-white mb-6">
+        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center">
+            <i class="bi bi-translate text-accent text-lg mr-2"></i> {{ __('public/profile.language_preference') }}
+        </h3>
+        <form action="{{ route('lang.switch') }}" method="POST" class="flex flex-col space-y-3">
+            @csrf
+            <label for="languageSwitcher" class="font-semibold text-gray-800">
+                {{ __('public/profile.select_language') }}:
+            </label>
+            <select name="languageSwitcher" id="languageSwitcher"
+                    class="border rounded-lg px-4 py-2 focus:ring focus:ring-accent focus:outline-none"
+                    onchange="this.form.submit()">
+                <option value="frca" {{ app()->getLocale() === 'frca' ? 'selected' : '' }}>🇨🇦 Français (Canada)</option>
+                <option value="enca" {{ app()->getLocale() === 'enca' ? 'selected' : '' }}>🇨🇦 English (Canada)</option>
+            </select>
+        </form>
+    </div>
+
+
+    <script>
+        document.getElementById('languageSwitcher').addEventListener('change', function() {
+            const selectedLang = this.value;
+            window.location.href = "{{ route('lang.switch') }}?lang=" + selectedLang;
+        });
+    </script> --}}
 
     <!-- Adresse de facturation -->
     <div class="shadow-md p-6 rounded-lg bg-white mb-6">
@@ -72,64 +69,29 @@
             <i class="bi bi-house text-accent text-lg mr-2"></i> {{ __('public/profile.billing_address') }}
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Address -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.address') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="address" :value="Auth::user()->profile->address ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.address') }}:</label>
+                <livewire:update-field field="address" :value="Auth::user()->profile->address ?? ''" />
             </div>
-
-            <!-- ZIP Code -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.zip_code') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="zipcode" :value="Auth::user()->profile->zipcode ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.zip_code') }}:</label>
+                <livewire:update-field field="zipcode" :value="Auth::user()->profile->zipcode ?? ''" />
             </div>
-
-            <!-- Country -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.country') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="country" :value="Auth::user()->profile->country ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.country') }}:</label>
+                <livewire:update-field field="country" :value="Auth::user()->profile->country ?? ''" />
             </div>
-
-            <!-- State -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.state') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="state" :value="Auth::user()->profile->state ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.state') }}:</label>
+                <livewire:update-field field="state" :value="Auth::user()->profile->state ?? ''" />
             </div>
-
-            <!-- City -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.city') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="city" :value="Auth::user()->profile->city ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.city') }}:</label>
+                <livewire:update-field field="city" :value="Auth::user()->profile->city ?? ''" />
             </div>
-
-            <!-- Phone -->
-            <div class="flex flex-col md:flex-row md:items-center gap-y-2">
-                <label class="font-semibold text-gray-800 md:w-1/3 text-left md:text-right pr-4">
-                    {{ __('public/profile.phone') }}:
-                </label>
-                <div class="md:w-2/3 w-full">
-                    <livewire:update-field field="phone" :value="Auth::user()->profile->phone ?? ''" />
-                </div>
+            <div class="flex flex-col">
+                <label class="font-semibold text-gray-800">{{ __('public/profile.phone') }}:</label>
+                <livewire:update-field field="phone" :value="Auth::user()->profile->phone ?? ''" />
             </div>
         </div>
     </div>
@@ -191,14 +153,6 @@
                         <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="w-full h-32 object-cover rounded">
                         <h4 class="text-lg font-semibold mt-2 text-heading">{{ $item->product->name }}</h4>
                         <p class="text-gray-700 mt-1">{{ number_format($item->product->price, 2) }}$</p>
-                        <div class="flex justify-between w-full mt-3">
-                            <a href="{{ route('product.details', $item->product->id) }}" class="text-link hover:underline">
-                                {{ __('public/profile.view_product') }}
-                            </a>
-                            <button wire:click="removeFromWishlist({{ $item->id }})" class="text-red-500 hover:underline">
-                                {{ __('public/profile.remove_product') }}
-                            </button>
-                        </div>
                     </div>
                 @endforeach
             </div>

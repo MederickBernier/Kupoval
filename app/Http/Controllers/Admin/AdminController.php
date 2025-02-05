@@ -10,28 +10,40 @@ use App\Models\Setting;
 class AdminController extends Controller
 {
     public function index(Request $request){
-        isAllowed($request->user());
-        return view('admin.dashboard');
+        try{
+            isAllowed($request->user());
+            return view('admin.dashboard');
+        }catch(\Exception $e){
+            throwError(__('Unauthorized access'), 403, ['exception' => $e->getMessage()]);
+        }
     }
 
     public function users(Request $request)
     {
-        isAllowed($request->user());
+        try{
+            isAllowed($request->user());
 
-        $users = User::with(['profile', 'orders'])->orderBy('id', 'asc')->paginate(10);
+            $users = User::with(['profile', 'orders'])->orderBy('id', 'asc')->paginate(10);
 
-        return view('admin.users.index', [
-            'users' => $users
-        ]);
+            return view('admin.users.index', [
+                'users' => $users
+            ]);
+        }catch(\Exception $e){
+            throwError(__('Unauthorized access'), 403, ['exception' => $e->getMessage()]);
+        }
     }
 
     public function settings(Request $request)
     {
-        isAllowed($request->user());
-        $settings = Setting::orderBy('key', 'asc')->paginate(10);
+        try{
+            isAllowed($request->user());
+            $settings = Setting::orderBy('key', 'asc')->paginate(10);
 
-        return view('admin.settings.index', [
-            'settings' => $settings,
-        ]);
+            return view('admin.settings.index', [
+                'settings' => $settings,
+            ]);
+        }catch(\Exception $e){
+            throwError(__('Unauthorized access'), 403, ['exception' => $e->getMessage()]);
+        }
     }
 }

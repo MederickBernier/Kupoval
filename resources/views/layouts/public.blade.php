@@ -18,7 +18,6 @@
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/glide.min.js"></script>
 
-    <script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
     <title>@yield('title', 'Kupoval')</title>
     @livewireStyles
     @vite(['resources/css/app.css','resources/js/app.js'])
@@ -40,6 +39,12 @@
             <a href="#" class="text-link hover:underline"><i class="bi bi-instagram"></i></a>
         </div>
     </footer>
+    <script>
+        window.addEventListener('reload-page', function () {
+            console.log('🔄 Rechargement forcé après changement de langue');
+            location.reload();
+        });
+    </script>
     @livewireScripts
 </body>
 </html>

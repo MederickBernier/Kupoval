@@ -37,4 +37,14 @@ return [
     'add_city' => 'Ajoutez une nouvelle ville si elle n\'est pas listée',
     'enter_city' => 'Entrez le nom de la ville',
     'add_city_button' => 'Ajouter la ville',
+
+    'select_language' => 'Sélectionner la langue',
+    'language_preference' => 'Préférence de langue',
+    'languages' => [
+        'frca' => '🇨🇦 Français (Canada)',
+        'fren' => '🌍 Français (International)',
+        'frfr' => '🇫🇷 Français (France)',
+        'enus' => '🇺🇸 Anglais (US)',
+        'engb' => '🇬🇧 Anglais (UK)',
+    ],
 ];

@@ -11,6 +11,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\Admin\AdminUsersController;
+// use App\Http\Controllers\LanguageController;
 
 // Pages publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -47,25 +49,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/user-profile', [UserProfileController::class, 'profile'])->name('user.profile');
     Route::put('/user-profile/update', [UserProfileController::class, 'updateProfile'])->name('user.profile.update');
 
-    // Routes HTMX pour édition rapide
     Route::get('/user/edit-field/{field}', [UserProfileController::class, 'editField'])->name('user.edit-field');
     Route::post('/user/update-field/{field}', [UserProfileController::class, 'updateField'])->name('user.update-field');
 });
+
+// Lang Switching Route
+// Route::get('/lang-switch', [LanguageController::Class, 'switch'])->name('lang.switch');
 
 // Admin (nécessite email vérifié)
 Route::middleware(['auth', 'verified'])
     ->prefix('admin')
     ->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-        Route::get('/users', [AdminController::class, 'users'])->name('admin.users.list');
+        Route::get('/users', [AdminUsersController::class, 'index'])->name('admin.users.list');
+        Route::delete('/users/{id}', [AdminUsersController::class, 'destroy'])->name('admin.users.destroy');
+        Route::get('/users/trashed', [AdminUsersController::class, 'trashed'])->name('admin.users.trashed');
+        Route::post('/users/restore/{id}', [AdminUsersController::class, 'restore'])->name('admin.users.restore');
         Route::get('/settings', [AdminController::class, 'settings'])->name('admin.settings.list');
     })->middleware('verified');
 
-// Changement de langue
-Route::get('/lang/{locale}', function ($locale) {
-    if (in_array($locale, ['en', 'fr'])) {
-        Session::put('locale', $locale);
-        Cookie::queue('locale', $locale, 60 * 24 * 30);
-    }
-    return redirect()->back();
-})->name('setLocale');
