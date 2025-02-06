@@ -88,5 +88,16 @@ Route::middleware(['auth', 'verified'])
         Route::get('/events/trashed', [AdminEventsController::class, 'trashed'])->name('admin.events.trashed');
         Route::post('/events/restore/{id}', [AdminEventsController::class, 'restore'])->name('admin.events.restore');
         Route::delete('/events/force-delete/{id}', [AdminEventsController::class, 'forceDelete'])->name('admin.events.force-delete');
+
+        // Afficher la liste des œuvres d'art
+        Route::get('artworks', [AdminArtworksController::class, 'index'])->name('admin.artworks.index');
+        Route::get('artworks/create', [AdminArtworksController::class, 'create'])->name('admin.artworks.create');
+        Route::post('artworks', [AdminArtworksController::class, 'store'])->name('admin.artworks.store');
+        Route::get('artworks/{id}/edit', [AdminArtworksController::class, 'edit'])->name('admin.artworks.edit');
+        Route::put('artworks/{id}', [AdminArtworksController::class, 'update'])->name('admin.artworks.update');
+        Route::delete('artworks/{id}', [AdminArtworksController::class, 'destroy'])->name('admin.artworks.destroy');
+        Route::get('artworks/trashed', [AdminArtworksController::class, 'trashed'])->name('admin.artworks.trashed');
+        Route::post('artworks/{id}/restore', [AdminArtworksController::class, 'restore'])->name('admin.artworks.restore');
+        Route::delete('artworks/{id}/force-delete', [AdminArtworksController::class, 'forceDelete'])->name('admin.artworks.forceDelete');
     })->middleware('verified');
 
