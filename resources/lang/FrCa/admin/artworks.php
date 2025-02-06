@@ -24,4 +24,13 @@ return [
     'trashed_title' => 'Œuvres désactivées',
     'restore' => 'Restaurer',
     'delete_permanently' => 'Supprimer définitivement',
+    'size_pricing' => 'Taille et tarification',
+    'height' => 'Hauteur',
+    'width' => 'Largeur',
+    'sale_event_options' => 'Options d\'événement de vente',
+    'featured' => 'En vedette',
+    'for_event' => 'Pour événement',
+    'select_event' => 'Sélectionner un événement',
+    'select_event_placeholder' => '-- Sélectionner un événement --',
+    'description' => 'Description',
 ];
