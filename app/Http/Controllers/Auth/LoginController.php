@@ -26,7 +26,13 @@ class LoginController extends Controller
 
         try {
             if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+                $user = Auth::user();
                 $request->session()->regenerate();
+
+                $lang = $user->profile->language ?? config('app.locale');
+
+                Session::put('locale', $lang);
+                Cookie::queue('locale', $lang, 60 * 24 * 30);
 
                 return redirect()->intended(route('user.profile'))
                     ->with('success', __('Login successful.'));

@@ -12,8 +12,9 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->append(\App\Http\Middleware\SetLocale::class);
-        // \App\Http\Middleware\SetLocale::class;
-        // \App\Http\Middleware\EncryptCookies::class;
+        $middleware->encryptCookies([
+            'locale',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

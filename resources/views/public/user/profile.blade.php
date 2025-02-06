@@ -8,9 +8,9 @@
         <i class="bi bi-person-circle text-heading text-xl mr-2"></i> {{ __('public/profile.title') }}
     </h2>
 
-    <!-- Informations Personnelles -->
+    <!-- 📌 Informations Personnelles -->
     <div class="shadow-md p-6 rounded-lg bg-white mb-6">
-        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center">
+        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center border-b pb-2">
             <i class="bi bi-person text-accent text-lg mr-2"></i> {{ __('public/profile.personal_info') }}
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -37,8 +37,9 @@
         </div>
     </div>
 
-    {{-- <div class="shadow-md p-6 rounded-lg bg-white mb-6">
-        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center">
+    <!-- 🌍 Changer la Langue -->
+    <div class="shadow-md p-6 rounded-lg bg-white mb-6">
+        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center border-b pb-2">
             <i class="bi bi-translate text-accent text-lg mr-2"></i> {{ __('public/profile.language_preference') }}
         </h3>
         <form action="{{ route('lang.switch') }}" method="POST" class="flex flex-col space-y-3">
@@ -55,17 +56,9 @@
         </form>
     </div>
 
-
-    <script>
-        document.getElementById('languageSwitcher').addEventListener('change', function() {
-            const selectedLang = this.value;
-            window.location.href = "{{ route('lang.switch') }}?lang=" + selectedLang;
-        });
-    </script> --}}
-
-    <!-- Adresse de facturation -->
+    <!-- 🏡 Adresse de Facturation -->
     <div class="shadow-md p-6 rounded-lg bg-white mb-6">
-        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center">
+        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center border-b pb-2">
             <i class="bi bi-house text-accent text-lg mr-2"></i> {{ __('public/profile.billing_address') }}
         </h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -81,32 +74,20 @@
                 <label class="font-semibold text-gray-800">{{ __('public/profile.country') }}:</label>
                 <livewire:update-field field="country" :value="Auth::user()->profile->country ?? ''" />
             </div>
-            <div class="flex flex-col">
-                <label class="font-semibold text-gray-800">{{ __('public/profile.state') }}:</label>
-                <livewire:update-field field="state" :value="Auth::user()->profile->state ?? ''" />
-            </div>
-            <div class="flex flex-col">
-                <label class="font-semibold text-gray-800">{{ __('public/profile.city') }}:</label>
-                <livewire:update-field field="city" :value="Auth::user()->profile->city ?? ''" />
-            </div>
-            <div class="flex flex-col">
-                <label class="font-semibold text-gray-800">{{ __('public/profile.phone') }}:</label>
-                <livewire:update-field field="phone" :value="Auth::user()->profile->phone ?? ''" />
-            </div>
         </div>
     </div>
 
-    <!-- Historique des commandes -->
+    <!-- 📦 Historique des Commandes -->
     <div class="shadow-md p-6 rounded-lg bg-white mb-6">
-        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center">
+        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center border-b pb-2">
             <i class="bi bi-box-seam text-accent text-lg mr-2"></i> {{ __('public/profile.order_history') }}
         </h3>
         @if(Auth::user()->orders->isEmpty())
-            <p class="text-gray-500 bg-neutral p-3 rounded">{{ __('public/profile.no_orders') }}</p>
+            <p class="text-gray-500 bg-gray-100 p-3 rounded">{{ __('public/profile.no_orders') }}</p>
         @else
             <div class="overflow-x-auto">
                 <table class="w-full border rounded-lg">
-                    <thead class="bg-gray-200">
+                    <thead class="bg-gray-200 text-gray-800">
                         <tr>
                             <th class="px-4 py-2 text-left">{{ __('public/profile.order_number') }}</th>
                             <th class="px-4 py-2 text-left">{{ __('public/profile.order_date') }}</th>
@@ -117,10 +98,10 @@
                     </thead>
                     <tbody>
                         @foreach(Auth::user()->orders as $order)
-                            <tr class="border-t">
+                            <tr class="border-t hover:bg-gray-100">
                                 <td class="px-4 py-2">{{ $order->id }}</td>
                                 <td class="px-4 py-2">{{ $order->created_at->format('d M Y') }}</td>
-                                <td class="px-4 py-2">{{ number_format($order->total, 2) }}$</td>
+                                <td class="px-4 py-2 font-semibold">{{ number_format($order->total, 2) }}$</td>
                                 <td class="px-4 py-2">
                                     <span class="px-2 py-1 text-sm rounded bg-gray-200 text-gray-800">
                                         {{ ucfirst($order->status) }}
@@ -139,17 +120,17 @@
         @endif
     </div>
 
-    <!-- Wishlist -->
+    <!-- ❤️ Wishlist -->
     <div class="shadow-md p-6 rounded-lg bg-white mb-6">
-        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center">
+        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center border-b pb-2">
             <i class="bi bi-heart text-accent text-lg mr-2"></i> {{ __('public/profile.wishlist') }}
         </h3>
         @if(Auth::user()->wishlist->isEmpty())
-            <p class="text-gray-500 bg-neutral p-3 rounded">{{ __('public/profile.no_wishlist') }}</p>
+            <p class="text-gray-500 bg-gray-100 p-3 rounded">{{ __('public/profile.no_wishlist') }}</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach(Auth::user()->wishlist as $item)
-                    <div class="border rounded-lg p-4 shadow-emerald flex flex-col items-center">
+                    <div class="border rounded-lg p-4 shadow-sm flex flex-col items-center bg-gray-50 hover:bg-gray-100">
                         <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="w-full h-32 object-cover rounded">
                         <h4 class="text-lg font-semibold mt-2 text-heading">{{ $item->product->name }}</h4>
                         <p class="text-gray-700 mt-1">{{ number_format($item->product->price, 2) }}$</p>

@@ -15,7 +15,7 @@ use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AdminEventsController;
 use App\Http\Controllers\Admin\AdminArtworksController;
-// use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\LanguageController;
 
 // Pages publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -57,7 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Lang Switching Route
-// Route::get('/lang-switch', [LanguageController::Class, 'switch'])->name('lang.switch');
+Route::post('/lang-switch', [LanguageController::class, 'switch'])->middleware('auth')->name('lang.switch');
 
 // Admin (nécessite email vérifié)
 Route::middleware(['auth', 'verified'])
