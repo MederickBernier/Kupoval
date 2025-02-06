@@ -18,4 +18,5 @@ return [
     'logout' => 'Déconnexion',
     'settings' => 'Paramètres',
     'accounting' => 'Comptabilité',
+    'user_profile' => 'Profil de l\'utilisateur',
 ];

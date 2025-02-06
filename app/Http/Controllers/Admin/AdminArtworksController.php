@@ -25,10 +25,10 @@ class AdminArtworksController extends Controller
         }
     }
 
-    public function create()
+    public function create(Request $request)
     {
         try {
-            isAllowed(auth()->user());
+            isAllowed($request->user());
 
             $artists = Artist::orderBy('name', 'asc')->get();
             $events = Event::orderBy('start_date', 'asc')->get();
@@ -72,7 +72,6 @@ class AdminArtworksController extends Controller
 
             return redirect()->route('admin.artworks.index')->with('success', __('Artwork created successfully'));
         } catch (\Exception $e) {
-            \Log::error('Error creating artwork:', ['exception' => $e->getMessage()]);
             return back()->withErrors(__('Error creating artwork: ') . $e->getMessage());
         }
     }

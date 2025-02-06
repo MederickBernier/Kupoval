@@ -73,10 +73,10 @@ class AdminEventsController extends Controller
     /**
      * Supprime un événement (soft delete).
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
-            isAllowed(auth()->user());
+            isAllowed($request->user());
 
             $event = Event::findOrFail($id);
             $event->delete();
@@ -105,10 +105,10 @@ class AdminEventsController extends Controller
     /**
      * Restaure un événement supprimé.
      */
-    public function restore($id)
+    public function restore(Request $request,$id)
     {
         try {
-            isAllowed(auth()->user());
+            isAllowed($request->user());
 
             $event = Event::onlyTrashed()->findOrFail($id);
             $event->restore();
@@ -122,10 +122,10 @@ class AdminEventsController extends Controller
     /**
      * Supprime définitivement un événement.
      */
-    public function forceDelete($id)
+    public function forceDelete(Request $request, $id)
     {
         try {
-            isAllowed(auth()->user());
+            isAllowed($request->user());
 
             $event = Event::onlyTrashed()->findOrFail($id);
             $event->forceDelete();

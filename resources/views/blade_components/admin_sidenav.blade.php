@@ -112,6 +112,13 @@
                 </a>
             </li>
 
+            <li>
+                <a href="{{ route('user.profile') }}" target="_blank"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200 'text-gray-700' }}">
+                    <i class="bi bi-person mr-2"></i> {{ __('admin/sidenav.user_profile') }}
+                </a>
+            </li>
+
             <!-- Logout -->
             <li class="mt-6">
                 <form action="{{ route('logout') }}" method="POST" class="w-full">

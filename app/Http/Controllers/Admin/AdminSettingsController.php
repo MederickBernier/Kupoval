@@ -22,6 +22,9 @@ class AdminSettingsController extends Controller
     }
 
     public function store(Request $request){
+
+        isAllowed($request->user());
+
         $request->validate([
             'key' => 'required|string|max:255|unique:settings,key',
             'value' => 'required|string',
@@ -39,6 +42,9 @@ class AdminSettingsController extends Controller
     }
 
     public function update(Request $request, $id){
+
+        isAllowed($request->user());
+
         $request->validate([
             'value' => 'required|string',
         ]);
@@ -55,8 +61,10 @@ class AdminSettingsController extends Controller
         }
     }
 
-    public function destroy($id){
+    public function destroy(Request $request, $id){
         try{
+            isAllowed($request->user());
+            
             $setting = Setting::findOrFail($id);
             $setting->delete();
 

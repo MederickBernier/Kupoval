@@ -18,4 +18,5 @@ return [
     'logout' => 'Logout',
     'settings' => 'Settings',
     'accounting' => 'Accounting',
+    'user_profile' => 'User Profile',
 ];

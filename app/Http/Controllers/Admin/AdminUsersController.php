@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 class AdminUsersController extends Controller
 {
-    public function index(){
+    public function index(Request $request){
         try{
+            isAllowed($request->user());
+
             $users = user::with(['profile','orders'])->whereNull('deleted_at')->orderBy('id','asc')->paginate(10);
             return view('admin.users.index',[
                 'users' => $users,
@@ -18,9 +20,11 @@ class AdminUsersController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
+            isAllowed($request->user());
+
             $user = User::findOrFail($id);
 
             if ($user->role === 'admin') {
@@ -35,8 +39,10 @@ class AdminUsersController extends Controller
         }
     }
 
-    public function trashed(){
+    public function trashed(Request $request){
         try{
+            isAllowed($request->user());
+
             $users = User::onlyTrashed()->with(['profile','orders'])->orderBy('id','asc')->paginate(10);
 
             return view('admin.users.trashed',[
@@ -47,8 +53,10 @@ class AdminUsersController extends Controller
         }
     }
 
-    public function restore($id){
+    public function restore(Request $request, $id){
         try {
+            isAllowed($request->user());
+
             $user = User::onlyTrashed()->findOrFail($id);
             $user->restore();
 
