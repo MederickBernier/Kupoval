@@ -10,16 +10,16 @@
             <i class="bi bi-x-lg"></i>
         </button>
 
-        <h2 class="text-xl font-bold text-red-500 mb-4">Confirm Event Deletion</h2>
-        <p>You are about to delete <strong x-text="selectedEvent.name"></strong>. This action is irreversible.</p>
+        <h2 class="text-xl font-bold text-red-500 mb-4">{{ __('admin/events.delete_title') }}</h2>
+        <p>{{ __('admin/events.delete_confirmation') }} <strong x-text="selectedEvent.name"></strong>. {{ __('admin/events.irreversible_action') }}</p>
 
         <div class="mt-4">
             <button type="button" @click="openDeleteModal = false"
                     class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
-                Cancel
+                {{ __('admin/events.cancel') }}
             </button>
             <button @click="deleteEvent()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                Delete
+                {{ __('admin/events.delete') }}
             </button>
         </div>
     </div>
@@ -33,7 +33,7 @@ document.addEventListener('alpine:init', () => {
 
         async deleteEvent() {
             if (!this.selectedEvent.id) {
-                console.error("No event selected for deletion.");
+                console.error("{{ __('admin/events.error_no_selection') }}");
                 return;
             }
 
@@ -55,11 +55,11 @@ document.addEventListener('alpine:init', () => {
                     this.openDeleteModal = false;
                     window.location.reload();
                 } else {
-                    alert(data.error || 'Failed to delete event.');
+                    alert(data.error || "{{ __('admin/events.delete_failed') }}");
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An unexpected error occurred.');
+                alert("{{ __('admin/events.unexpected_error') }}");
             }
         }
     }));

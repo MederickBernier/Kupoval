@@ -10,38 +10,38 @@
             <i class="bi bi-x-lg"></i>
         </button>
 
-        <h2 class="text-xl font-bold text-green-500 mb-4">Add New Event</h2>
+        <h2 class="text-xl font-bold text-green-500 mb-4">{{ __('admin/events.add_title') }}</h2>
 
         <form action="{{ route('admin.events.store') }}" method="POST">
             @csrf
 
             <!-- Nom de l'événement -->
             <div class="mb-4">
-                <label class="block text-sm font-semibold mb-2">Name:</label>
+                <label class="block text-sm font-semibold mb-2">{{ __('admin/events.name') }}:</label>
                 <input type="text" name="name" class="w-full border px-4 py-2 rounded-lg" required>
             </div>
 
             <!-- Description -->
             <div class="mb-4">
-                <label class="block text-sm font-semibold mb-2">Description:</label>
+                <label class="block text-sm font-semibold mb-2">{{ __('admin/events.description') }}:</label>
                 <textarea name="description" class="w-full border px-4 py-2 rounded-lg h-24"></textarea>
             </div>
 
             <!-- Date de début -->
             <div class="mb-4">
-                <label class="block text-sm font-semibold mb-2">Start Date:</label>
+                <label class="block text-sm font-semibold mb-2">{{ __('admin/events.start_date') }}:</label>
                 <input type="date" name="start_date" class="w-full border px-4 py-2 rounded-lg" required>
             </div>
 
             <!-- Date de fin -->
             <div class="mb-4">
-                <label class="block text-sm font-semibold mb-2">End Date:</label>
+                <label class="block text-sm font-semibold mb-2">{{ __('admin/events.end_date') }}:</label>
                 <input type="date" name="end_date" class="w-full border px-4 py-2 rounded-lg">
             </div>
 
             <!-- Lieu -->
             <div class="mb-4">
-                <label class="block text-sm font-semibold mb-2">Location:</label>
+                <label class="block text-sm font-semibold mb-2">{{ __('admin/events.location') }}:</label>
                 <input type="text" name="location" class="w-full border px-4 py-2 rounded-lg" required>
             </div>
 
@@ -49,11 +49,11 @@
             <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-2">
                 <button type="button" @click="openAddModal = false"
                         class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
-                    Cancel
+                    {{ __('admin/events.cancel') }}
                 </button>
                 <button type="submit"
                         class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
-                    Add Event
+                    {{ __('admin/events.add') }}
                 </button>
             </div>
         </form>

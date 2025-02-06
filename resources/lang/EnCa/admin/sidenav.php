@@ -1,0 +1,21 @@
+<?php
+
+return [
+    'brand' => 'Kupoval',
+    'return_site' => 'Return to Website',
+    'return_site_new_tab' => 'Return to Website (in new tab)',
+    'dashboard' => 'Dashboard',
+    'events' => 'Events',
+    'list_events' => 'List Events',
+    'deactivated_events' => 'Deactivated Events',
+    'artworks' => 'Artworks',
+    'list_artworks' => 'List Artworks',
+    'deactivated_artworks' => 'Deactivated Artworks',
+    'orders' => 'Orders',
+    'users' => 'Users',
+    'active_users' => 'Active Users',
+    'deactivated_users' => 'Deactivated Users',
+    'logout' => 'Logout',
+    'settings' => 'Settings',
+    'accounting' => 'Accounting',
+];

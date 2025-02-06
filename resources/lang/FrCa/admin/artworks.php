@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'list_title' => 'Liste des œuvres',
+    'list_heading' => 'Liste des œuvres',
+    'add_new' => 'Ajouter une œuvre',
+    'create_title' => 'Créer une œuvre',
+    'image' => 'Image',
+    'name' => 'Nom',
+    'artist' => 'Artiste',
+    'select_artist' => '-- Sélectionner un artiste --',
+    'price' => 'Prix',
+    'for_sale' => 'À vendre',
+    'actions' => 'Actions',
+    'yes' => 'Oui',
+    'no' => 'Non',
+    'edit' => 'Modifier',
+    'delete' => 'Supprimer',
+    'unknown_artist' => 'Artiste inconnu',
+    'details' => 'Détails de l\'œuvre',
+    'upload_image' => 'Téléverser une image d\'œuvre',
+    'cancel' => 'Annuler',
+    'save' => 'Enregistrer l\'œuvre',
+    'trashed_title' => 'Œuvres désactivées',
+    'restore' => 'Restaurer',
+    'delete_permanently' => 'Supprimer définitivement',
+];

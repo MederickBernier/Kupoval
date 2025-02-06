@@ -1,24 +1,24 @@
 @extends('layouts.admin')
 
-@section('title', 'Trashed Events')
+@section('title', __('admin/events.trashed_title'))
 
-@section('page-title', 'Trashed Events')
+@section('page-title', __('admin/events.trashed_title'))
 
 @section('content')
 
 <div x-data="restoreEventModal" class="bg-white p-6 rounded-lg shadow-lg">
-    <h2 class="text-xl font-semibold mb-4">Deleted Events</h2>
+    <h2 class="text-xl font-semibold mb-4">{{ __('admin/events.deleted_events') }}</h2>
 
     <div class="overflow-x-auto">
         <table class="w-full border-collapse border border-gray-300">
             <thead class="bg-gray-200">
                 <tr>
-                    <th class="px-4 py-2 border">ID</th>
-                    <th class="px-4 py-2 border">Name</th>
-                    <th class="px-4 py-2 border">Start Date</th>
-                    <th class="px-4 py-2 border">End Date</th>
-                    <th class="px-4 py-2 border">Deleted At</th>
-                    <th class="px-4 py-2 border text-center">Actions</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.id') }}</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.name') }}</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.start_date') }}</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.end_date') }}</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.deleted_at') }}</th>
+                    <th class="px-4 py-2 border text-center">{{ __('admin/events.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@
                         <td class="px-4 py-2 border text-center">
                             <button @click="setRestoreEvent({{ $event->id }}, '{{ $event->name }}')"
                                     class="text-green-500 hover:underline">
-                                <i class="bi bi-arrow-counterclockwise"></i> Restore
+                                <i class="bi bi-arrow-counterclockwise"></i> {{ __('admin/events.restore') }}
                             </button>
                         </td>
                     </tr>

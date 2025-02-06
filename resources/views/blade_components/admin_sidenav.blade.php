@@ -3,7 +3,9 @@
 
     <!-- Header du Menu -->
     <div class="p-6 border-b flex justify-between items-center">
-        <h1 class="text-lg font-semibold"><a href="{{ route('home') }}">Kupoval</a></h1>
+        <h1 class="text-lg font-semibold">
+            <a href="{{ route('home') }}">{{ __('admin/sidenav.brand') }}</a>
+        </h1>
         <button @click="open = false" class="md:hidden text-gray-600">
             <i class="bi bi-x-lg"></i>
         </button>
@@ -12,122 +14,113 @@
     <!-- Navigation -->
     <nav class="mt-4">
         <ul class="space-y-1">
-            <!-- Return to Website -->
+
+            <!-- Retour au site -->
             <li>
-                <a href="{{ route('home') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-house-fill mr-2"></i> Return to Website
+                <a href="{{ route('home') }}"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200
+                          {{ request()->routeIs('home') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                    <i class="bi bi-house-fill mr-2"></i> {{ __('admin/sidenav.return_site') }}
                 </a>
             </li>
-            <!-- Return to Website (target=_blank) -->
             <li>
-                <a href="{{ route('home') }}" target="_blank" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-house-fill mr-2"></i> Return to Website (in new tab)
+                <a href="{{ route('home') }}" target="_blank"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200
+                          {{ request()->routeIs('home') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                    <i class="bi bi-box-arrow-up-right mr-2"></i> {{ __('admin/sidenav.return_site_new_tab') }}
                 </a>
             </li>
+
             <!-- Dashboard -->
             <li>
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-house-door mr-2"></i> Dashboard
+                <a href="{{ route('admin.dashboard') }}"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200
+                          {{ request()->routeIs('admin.dashboard') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                    <i class="bi bi-speedometer2 mr-2"></i> {{ __('admin/sidenav.dashboard') }}
                 </a>
-            </li>
-
-
-            <!-- Events -->
-            <li x-data="{ openSub: false }">
-                <button @click="openSub = !openSub" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-calendar-event mr-2"></i> Events
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openSub}"></i>
-                </button>
-                <ul x-show="openSub" class="pl-8 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.events.list') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">List Events</a></li>
-                    <li><a href="{{ route('admin.events.trashed') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Deactivated Events</a></li>
-                </ul>
             </li>
 
             <!-- Artworks -->
-            <li x-data="{ openSub: false }">
-                <button @click="openSub = !openSub" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-brush mr-2"></i> Artworks
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openSub}"></i>
+            <li x-data="{ openArtworks: {{ request()->routeIs('admin.artworks.*') ? 'true' : 'false' }} }">
+                <button @click="openArtworks = !openArtworks"
+                        class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
+                    <i class="bi bi-brush mr-2"></i> {{ __('admin/sidenav.artworks') }}
+                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openArtworks}"></i>
                 </button>
-                <ul x-show="openSub" class="pl-8 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.artworks.index') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">List Artworks</a></li>
-                    <li><a href="{{ route('admin.artworks.trashed') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Deactivated Artworks</a></li>
+                <ul x-show="openArtworks" class="pl-8 mt-1 space-y-1">
+                    <li><a href="{{ route('admin.artworks.index') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.artworks.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.list_artworks') }}
+                        </a></li>
+                    <li><a href="{{ route('admin.artworks.trashed') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.artworks.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.deactivated_artworks') }}
+                        </a></li>
                 </ul>
             </li>
 
-            <!-- Orders -->
-            <li>
-                <a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-card-list mr-2"></i> Orders
-                </a>
+            <!-- Events -->
+            <li x-data="{ openEvents: {{ request()->routeIs('admin.events.*') ? 'true' : 'false' }} }">
+                <button @click="openEvents = !openEvents"
+                        class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
+                    <i class="bi bi-calendar-event mr-2"></i> {{ __('admin/sidenav.events') }}
+                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openEvents}"></i>
+                </button>
+                <ul x-show="openEvents" class="pl-8 mt-1 space-y-1">
+                    <li><a href="{{ route('admin.events.list') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.events.list') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.list_events') }}
+                        </a></li>
+                    <li><a href="{{ route('admin.events.trashed') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.events.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.deactivated_events') }}
+                        </a></li>
+                </ul>
             </li>
 
             <!-- Users -->
-            <li x-data="{ openUsers: false }">
-                <button @click="openUsers = !openUsers" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-people mr-2"></i> Users
+            <li x-data="{ openUsers: {{ request()->routeIs('admin.users.*') ? 'true' : 'false' }} }">
+                <button @click="openUsers = !openUsers"
+                        class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
+                    <i class="bi bi-people mr-2"></i> {{ __('admin/sidenav.users') }}
                     <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openUsers}"></i>
                 </button>
                 <ul x-show="openUsers" class="pl-8 mt-1 space-y-1">
-                    <li>
-                        <a href="{{ route('admin.users.list') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">
-                            <i class="bi bi-list-ul mr-2"></i> Active Users
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('admin.users.trashed') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">
-                            <i class="bi bi-archive mr-2"></i> Deactivated Users
-                        </a>
-                    </li>
+                    <li><a href="{{ route('admin.users.list') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.users.list') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.active_users') }}
+                        </a></li>
+                    <li><a href="{{ route('admin.users.trashed') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.users.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.deactivated_users') }}
+                        </a></li>
                 </ul>
             </li>
+
             <!-- Settings -->
-            <li x-data="{ openSub: false }">
-                <button @click="openSub = !openSub" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-gear mr-2"></i> Settings
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openSub}"></i>
-                </button>
-                <ul x-show="openSub" class="pl-8 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.settings.list') }}" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">General Settings</a></li>
-                    <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Social Media Links</a></li>
-                </ul>
-            </li>
-
-            <!-- Statics -->
-            <li x-data="{ openSub: false }">
-                <button @click="openSub = !openSub" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-bar-chart mr-2"></i> Statics
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openSub}"></i>
-                </button>
-                <ul x-show="openSub" class="pl-8 mt-1 space-y-1">
-                    <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">About Page</a></li>
-                    <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Contact Page</a></li>
-                </ul>
-            </li>
-
-            <!-- Accounting -->
-            <li x-data="{ openSub: false }">
-                <button @click="openSub = !openSub" class="w-full flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200">
-                    <i class="bi bi-cash mr-2"></i> Accounting
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openSub}"></i>
-                </button>
-                <ul x-show="openSub" class="pl-8 mt-1 space-y-1">
-                    <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Financial Summary</a></li>
-                    <li><a href="#" class="block px-4 py-2 text-gray-600 hover:bg-gray-100">Revenue Reports</a></li>
-                </ul>
+            <li>
+                <a href="{{ route('admin.settings.list') }}"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200
+                          {{ request()->routeIs('admin.settings.list') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                    <i class="bi bi-gear mr-2"></i> {{ __('admin/sidenav.settings') }}
+                </a>
             </li>
 
             <!-- Logout -->
             <li class="mt-6">
-                <a href="{{ route('logout') }}" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-100">
-                    <i class="bi bi-box-arrow-left mr-2"></i> Logout
-                </a>
-            </li>
-
-            <!-- Profile -->
-            <li class="mt-6 flex items-center px-4 py-2 text-gray-700 border-t pt-4">
-                <i class="bi bi-person-circle text-xl mr-2"></i> Profile
+                <form action="{{ route('logout') }}" method="POST" class="w-full">
+                    @csrf
+                    <button type="submit"
+                            class="flex items-center w-full px-4 py-2 text-red-600 hover:bg-red-100">
+                        <i class="bi bi-box-arrow-left mr-2"></i> {{ __('admin/sidenav.logout') }}
+                    </button>
+                </form>
             </li>
         </ul>
     </nav>

@@ -5,25 +5,28 @@
      @click.away="openDeleteModal = false">
 
     <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-lg font-semibold text-red-600 mb-4">Confirm User Deletion</h2>
+        <h2 class="text-lg font-semibold text-red-600 mb-4">{{ __('admin/users.confirm_delete_title') }}</h2>
         <p>
-            You are about to delete <strong x-text="selectedUser ? selectedUser.username : 'Unknown'"></strong>.
-            This action is <strong>irreversible</strong>.
+            {{ __('admin/users.confirm_delete_message') }}
+            <strong x-text="selectedUser ? selectedUser.username : 'Unknown'"></strong>.
+            {{ __('admin/users.irreversible_action') }}
         </p>
 
         <!-- Confirmation Input -->
         <div class="mt-4">
-            <label for="confirmName" class="font-semibold">Enter Full Name:</label>
+            <label for="confirmName" class="font-semibold">{{ __('admin/users.enter_full_name') }}</label>
             <input type="text" id="confirmName" class="w-full p-2 border rounded mt-1"
-                   placeholder="Type full name here..." x-model="confirmationText">
+                   placeholder="{{ __('admin/users.type_full_name_placeholder') }}" x-model="confirmationText">
         </div>
 
         <div class="flex justify-end space-x-2 mt-6">
-            <button @click="openDeleteModal = false" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">Cancel</button>
+            <button @click="openDeleteModal = false" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">
+                {{ __('admin/users.cancel') }}
+            </button>
             <button
                 :disabled="confirmationText !== (selectedUser ? selectedUser.username : '')"
                 class="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
-                Confirm Delete
+                {{ __('admin/users.confirm_delete') }}
             </button>
         </div>
     </div>

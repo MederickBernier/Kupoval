@@ -1,15 +1,17 @@
 <div x-cloak x-show="openRestoreModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
      x-transition.opacity @keydown.window.escape="openRestoreModal = false" @click.away="openRestoreModal = false">
     <div class="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 class="text-lg font-semibold text-green-600 mb-4">Confirm Event Restoration</h2>
+        <h2 class="text-lg font-semibold text-green-600 mb-4">{{ __('admin/events.restore_title') }}</h2>
         <p>
-            Are you sure you want to restore <strong x-text="selectedEvent ? selectedEvent.name : 'Unknown'"></strong>?
+            {{ __('admin/events.restore_confirmation') }} <strong x-text="selectedEvent ? selectedEvent.name : 'Unknown'"></strong>?
         </p>
 
         <div class="flex justify-end space-x-2 mt-6">
-            <button @click="openRestoreModal = false" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">Cancel</button>
+            <button @click="openRestoreModal = false" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">
+                {{ __('admin/events.cancel') }}
+            </button>
             <button @click="restoreEvent()" class="px-4 py-2 bg-green-500 text-white rounded">
-                Confirm Restore
+                {{ __('admin/events.confirm_restore') }}
             </button>
         </div>
     </div>
@@ -46,12 +48,12 @@ document.addEventListener('alpine:init', () => {
                     alert(data.success);
                     window.location.reload();
                 } else {
-                    alert(data.error || 'Failed to restore event.');
+                    alert(data.error || "{{ __('admin/events.restore_failed') }}");
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An unexpected error occurred.');
+                alert("{{ __('admin/events.unexpected_error') }}");
             });
         }
     }));

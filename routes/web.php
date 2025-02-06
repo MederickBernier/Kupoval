@@ -69,7 +69,7 @@ Route::middleware(['auth', 'verified'])
         // Users Routes
         Route::get('/users', [AdminUsersController::class, 'index'])->name('admin.users.list');
         Route::delete('/users/{id}', [AdminUsersController::class, 'destroy'])->name('admin.users.destroy');
-        Route::get('/users/trashed', [AdminUsersController::class, 'trashed'])->name('admin.users.trashed');
+        Route::get('/users/deactivated', [AdminUsersController::class, 'trashed'])->name('admin.users.trashed');
         Route::post('/users/restore/{id}', [AdminUsersController::class, 'restore'])->name('admin.users.restore');
 
         // Settings Routes
@@ -85,7 +85,7 @@ Route::middleware(['auth', 'verified'])
         Route::delete('/events/{id}', [AdminEventsController::class, 'destroy'])->name('admin.events.destroy');
 
         // Gestion des événements supprimés
-        Route::get('/events/trashed', [AdminEventsController::class, 'trashed'])->name('admin.events.trashed');
+        Route::get('/events/deactivated', [AdminEventsController::class, 'trashed'])->name('admin.events.trashed');
         Route::post('/events/restore/{id}', [AdminEventsController::class, 'restore'])->name('admin.events.restore');
         Route::delete('/events/force-delete/{id}', [AdminEventsController::class, 'forceDelete'])->name('admin.events.force-delete');
 
@@ -96,7 +96,7 @@ Route::middleware(['auth', 'verified'])
         Route::get('artworks/{id}/edit', [AdminArtworksController::class, 'edit'])->name('admin.artworks.edit');
         Route::put('artworks/{id}', [AdminArtworksController::class, 'update'])->name('admin.artworks.update');
         Route::delete('artworks/{id}', [AdminArtworksController::class, 'destroy'])->name('admin.artworks.destroy');
-        Route::get('artworks/trashed', [AdminArtworksController::class, 'trashed'])->name('admin.artworks.trashed');
+        Route::get('artworks/deactivated', [AdminArtworksController::class, 'trashed'])->name('admin.artworks.trashed');
         Route::post('artworks/{id}/restore', [AdminArtworksController::class, 'restore'])->name('admin.artworks.restore');
         Route::delete('artworks/{id}/force-delete', [AdminArtworksController::class, 'forceDelete'])->name('admin.artworks.forceDelete');
     })->middleware('verified');

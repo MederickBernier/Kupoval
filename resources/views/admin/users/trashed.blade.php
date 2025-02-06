@@ -1,24 +1,24 @@
 @extends('layouts.admin')
 
-@section('title', 'Trashed Users')
+@section('title', __('admin/users.trashed_title'))
 
-@section('page-title', 'Trashed Users')
+@section('page-title', __('admin/users.trashed_page_title'))
 
 @section('content')
 
 <div x-data="restoreUserModal()" class="bg-white p-4 sm:p-6 rounded-lg shadow-lg">
-    <h2 class="text-xl font-semibold mb-4">List of Deleted Users</h2>
+    <h2 class="text-xl font-semibold mb-4">{{ __('admin/users.trashed_list_title') }}</h2>
 
     <div class="overflow-x-auto">
         <table class="w-full border-collapse border border-gray-300">
             <thead class="bg-gray-200">
                 <tr>
-                    <th class="px-2 sm:px-4 py-2 text-left border">ID</th>
-                    <th class="px-2 sm:px-4 py-2 text-left border">Username</th>
-                    <th class="px-2 sm:px-4 py-2 text-left border hidden md:table-cell">Email</th>
-                    <th class="px-2 sm:px-4 py-2 text-left border">Role</th>
-                    <th class="px-2 sm:px-4 py-2 text-left border hidden md:table-cell">Deleted At</th>
-                    <th class="px-2 sm:px-4 py-2 text-center border">Actions</th>
+                    <th class="px-2 sm:px-4 py-2 text-left border">{{ __('admin/users.id') }}</th>
+                    <th class="px-2 sm:px-4 py-2 text-left border">{{ __('admin/users.username') }}</th>
+                    <th class="px-2 sm:px-4 py-2 text-left border hidden md:table-cell">{{ __('admin/users.email') }}</th>
+                    <th class="px-2 sm:px-4 py-2 text-left border">{{ __('admin/users.role') }}</th>
+                    <th class="px-2 sm:px-4 py-2 text-left border hidden md:table-cell">{{ __('admin/users.deleted_at') }}</th>
+                    <th class="px-2 sm:px-4 py-2 text-center border">{{ __('admin/users.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -32,7 +32,7 @@
                         <td class="px-2 sm:px-4 py-2 border text-center space-x-2">
                             <button @click="selectedUser = { id: {{ $user->id }}, username: '{{ $user->username }}' }; openRestoreModal = true"
                                     class="text-green-500 hover:underline">
-                                <i class="bi bi-arrow-counterclockwise"></i> <span class="hidden sm:inline">Restore</span>
+                                <i class="bi bi-arrow-counterclockwise"></i> <span class="hidden sm:inline">{{ __('admin/users.restore') }}</span>
                             </button>
                         </td>
                     </tr>

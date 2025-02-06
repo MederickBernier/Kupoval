@@ -1,16 +1,16 @@
 @extends('layouts.admin')
 
-@section('title', 'Events List')
+@section('title', __('admin/events.list_title'))
 
-@section('page-title', 'Events List')
+@section('page-title', __('admin/events.list_title'))
 
 @section('content')
 
 <div x-data="eventManager()" class="bg-white p-6 rounded-lg shadow-lg">
     <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-semibold">List of Events</h2>
+        <h2 class="text-xl font-semibold">{{ __('admin/events.list_heading') }}</h2>
         <button @click="openAddModal = true" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
-            + Add Event
+            + {{ __('admin/events.add_new') }}
         </button>
     </div>
 
@@ -18,11 +18,11 @@
         <table class="w-full border-collapse border border-gray-300 text-sm sm:text-base">
             <thead class="bg-gray-200">
                 <tr>
-                    <th class="px-4 py-2 border">Name</th>
-                    <th class="px-4 py-2 border">Start Date</th>
-                    <th class="px-4 py-2 border">End Date</th>
-                    <th class="px-4 py-2 border">Location</th>
-                    <th class="px-4 py-2 border text-center">Actions</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.name') }}</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.start_date') }}</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.end_date') }}</th>
+                    <th class="px-4 py-2 border">{{ __('admin/events.location') }}</th>
+                    <th class="px-4 py-2 border text-center">{{ __('admin/events.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,11 +35,11 @@
                         <td class="px-4 py-2 border text-center space-x-2">
                             <button @click="setSelectedEvent({{ json_encode($event) }}); openEditModal = true"
                                     class="text-blue-500 hover:underline">
-                                <i class="bi bi-pencil"></i> Edit
+                                <i class="bi bi-pencil"></i> {{ __('admin/events.edit') }}
                             </button>
                             <button @click="setSelectedEvent({{ json_encode($event) }}); openDeleteModal = true"
                                     class="text-red-500 hover:underline">
-                                <i class="bi bi-trash"></i> Delete
+                                <i class="bi bi-trash"></i> {{ __('admin/events.delete') }}
                             </button>
                         </td>
                     </tr>
@@ -85,8 +85,8 @@ document.addEventListener('alpine:init', () => {
 
         async deleteEvent() {
             if (!this.selectedEvent.id) {
-                console.error("No event selected for deletion.");
-                alert("Error: No event selected.");
+                console.error("{{ __('admin/events.error_no_selection') }}");
+                alert("{{ __('admin/events.error_no_selection') }}");
                 return;
             }
 
@@ -108,11 +108,11 @@ document.addEventListener('alpine:init', () => {
                     this.openDeleteModal = false;
                     window.location.reload();
                 } else {
-                    alert(data.error || 'Failed to delete event.');
+                    alert(data.error || "{{ __('admin/events.delete_failed') }}");
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('An unexpected error occurred.');
+                alert("{{ __('admin/events.unexpected_error') }}");
             }
         }
     }));

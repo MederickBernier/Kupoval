@@ -10,19 +10,19 @@
             <i class="bi bi-x-lg"></i>
         </button>
 
-        <h2 class="text-xl font-bold text-red-500 mb-4 text-center">Confirm Artwork Deletion</h2>
+        <h2 class="text-xl font-bold text-red-500 mb-4 text-center">{{ __('admin/artworks.delete_title') }}</h2>
 
         <!-- Affichage des détails de l'œuvre -->
         <div class="flex flex-col items-center">
             <!-- Gestion d'affichage de l'image -->
             <template x-if="selectedArtwork.image">
                 <img :src="'/storage/artworks/' + selectedArtwork.image.split('/').pop()"
-                     alt="Artwork Image"
+                     alt="{{ __('admin/artworks.image_alt') }}"
                      class="w-32 h-32 object-cover rounded-lg shadow-md mb-4">
             </template>
             <template x-if="!selectedArtwork.image">
                 <img src="{{ asset('images/placeholder.png') }}"
-                     alt="No Image Available"
+                     alt="{{ __('admin/artworks.no_image') }}"
                      class="w-32 h-32 object-cover rounded-lg shadow-md mb-4">
             </template>
 
@@ -31,12 +31,12 @@
         </div>
 
         <p class="mt-4 text-sm text-gray-600 text-center">
-            To confirm deletion, type "<strong x-text="selectedArtwork.name"></strong>" below:
+            {{ __('admin/artworks.delete_confirmation') }} "<strong x-text="selectedArtwork.name"></strong>" {{ __('admin/artworks.delete_instruction') }}:
         </p>
 
         <input type="text" x-model="deleteConfirmation"
                class="w-full border px-4 py-2 rounded-lg mt-2 text-center"
-               placeholder="Type the artwork name">
+               :placeholder="__('admin/artworks.type_name_placeholder')">
 
         <form x-bind:action="deleteUrl" method="POST" class="mt-4">
             @csrf
@@ -45,11 +45,11 @@
             <div class="flex justify-end space-x-2">
                 <button type="button" @click="openDeleteArtworkModal = false"
                         class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
-                    Cancel
+                    {{ __('admin/artworks.cancel') }}
                 </button>
                 <button type="submit" :disabled="deleteConfirmation !== selectedArtwork.name"
                         class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed">
-                    Delete
+                    {{ __('admin/artworks.delete') }}
                 </button>
             </div>
         </form>

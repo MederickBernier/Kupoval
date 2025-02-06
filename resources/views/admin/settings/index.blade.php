@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 
-@section('title', 'Settings List')
+@section('title', __('admin/settings.list_title'))
 
-@section('page-title', 'Settings List')
+@section('page-title', __('admin/settings.list_title'))
 
 @section('content')
 
@@ -15,9 +15,9 @@
 }" class="bg-white p-6 rounded-lg shadow-lg">
 
     <div class="flex flex-col sm:flex-row justify-between items-center mb-4 space-y-4 sm:space-y-0">
-        <h2 class="text-xl font-semibold">List of Settings</h2>
+        <h2 class="text-xl font-semibold">{{ __('admin/settings.list_heading') }}</h2>
         <button @click="openAddModal = true" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 w-full sm:w-auto">
-            + Add New Setting
+            + {{ __('admin/settings.add_new') }}
         </button>
     </div>
 
@@ -25,9 +25,9 @@
         <table class="w-full border-collapse border border-gray-300 text-sm sm:text-base">
             <thead class="bg-gray-200">
                 <tr>
-                    <th class="px-4 py-2 text-left border">Key</th>
-                    <th class="px-4 py-2 text-left border">Value</th>
-                    <th class="px-4 py-2 text-center border">Actions</th>
+                    <th class="px-4 py-2 text-left border">{{ __('admin/settings.key') }}</th>
+                    <th class="px-4 py-2 text-left border">{{ __('admin/settings.value') }}</th>
+                    <th class="px-4 py-2 text-center border">{{ __('admin/settings.actions') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,11 +38,11 @@
                         <td class="px-4 py-2 border text-center space-x-2 flex justify-center">
                             <button @click="openEditModal = true; selectedSetting = {{ json_encode($setting) }}"
                                 class="text-blue-500 hover:underline flex items-center">
-                                <i class="bi bi-pencil mr-1"></i> Edit
+                                <i class="bi bi-pencil mr-1"></i> {{ __('admin/settings.edit') }}
                             </button>
                             <button @click="openDeleteModal = true; selectedSetting = {{ json_encode($setting) }}; confirmationInput = ''"
                                 class="text-red-500 hover:underline flex items-center">
-                                <i class="bi bi-trash mr-1"></i> Delete
+                                <i class="bi bi-trash mr-1"></i> {{ __('admin/settings.delete') }}
                             </button>
                         </td>
                     </tr>
