@@ -33,4 +33,5 @@ return [
     'select_event' => 'Sélectionner un événement',
     'select_event_placeholder' => '-- Sélectionner un événement --',
     'description' => 'Description',
+    'categories' => 'Catégories',
 ];

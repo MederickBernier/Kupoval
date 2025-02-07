@@ -55,4 +55,5 @@ return [
     'username' => 'Username',
     'password' => 'Password',
     'edit_password' => 'Edit Password',
+    'cancel' => 'Cancel',
 ];

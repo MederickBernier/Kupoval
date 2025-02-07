@@ -8,10 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Log;
 
 class LoginController extends Controller
 {
+    private const ALLOWED_LANGUAGES = ['enca', 'frca'];
+
     public function showLoginForm()
     {
         return view('public.auth.login');
@@ -25,11 +26,16 @@ class LoginController extends Controller
         ]);
 
         try {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            if (Auth::attempt($request->only('email', 'password'))) {
                 $user = Auth::user();
                 $request->session()->regenerate();
 
                 $lang = $user->profile->language ?? config('app.locale');
+
+                // Vérifier si la langue est valide
+                if (!in_array($lang, self::ALLOWED_LANGUAGES)) {
+                    $lang = config('app.locale');
+                }
 
                 Session::put('locale', $lang);
                 Cookie::queue('locale', $lang, 60 * 24 * 30);
@@ -38,14 +44,11 @@ class LoginController extends Controller
                     ->with('success', __('Login successful.'));
             }
 
-            return back()->withErrors([
+            return back()->withInput()->withErrors([
                 'email' => __('The provided credentials do not match our records.'),
             ]);
         } catch (\Exception $e) {
-            Log::error("❌ Login failed: " . $e->getMessage());
-            return back()->withErrors([
-                'error' => __('Login failed. Please try again later.'),
-            ]);
+            throwError(__('Login failed. Please try again later.'), 500, ['details' => $e->getMessage()]);
         }
     }
 
@@ -58,7 +61,7 @@ class LoginController extends Controller
 
             return redirect()->route('home');
         } catch (\Exception $e) {
-            throwError(__('Logout failed. Please try again later.'), 500, ['exception' => $e->getMessage()]);
+            throwError(__('Logout failed. Please try again later.'), 500, ['details' => $e->getMessage()]);
         }
     }
 }

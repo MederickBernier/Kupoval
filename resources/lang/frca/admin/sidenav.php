@@ -19,4 +19,7 @@ return [
     'settings' => 'Paramètres',
     'accounting' => 'Comptabilité',
     'user_profile' => 'Profil de l\'utilisateur',
+    'categories' => 'Catégories',
+    'list_categories' => 'Liste des catégories',
+    'deactivated_categories' => 'Catégories désactivées',
 ];

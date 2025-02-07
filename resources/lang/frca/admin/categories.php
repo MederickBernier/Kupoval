@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'list_categories' => 'Liste des catégories',
+    'add_category' => 'Ajouter une catégorie',
+    'name' => 'Nom',
+    'description' => 'Description',
+    'actions' => 'Actions',
+    'edit' => 'Modifier',
+    'delete' => 'Supprimer',
+    'create_title' => 'Créer une catégorie',
+    'create_button' => 'Créer',
+    'edit_title' => 'Modifier la catégorie',
+    'update_button' => 'Mettre à jour',
+    'delete_title' => 'Supprimer la catégorie',
+    'delete_confirmation' => 'Êtes-vous sûr de vouloir supprimer cette catégorie?',
+    'delete_button' => 'Supprimer',
+    'trashed_list' => 'Catégories désactivées',
+    'force_delete' => 'Supprimer définitivement',
+    'restore' => 'Restaurer',
+    'restore_title' => 'Restaurer la catégorie',
+    'restore_confirmation' => 'Êtes-vous sûr de vouloir restaurer cette catégorie?',
+    'restore_button' => 'Restaurer',
+    'force_delete_title' => 'Supprimer définitivement la catégorie',
+    'force_delete_confirmation' => 'Êtes-vous sûr de vouloir supprimer définitivement cette catégorie?',
+    'force_delete_button' => 'Supprimer définitivement',
+];

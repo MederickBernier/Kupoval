@@ -52,12 +52,33 @@
                            class="block px-4 py-2 hover:bg-gray-100
                                   {{ request()->routeIs('admin.artworks.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
                             {{ __('admin/sidenav.list_artworks') }}
-                        </a></li>
+                    </a></li>
                     <li><a href="{{ route('admin.artworks.trashed') }}"
                            class="block px-4 py-2 hover:bg-gray-100
                                   {{ request()->routeIs('admin.artworks.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
                             {{ __('admin/sidenav.deactivated_artworks') }}
-                        </a></li>
+                    </a></li>
+                </ul>
+            </li>
+
+            <!-- Categories -->
+            <li x-data="{ openCategories: {{ request()->routeIs('admin.categories.*') ? 'true' : 'false' }} }">
+                <button @click="openCategories = !openCategories"
+                        class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
+                    <i class="bi bi-tags mr-2"></i> {{ __('admin/sidenav.categories') }}
+                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openCategories}"></i>
+                </button>
+                <ul x-show="openCategories" class="pl-8 mt-1 space-y-1">
+                    <li><a href="{{ route('admin.categories.index') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.categories.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.list_categories') }}
+                    </a></li>
+                    <li><a href="{{ route('admin.categories.trashed') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.categories.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.deactivated_categories') }}
+                    </a></li>
                 </ul>
             </li>
 
@@ -101,22 +122,6 @@
                             {{ __('admin/sidenav.deactivated_users') }}
                         </a></li>
                 </ul>
-            </li>
-
-            <!-- Settings -->
-            <li>
-                <a href="{{ route('admin.settings.list') }}"
-                   class="flex items-center px-4 py-2 hover:bg-gray-200
-                          {{ request()->routeIs('admin.settings.list') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
-                    <i class="bi bi-gear mr-2"></i> {{ __('admin/sidenav.settings') }}
-                </a>
-            </li>
-
-            <li>
-                <a href="{{ route('user.profile') }}" target="_blank"
-                   class="flex items-center px-4 py-2 hover:bg-gray-200 'text-gray-700' }}">
-                    <i class="bi bi-person mr-2"></i> {{ __('admin/sidenav.user_profile') }}
-                </a>
             </li>
 
             <!-- Logout -->

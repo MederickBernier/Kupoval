@@ -1,29 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\UserProfileController;
-use App\Http\Controllers\Admin\AdminUsersController;
-use App\Http\Controllers\Admin\AdminSettingsController;
-use App\Http\Controllers\Admin\AdminEventsController;
-use App\Http\Controllers\Admin\AdminArtworksController;
 use App\Http\Controllers\LanguageController;
 
 // Pages publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/bio', [HomeController::class, 'bio'])->name('bio');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
-Route::get('/events', [HomeController::class, 'events'])->name('events');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
+Route::get('/events', [HomeController::class, 'events'])->name('events');
+Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show');
 
 // Authentification (guest seulement)
 Route::middleware('guest')->group(function () {
@@ -59,45 +51,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Lang Switching Route
 Route::post('/lang-switch', [LanguageController::class, 'switch'])->middleware('auth')->name('lang.switch');
 
-// Admin (nécessite email vérifié)
-Route::middleware(['auth', 'verified'])
-    ->prefix('admin')
-    ->group(function () {
-        // Dashboard
-        Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-
-        // Users Routes
-        Route::get('/users', [AdminUsersController::class, 'index'])->name('admin.users.list');
-        Route::delete('/users/{id}', [AdminUsersController::class, 'destroy'])->name('admin.users.destroy');
-        Route::get('/users/deactivated', [AdminUsersController::class, 'trashed'])->name('admin.users.trashed');
-        Route::post('/users/restore/{id}', [AdminUsersController::class, 'restore'])->name('admin.users.restore');
-
-        // Settings Routes
-        Route::get('/settings', [AdminSettingsController::class, 'index'])->name('admin.settings.list');
-        Route::post('/settings', [AdminSettingsController::class, 'store'])->name('admin.settings.store');
-        Route::put('/settings/{id}', [AdminSettingsController::class, 'update'])->name('admin.settings.update');
-        Route::delete('/settings/{id}', [AdminSettingsController::class, 'destroy'])->name('admin.settings.destroy');
-
-        // Events Routes
-        Route::get('/events', [AdminEventsController::class,'index'])->name('admin.events.list');
-        Route::post('/events', [AdminEventsController::class, 'store'])->name('admin.events.store');
-        Route::put('/events/{id}', [AdminEventsController::class, 'update'])->name('admin.events.update');
-        Route::delete('/events/{id}', [AdminEventsController::class, 'destroy'])->name('admin.events.destroy');
-
-        // Gestion des événements supprimés
-        Route::get('/events/deactivated', [AdminEventsController::class, 'trashed'])->name('admin.events.trashed');
-        Route::post('/events/restore/{id}', [AdminEventsController::class, 'restore'])->name('admin.events.restore');
-        Route::delete('/events/force-delete/{id}', [AdminEventsController::class, 'forceDelete'])->name('admin.events.force-delete');
-
-        // Afficher la liste des œuvres d'art
-        Route::get('artworks', [AdminArtworksController::class, 'index'])->name('admin.artworks.index');
-        Route::get('artworks/create', [AdminArtworksController::class, 'create'])->name('admin.artworks.create');
-        Route::post('artworks', [AdminArtworksController::class, 'store'])->name('admin.artworks.store');
-        Route::get('artworks/{id}/edit', [AdminArtworksController::class, 'edit'])->name('admin.artworks.edit');
-        Route::put('artworks/{id}', [AdminArtworksController::class, 'update'])->name('admin.artworks.update');
-        Route::delete('artworks/{id}', [AdminArtworksController::class, 'destroy'])->name('admin.artworks.destroy');
-        Route::get('artworks/deactivated', [AdminArtworksController::class, 'trashed'])->name('admin.artworks.trashed');
-        Route::post('artworks/{id}/restore', [AdminArtworksController::class, 'restore'])->name('admin.artworks.restore');
-        Route::delete('artworks/{id}/force-delete', [AdminArtworksController::class, 'forceDelete'])->name('admin.artworks.forceDelete');
-    })->middleware('verified');
-
+// Charger les routes Admin
+Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
+    require_once __DIR__ . '/admin/dashboard.php';
+    require_once __DIR__ . '/admin/users.php';
+    require_once __DIR__ . '/admin/settings.php';
+    require_once __DIR__ . '/admin/events.php';
+    require_once __DIR__ . '/admin/artworks.php';
+    require_once __DIR__ . '/admin/categories.php';
+});

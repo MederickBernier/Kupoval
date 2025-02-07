@@ -6,7 +6,7 @@
 
 @section('content')
     <section class="carousel-section mt-8">
-        @include('partials.carousel', ['carouselItems' => $carouselItems])
+        @include('partials.carousel', ['carouselItems' => $recentArtworks])
     </section>
 
     <section class="events mt-16">

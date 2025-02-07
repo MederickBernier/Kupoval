@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'list_categories' => 'List Categories',
+    'add_category' => 'Add Category',
+    'name' => 'Name',
+    'description' => 'Description',
+    'actions' => 'Actions',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'edit_title' => 'Edit Category',
+    'update_button' => 'Update',
+    'delete_title' => 'Delete Category',
+    'delete_confirmation' => 'Are you sure you want to delete this category?',
+    'delete_button' => 'Delete',
+    'trashed_list' => 'Deactivated Categories',
+    'force_delete' => 'Force Delete',
+    'restore' => 'Restore',
+    'restore_title' => 'Restore Category',
+    'restore_confirmation' => 'Are you sure you want to restore this category?',
+    'restore_button' => 'Restore',
+    'force_delete_title' => 'Force Delete Category',
+    'force_delete_confirmation' => 'Are you sure you want to force delete this category?',
+    'force_delete_button' => 'Force Delete',
+];

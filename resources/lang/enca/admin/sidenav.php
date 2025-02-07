@@ -19,4 +19,7 @@ return [
     'settings' => 'Settings',
     'accounting' => 'Accounting',
     'user_profile' => 'User Profile',
+    'categories' => 'Categories',
+    'list_categories' => 'List Categories',
+    'deactivated_categories' => 'Deactivated Categories',
 ];

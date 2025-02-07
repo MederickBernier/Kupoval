@@ -32,7 +32,7 @@ class Artwork extends Model
     }
 
     public function categories(){
-        return $this->belongsToMany(Category::class, 'artwork_categories');
+        return $this->belongsToMany(Category::class, 'artwork_categories')->withTimestamps()->withTrashed();
     }
 
     public function event(){

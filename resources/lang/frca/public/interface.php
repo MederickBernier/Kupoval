@@ -55,4 +55,5 @@ return [
     'username' => 'Nom d\'utilisateur',
     'password' => 'Mot de passe',
     'edit_password' => 'Modifier le mot de passe',
+    'cancel' => 'Annuler',
 ];

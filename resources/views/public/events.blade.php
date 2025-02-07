@@ -3,11 +3,11 @@
 <section class="my-8">
     <h1 class="text-4xl font-title text-heading text-center mb-8">{{ __('Upcoming Events') }}</h1>
 
-    @if($eventsByMonth->isEmpty())
+    @if($events->isEmpty())
         <p class="text-center text-body">{{ __('No upcoming events at this time.') }}</p>
     @else
         <div class="w-full max-w-4xl mx-auto">
-            @foreach ($eventsByMonth as $month => $events)
+            @foreach ($events as $month => $events)
                 <!-- Month Separator -->
                 <div class="flex items-center justify-center my-8">
                     <div class="border-t flex-grow border-gray-300"></div>
@@ -34,7 +34,7 @@
                                     - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
                                 </p>
                                 <!-- View Details Button -->
-                                <a href="{{ route('events.show', ['id' => $event->id]) }}"
+                                <a href="{{ route('event.show', ['event' => $event->id]) }}"
                                    class="inline-block mt-4 px-6 py-2 bg-accent text-white font-bold rounded-full hover:bg-cta transition">
                                     {{ __('View Details') }}
                                 </a>

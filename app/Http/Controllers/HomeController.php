@@ -15,15 +15,15 @@ class HomeController extends Controller
     public function index()
     {
         try {
-            $recentArtworks = Artwork::orderBy('created_at', 'desc')->take(5)->get();
+            $recentArtworks = Artwork::latest()->take(5)->get();
             $events = Event::where('start_date', '>=', now())
-                ->orderBy('start_date', 'asc')
+                ->orderBy('start_date')
                 ->take(3)
                 ->get();
 
             return view('public.home', [
-                'carouselItems' => $recentArtworks,
-                'events' => $events,
+                'recentArtworks' => $recentArtworks,
+                'events' => $events
             ]);
         } catch (\Exception $e) {
             throwError('Failed to load home page data', 500, ['details' => $e->getMessage()]);
@@ -34,11 +34,11 @@ class HomeController extends Controller
     {
         try {
             $page = StaticPage::where('slug', 'about')->firstOrFail();
-            $artist = Artist::first();
+            $artist = Artist::firstOrFail();
 
             return view('public.about', [
                 'page' => $page,
-                'artist' => $artist,
+                'artist' => $artist
             ]);
         } catch (\Exception $e) {
             throwError('Failed to load about page', 500, ['details' => $e->getMessage()]);
@@ -48,10 +48,10 @@ class HomeController extends Controller
     public function bio()
     {
         try {
-            $artist = Artist::first();
+            $artist = Artist::firstOrFail();
 
             return view('public.bio', [
-                'artist' => $artist,
+                'artist' => $artist
             ]);
         } catch (\Exception $e) {
             throwError('Failed to load bio page', 500, ['details' => $e->getMessage()]);
@@ -65,7 +65,7 @@ class HomeController extends Controller
                 ->pluck('value', 'key');
 
             return view('public.contact', [
-                'settings' => $settings,
+                'settings' => $settings
             ]);
         } catch (\Exception $e) {
             throwError('Failed to load contact page', 500, ['details' => $e->getMessage()]);
@@ -85,14 +85,12 @@ class HomeController extends Controller
     {
         try {
             $events = Event::where('start_date', '>=', now())
-                ->orderBy('start_date', 'asc')
+                ->orderBy('start_date')
                 ->get()
-                ->groupBy(function ($event) {
-                    return Carbon::parse($event->start_date)->format('F Y');
-                });
+                ->groupBy(fn ($event) => Carbon::parse($event->start_date)->format('F Y'));
 
             return view('public.events', [
-                'eventsByMonth' => $events,
+                'events' => $events
             ]);
         } catch (\Exception $e) {
             throwError('Failed to load events page', 500, ['details' => $e->getMessage()]);
