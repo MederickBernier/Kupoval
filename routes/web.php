@@ -8,14 +8,19 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\LanguageController;
+use App\Http\Controllers\BioController;
 
 // Pages publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/bio', [HomeController::class, 'bio'])->name('bio');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/events', [HomeController::class, 'events'])->name('events');
 Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show');
+
+// Bio Routes
+Route::get('/bio', [BioController::class, 'index'])->name('bio.index');
+Route::get('/bio/artist/{artist:slug}', [BioController::class, 'show'])->name('bio.show');
+
 
 // Authentification (guest seulement)
 Route::middleware('guest')->group(function () {
@@ -59,4 +64,5 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     require_once __DIR__ . '/admin/events.php';
     require_once __DIR__ . '/admin/artworks.php';
     require_once __DIR__ . '/admin/categories.php';
+    require_once __DIR__ . '/admin/artists.php';
 });

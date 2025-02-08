@@ -45,19 +45,6 @@ class HomeController extends Controller
         }
     }
 
-    public function bio()
-    {
-        try {
-            $artist = Artist::firstOrFail();
-
-            return view('public.bio', [
-                'artist' => $artist
-            ]);
-        } catch (\Exception $e) {
-            throwError('Failed to load bio page', 500, ['details' => $e->getMessage()]);
-        }
-    }
-
     public function contact()
     {
         try {

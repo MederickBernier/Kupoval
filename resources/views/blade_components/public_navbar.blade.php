@@ -32,7 +32,7 @@
             <a href="{{ route('events') }}" class="relative hover:text-navbar-hover group text-2xl">
                 {{ __('public/interface.events') }}
             </a>
-            <a href="{{ route('bio') }}" class="relative hover:text-navbar-hover group text-2xl">
+            <a href="{{ route('bio.index') }}" class="relative hover:text-navbar-hover group text-2xl">
                 {{ __('public/interface.bio') }}
             </a>
             <a href="#" class="relative hover:text-navbar-hover group text-2xl">
@@ -92,7 +92,7 @@
             <a href="{{ route('home') }}" class="hover:text-navbar-hover">{{ __('public/interface.home') }}</a>
             <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.gallery') }}</a>
             <a href="{{ route('events') }}" class="hover:text-navbar-hover">{{ __('public/interface.events') }}</a>
-            <a href="{{ route('bio') }}" class="hover:text-navbar-hover">{{ __('public/interface.bio') }}</a>
+            <a href="{{ route('bio.index') }}" class="hover:text-navbar-hover">{{ __('public/interface.bio') }}</a>
             <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.shop') }}</a>
             <a href="{{ route('about') }}" class="hover:text-navbar-hover">{{ __('public/interface.about') }}</a>
             <a href="{{ route('contact') }}" class="hover:text-navbar-hover">{{ __('public/interface.contact') }}</a>

@@ -22,4 +22,7 @@ return [
     'categories' => 'Catégories',
     'list_categories' => 'Liste des catégories',
     'deactivated_categories' => 'Catégories désactivées',
+    'artists' => 'Artistes',
+    'list_artists' => 'Liste des artistes',
+    'deactivated_artists' => 'Artistes désactivés',
 ];
