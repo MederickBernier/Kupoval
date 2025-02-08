@@ -34,4 +34,12 @@ return [
     'select_event_placeholder' => '-- Select an Event --',
     'description' => 'Description',
     'categories' => 'Categories',
+    'edit_title' => 'Edit Artwork',
+    'current_image' => 'Current Image',
+    'upload_new' => 'Upload New',
+    'return' => 'Return to Artworks List',
+    'save_changes' => 'Save Changes',
+    'delete_title' => 'Delete Artwork',
+    'delete_confirmation' => 'Are you sure you want to delete this artwork?',
+    'delete_instruction' => 'Enter the name of the artwork in the field below to confirm.',
 ];

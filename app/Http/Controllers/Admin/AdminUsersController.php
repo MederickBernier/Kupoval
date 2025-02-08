@@ -61,11 +61,13 @@ class AdminUsersController extends Controller
         }
     }
 
-    public function restore(Request $request, User $user)
+    public function restore(Request $request, $id)
     {
         try {
             isAllowed($request->user());
 
+            // Fetch the user withTrashed()
+            $user = User::withTrashed()->findOrFail($id);
             $user->restore();
 
             return response()->json(['success' => __('User restored successfully')], 200);

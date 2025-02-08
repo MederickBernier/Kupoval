@@ -24,4 +24,7 @@ return [
     'force_delete_title' => 'Supprimer définitivement la catégorie',
     'force_delete_confirmation' => 'Êtes-vous sûr de vouloir supprimer définitivement cette catégorie?',
     'force_delete_button' => 'Supprimer définitivement',
+    'irreversible_action' => 'Cette action est irréversible.',
+    'confirm_name_label' => 'Tapez le nom de la catégorie pour confirmer',
+    'confirm_name_placeholder' => 'Nom de la catégorie',
 ];

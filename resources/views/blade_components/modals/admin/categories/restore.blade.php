@@ -11,7 +11,8 @@
             <button @click="openRestoreModal = false" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">
                 {{ __('public/interface.cancel') }}
             </button>
-            <form :action="'/admin/categories/restore/' + selectedCategory.id" method="POST">
+            <form x-bind:action="selectedCategory && selectedCategory.id ? ('/admin/categories/restore/' + selectedCategory.id) : '#'"
+                  method="POST">
                 @csrf
                 <button type="submit"
                         class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">

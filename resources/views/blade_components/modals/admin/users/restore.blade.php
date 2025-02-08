@@ -4,7 +4,7 @@
         <h2 class="text-lg font-semibold text-green-600 mb-4">{{ __('admin/users.confirm_restore_title') }}</h2>
         <p>
             {{ __('admin/users.confirm_restore_message') }}
-            <strong x-text="selectedUser ? selectedUser.username : '{{ __('admin/users.unknown') }}'"></strong>?
+            <strong x-text="selectedUser ? selectedUser.username : 'Unknown'"></strong>?
         </p>
 
         <div class="flex justify-end space-x-2 mt-6">
@@ -24,8 +24,14 @@ document.addEventListener('alpine:init', () => {
         selectedUser: null,
         openRestoreModal: false,
 
+        setRestoreUser(id, username) {
+            this.selectedUser = { id, username };
+            this.openRestoreModal = true;
+        },
+
         restoreUser() {
             if (!this.selectedUser || !this.selectedUser.id) {
+                console.error("Error: No user selected for restore.");
                 return;
             }
 
@@ -44,11 +50,12 @@ document.addEventListener('alpine:init', () => {
                     alert(data.success);
                     window.location.reload();
                 } else {
-                    alert(data.error || '{{ __('admin/users.restore_failed') }}');
+                    alert(data.error || "{{ __('admin/users.restore_failed') }}");
                 }
             })
             .catch(error => {
-                alert('{{ __('admin/users.unexpected_error') }}');
+                console.error('Error:', error);
+                alert("{{ __('admin/users.unexpected_error') }}");
             });
         }
     }));

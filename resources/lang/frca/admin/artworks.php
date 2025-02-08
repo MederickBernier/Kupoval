@@ -34,4 +34,12 @@ return [
     'select_event_placeholder' => '-- Sélectionner un événement --',
     'description' => 'Description',
     'categories' => 'Catégories',
+    'edit_title' => 'Modifier l\'œuvre',
+    'current_image' => 'Image actuelle',
+    'upload_new' => 'Téléverser une nouvelle',
+    'return' => 'Retour à la liste des œuvres',
+    'save_changes' => 'Enregistrer les modifications',
+    'delete_title' => 'Supprimer l\'œuvre',
+    'delete_confirmation' => 'Êtes-vous sûr de vouloir supprimer cette œuvre?',
+    'delete_instruction' => 'Entrez le nom de l\'œuvre dans le champ ci-dessous pour confirmer',
 ];

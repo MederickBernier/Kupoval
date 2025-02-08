@@ -51,7 +51,6 @@ return [
     'personal_info' => 'Personal Information',
     'first_name' => 'First Name',
     'last_name' => 'Last Name',
-    'email' => 'Email',
     'username' => 'Username',
     'password' => 'Password',
     'edit_password' => 'Edit Password',

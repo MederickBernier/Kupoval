@@ -23,11 +23,53 @@
             <button @click="openDeleteModal = false" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">
                 {{ __('admin/users.cancel') }}
             </button>
-            <button
+            <button @click="deleteUser()"
                 :disabled="confirmationText !== (selectedUser ? selectedUser.username : '')"
-                class="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">
+                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed">
                 {{ __('admin/users.confirm_delete') }}
             </button>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('userManagement', () => ({
+        selectedUser: null,
+        openDeleteModal: false,
+        confirmationText: '',
+
+        selectUser(user) {
+            this.selectedUser = user;
+            this.confirmationText = ''; // Reset confirmation input when opening the modal
+        },
+
+        deleteUser() {
+            if (!this.selectedUser) return;
+
+            fetch(`/admin/users/${this.selectedUser.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.openDeleteModal = false;
+                    alert(data.success);
+                    window.location.reload();
+                } else {
+                    alert(data.error || '{{ __('admin/users.delete_error') }}');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('{{ __('admin/users.unexpected_error') }}');
+            });
+        }
+    }));
+});
+</script>

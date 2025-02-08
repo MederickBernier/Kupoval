@@ -7,7 +7,7 @@
         <p class="text-center text-body">{{ __('No upcoming events at this time.') }}</p>
     @else
         <div class="w-full max-w-4xl mx-auto">
-            @foreach ($events as $month => $events)
+            @foreach ($events as $month => $cur_events)
                 <!-- Month Separator -->
                 <div class="flex items-center justify-center my-8">
                     <div class="border-t flex-grow border-gray-300"></div>
@@ -17,7 +17,7 @@
 
                 <!-- List of Events -->
                 <ul class="space-y-6">
-                    @foreach ($events as $event)
+                    @foreach ($cur_events as $event)
                         <li class="relative pl-8 border-l-4 border-accent">
                             <div class="absolute -left-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-accent rounded-full shadow-md flex items-center justify-center">
                                 <span class="text-white font-bold text-sm">{{ \Carbon\Carbon::parse($event->start_date)->format('d') }}</span>

@@ -59,13 +59,13 @@
 <script>
 document.addEventListener('alpine:init', () => {
     Alpine.data('categoryManagement', () => ({
-        selectedCategory: null,
+        selectedCategory: { id: '', name: '', description: '' },
         openCreateModal: false,
         openEditModal: false,
         openDeleteModal: false,
 
         selectCategory(category) {
-            this.selectedCategory = category;
+            this.selectedCategory = category ? { ...category } : { id: '', name: '', description: '' };
         }
     }));
 });

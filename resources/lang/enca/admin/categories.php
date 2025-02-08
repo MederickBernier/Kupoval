@@ -22,4 +22,7 @@ return [
     'force_delete_title' => 'Force Delete Category',
     'force_delete_confirmation' => 'Are you sure you want to force delete this category?',
     'force_delete_button' => 'Force Delete',
+    'irreversible_action' => 'This action is irreversible.',
+    'confirm_name_label' => 'Type the category name to confirm',
+    'confirm_name_placeholder' => 'Category Name',
 ];
