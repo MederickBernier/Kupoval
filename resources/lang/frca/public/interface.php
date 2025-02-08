@@ -55,4 +55,5 @@ return [
     'password' => 'Mot de passe',
     'edit_password' => 'Modifier le mot de passe',
     'cancel' => 'Annuler',
+    'view_profile' => 'Voir le profil de l\'artiste',
 ];

@@ -8,15 +8,18 @@ use App\Models\Artist;
 class BioController extends Controller
 {
     public function index(){
-        try{
-            $artists = Artist::all();
+        try {
+            $artists = Artist::all(); // Fetch all artists
+
             if($artists->count() === 1){
                 return redirect()->route('bio.show', ['artist' => $artists->first()]);
             }
-            return view('public.bio.index',[
-                'artist' => $artists
+
+            return view('public.bio.index', [
+                'artists' => $artists // Fix: Ensure 'artists' is passed to the view
             ]);
-        }catch(\Exception $e){
+
+        } catch (\Exception $e) {
             throwError('Failed to load bio page', 500, ['details' => $e->getMessage()]);
         }
     }

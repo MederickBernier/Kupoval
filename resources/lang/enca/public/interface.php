@@ -55,4 +55,5 @@ return [
     'password' => 'Password',
     'edit_password' => 'Edit Password',
     'cancel' => 'Cancel',
+    'view_profile' => 'View artist\'s Profile',
 ];
