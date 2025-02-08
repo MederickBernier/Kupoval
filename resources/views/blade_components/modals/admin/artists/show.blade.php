@@ -1,7 +1,7 @@
 <div x-cloak x-show="openShowArtistModal" class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
      x-transition.opacity @keydown.window.escape="openShowArtistModal = false" @click.away="openShowArtistModal = false">
 
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-auto">
         <!-- Header -->
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-semibold text-gray-800">{{ __('admin/artists.view_title') }}</h2>
@@ -16,7 +16,20 @@
                  alt=""
                  class="w-24 h-24 rounded-full object-cover mx-auto mb-3 shadow-lg">
             <h3 class="text-lg font-semibold" x-text="selectedArtist.name"></h3>
-            <p class="text-gray-600 mt-1" x-text="selectedArtist.bio"></p>
+
+            <!-- Bio with Read More / Less Toggle -->
+            <div class="relative mt-3 text-gray-600 text-sm">
+                <div class="max-h-24 overflow-hidden relative" x-ref="bioContainer">
+                    <p class="leading-relaxed" x-html="selectedArtist.bio.replace(/\n/g, '<br>')"></p>
+                </div>
+
+                <!-- Expand Button -->
+                <button @click="showFullBio = !showFullBio"
+                        class="text-blue-500 hover:underline mt-2"
+                        x-text="showFullBio ? '{{ __('admin/artists.read_less') }}' : '{{ __('admin/artists.read_more') }}'"
+                        x-show="selectedArtist.bio.length > 150">
+                </button>
+            </div>
         </div>
 
         <!-- Actions -->
@@ -30,3 +43,20 @@
         </div>
     </div>
 </div>
+
+<!-- Alpine.js for Read More / Less -->
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('showArtistModal', () => ({
+        openShowArtistModal: false,
+        selectedArtist: { id: '', name: '', bio: '', photo: '', editUrl: '' },
+        showFullBio: false,
+
+        setShowArtist(artist, editUrl) {
+            this.selectedArtist = { ...artist, editUrl };
+            this.openShowArtistModal = true;
+            this.showFullBio = false; // Reset read more state
+        }
+    }));
+});
+</script>
