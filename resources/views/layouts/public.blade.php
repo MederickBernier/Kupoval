@@ -18,6 +18,8 @@
     <!-- JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/glide.min.js"></script>
 
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
+
     <title>@yield('title', 'Kupoval')</title>
     @livewireStyles
     @vite(['resources/css/app.css','resources/js/app.js'])
@@ -44,6 +46,24 @@
             console.log('🔄 Rechargement forcé après changement de langue');
             location.reload();
         });
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.editor').forEach(editor => {
+            ClassicEditor
+                .create(editor, {
+                    toolbar: [
+                        'bold', 'italic', 'link', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'blockQuote', 'undo', 'redo'
+                    ],
+                    language: 'fr',
+                    height: 400
+                })
+                .then(editorInstance => {
+                    editorInstance.ui.view.editable.element.style.minHeight = "250px";
+                })
+                .catch(error => console.error("CKEditor Error:", error));
+        });
+    });
     </script>
     @livewireScripts
 </body>

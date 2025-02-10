@@ -14,6 +14,8 @@
 
     <!-- Alpine.js -->
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
 </head>
 <body class="bg-gray-100 font-sans antialiased" x-data="{ open: false }">
 
@@ -45,6 +47,27 @@
             </div>
         </main>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.editor').forEach(editor => {
+            ClassicEditor
+                .create(editor, {
+                    toolbar: [
+                        'bold', 'italic', 'link', '|',
+                        'bulletedList', 'numberedList', '|',
+                        'blockQuote', 'undo', 'redo'
+                    ],
+                    language: 'fr',
+                    height: 400
+                })
+                .then(editorInstance => {
+                    editorInstance.ui.view.editable.element.style.minHeight = "250px";
+                })
+                .catch(error => console.error("CKEditor Error:", error));
+        });
+    });
+    </script>
 
 </body>
 </html>

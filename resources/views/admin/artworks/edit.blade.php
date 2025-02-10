@@ -50,7 +50,7 @@
 
             <div class="mt-4">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">{{ __('admin/artworks.description') }}:</label>
-                <textarea name="description" class="w-full border border-gray-300 px-4 py-2 rounded-lg h-24 focus:ring focus:ring-blue-200">
+                <textarea name="description" class="editor w-full border border-gray-300 px-4 py-2 rounded-lg h-24 focus:ring focus:ring-blue-200">
                     {{ old('description', $artwork->description) }}
                 </textarea>
             </div>

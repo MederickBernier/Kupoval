@@ -27,7 +27,7 @@
             <!-- Description -->
             <div class="mb-4">
                 <label class="block text-sm font-semibold mb-2">{{ __('admin/events.description') }}:</label>
-                <textarea name="description" x-model="selectedEvent.description" class="w-full border px-4 py-2 rounded-lg h-24"></textarea>
+                <textarea name="description" x-model="selectedEvent.description" class="editor w-full border px-4 py-2 rounded-lg h-24"></textarea>
             </div>
 
             <!-- Date de début -->

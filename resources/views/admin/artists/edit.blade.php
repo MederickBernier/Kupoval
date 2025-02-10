@@ -42,7 +42,7 @@
         <div>
             <label for="bio" class="block font-semibold text-gray-700">{{ __('admin/artists.bio') }}</label>
             <textarea name="bio" id="bio"
-                      class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1 h-40">{{ old('bio', $artist->bio) }}</textarea>
+                      class="editor w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1 h-40">{{ old('bio', $artist->bio) }}</textarea>
         </div>
 
         <!-- Photo Upload with Preview -->

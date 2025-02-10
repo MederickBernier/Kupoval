@@ -36,4 +36,5 @@ return [
     'trashed_heading' => 'Artistes désactivés',
     'force_delete_title' => 'Confirmer la suppression définitive',
     'confirm_force_delete' => 'Êtes-vous sûr de vouloir supprimer définitivement cet artiste?',
+    'update' => 'Mettre à jour',
 ];
