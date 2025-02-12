@@ -14,12 +14,14 @@ return new class extends Migration
         Schema::create('artworks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('artist_id')->constrained()->onDelete('set null');
-            $table->string('name',255);
+            $table->string('name', 255);
+            $table->string('slug', 255)->unique();
             $table->text('description')->nullable();
-            $table->decimal('height',10,2);
-            $table->decimal('width',10,2);
-            $table->string('image',255)->nullable();
-            $table->decimal('initial_price',10,2)->default(0);
+            $table->decimal('height', 10, 2);
+            $table->decimal('width', 10, 2);
+            $table->string('image', 255)->nullable();
+            $table->decimal('initial_price', 10, 2)->default(0);
+            $table->decimal('current_price', 10, 2)->default(0);
             $table->boolean('is_on_sale')->default(false);
             $table->boolean('is_featured')->default(false);
             $table->boolean('is_for_event')->default(false);

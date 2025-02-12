@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->foreignId('artwork_id')->constrained()->onDelete('cascade');
             $table->unsignedInteger('quantity')->default(1);
+            $table->decimal('unit_price', 10, 2);
             $table->decimal('price', 10, 2)->default(0.00);
             $table->timestamps();
         });

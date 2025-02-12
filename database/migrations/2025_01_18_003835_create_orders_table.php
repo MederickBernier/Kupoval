@@ -14,19 +14,16 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('set null');
-            $table->foreignId('shipping_condition_id')->constrained()->onDelete('set null');
+            $table->foreignId('shipping_condition_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['pending', 'completed', 'canceled'])->default('pending');
             $table->decimal('total', 10, 2)->default(0.00);
-            $table->string('billing_address', 255);
-            $table->string('billing_city', 100);
-            $table->string('billing_state', 100);
-            $table->string('billing_country', 100);
-            $table->string('billing_zipcode', 20);
-            $table->string('shipping_address', 255)->nullable();
-            $table->string('shipping_city', 100)->nullable();
-            $table->string('shipping_state', 100)->nullable();
-            $table->string('shipping_country', 100)->nullable();
-            $table->string('shipping_zipcode', 20)->nullable();
+
+            $table->unsignedBigInteger('billing_address_id')->nullable();
+            $table->unsignedBigInteger('shipping_address_id')->nullable();
+
+            $table->foreign('billing_address_id')->references('id')->on('addresses')->onDelete('set null');
+            $table->foreign('shipping_address_id')->references('id')->on('addresses')->onDelete('set null');
+
             $table->string('recipient_name', 255);
             $table->string('recipient_email', 255);
             $table->string('recipient_phone', 20);

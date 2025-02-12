@@ -23,9 +23,10 @@ return new class extends Migration
             $table->string('state', 100)->nullable();
             $table->string('country', 100)->nullable();
             $table->string('phone', 20)->nullable();
+            $table->string('language', 10)->default('frca')->after('phone');
             $table->timestamps();
+            $table->softDeletes();
         });
-
     }
 
     /**

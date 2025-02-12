@@ -20,14 +20,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            UsersSeeder::class,
-            UserProfileSeeder::class,
-            ArtistSeeder::class,
-            CategorySeeder::class,
-            EventsSeeder::class,
-            ArtworkSeeder::class,
-            SettingsSeeder::class,
-            StaticPageSeeder::class,
-                    ]);
+            SettingsSeeder::class,         // Global settings (runs first)
+            ShippingConditionsSeeder::class, // Required before orders
+            UsersSeeder::class,            // Creates base users
+            UserProfileSeeder::class,      // Requires users to exist
+            ArtistSeeder::class,           // Creates artists
+            CategorySeeder::class,         // Creates categories
+            EventsSeeder::class,           // Creates events
+            ArtworkSeeder::class,          // Requires artists to exist
+            StaticPageSeeder::class,       // Static pages (independent)
+        ]);
     }
 }

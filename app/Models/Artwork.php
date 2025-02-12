@@ -22,6 +22,7 @@ class Artwork extends Model
         'is_featured',
         'is_for_event',
         'event_id',
+        'slug',
     ];
 
     public function artist()
@@ -37,5 +38,9 @@ class Artwork extends Model
     public function event()
     {
         return $this->belongsTo(Event::class);
+    }
+
+    public function getRouteKeyName(){
+        return 'slug';
     }
 }

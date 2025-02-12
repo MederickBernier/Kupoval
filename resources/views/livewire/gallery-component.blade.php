@@ -116,7 +116,7 @@
 
                 <!-- View Details Button -->
                 <div class="mt-4 flex justify-between">
-                    <a href="{{ route('artwork.show', $artwork->id) }}"
+                    <a href="{{ route('artwork.show', $artwork->slug) }}"
                     class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg shadow-md transition">
                         {{ __('public/gallery.view_details') }}
                     </a>
