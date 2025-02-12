@@ -24,9 +24,9 @@ return new class extends Migration
             $table->foreign('billing_address_id')->references('id')->on('addresses')->onDelete('set null');
             $table->foreign('shipping_address_id')->references('id')->on('addresses')->onDelete('set null');
 
-            $table->string('recipient_name', 255);
-            $table->string('recipient_email', 255);
-            $table->string('recipient_phone', 20);
+            $table->string('recipient_name', 255)->nullable();
+            $table->string('recipient_email', 255)->nullable();
+            $table->string('recipient_phone', 20)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

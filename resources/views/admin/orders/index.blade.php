@@ -52,7 +52,14 @@
                     @foreach ($orders as $order)
                         <tr class="border">
                             <td class="px-4 py-2 border">{{ $order->id }}</td>
-                            <td class="px-4 py-2 border">{{ $order->user->name ?? __('admin/orders.anonymous') }}</td>
+                            <td class="px-4 py-2 border">
+                                @if ($order->user && $order->user->profile)
+                                    {{ $order->user->profile->first_name ?? '' }} {{ $order->user->profile->last_name ?? '' }}
+                                    ({{ $order->user->email ?? __('admin/orders.anonymous') }})
+                                @else
+                                    {{ __('admin/orders.anonymous') }}
+                                @endif
+                            </td>
                             <td class="px-4 py-2 border font-semibold">${{ number_format($order->total_price, 2) }}</td>
                             <td class="px-4 py-2 border text-center">
                                 <span class="px-2 py-1 text-sm font-semibold rounded-full

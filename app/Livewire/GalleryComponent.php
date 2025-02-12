@@ -51,12 +51,13 @@ class GalleryComponent extends Component
         $this->selectedCategories = is_array($this->selectedCategories) ? $this->selectedCategories : [];
         $this->selectedArtists = is_array($this->selectedArtists) ? $this->selectedArtists : [];
 
-        // 🔹 Search Filter
+        // 🔹 Case-Insensitive Search Filter
         if (!empty($this->search)) {
-            $query->where(function ($q) {
-                $q->where('name', 'like', "%{$this->search}%")
-                    ->orWhere('description', 'like', "%{$this->search}%")
-                    ->orWhereHas('artist', fn($q) => $q->where('name', 'like', "%{$this->search}%"));
+            $searchTerm = strtolower($this->search); // Convert input to lowercase
+            $query->where(function ($q) use ($searchTerm) {
+                $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchTerm}%"])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"])
+                    ->orWhereHas('artist', fn($q) => $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchTerm}%"]));
             });
         }
 
@@ -81,12 +82,6 @@ class GalleryComponent extends Component
         switch ($this->sortBy) {
             case 'oldest':
                 $query->orderBy('created_at', 'asc');
-                break;
-            case 'price_low_high':
-                $query->orderBy('price', 'asc');
-                break;
-            case 'price_high_low':
-                $query->orderBy('price', 'desc');
                 break;
             case 'featured':
                 $query->orderBy('featured', 'desc');

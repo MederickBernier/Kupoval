@@ -163,7 +163,7 @@
                 <label class="block text-sm font-semibold text-gray-700 mb-1">{{ __('admin/orders.recipient_email') }}</label>
                 <input type="email" name="recipient_email" class="w-full border border-gray-300 px-4 py-2 rounded-lg mt-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">{{ __('admin/orders.recipient_phone') }}</label>
-                <input type="phone" name="recipient_email" class="w-full border border-gray-300 px-4 py-2 rounded-lg mt-2">
+                <input type="phone" name="recipient_phone" class="w-full border border-gray-300 px-4 py-2 rounded-lg mt-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">{{ __('admin/orders.address') }}</label>
                 <input type="text" name="shipping_address" class="w-full border border-gray-300 px-4 py-2 rounded-lg mt-2">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">{{ __('admin/orders.city') }}</label>
