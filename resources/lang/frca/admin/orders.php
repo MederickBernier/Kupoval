@@ -70,4 +70,5 @@ return [
     'edit_order' => 'Modifier la commande',
     'remove' => 'Retirer',
     'update_order' => 'Mettre à jour la commande',
+    'deactivate' => 'Désactiver',
 ];

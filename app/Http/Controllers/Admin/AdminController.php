@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Artwork;
 use App\Models\Event;
+use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
@@ -18,12 +19,24 @@ class AdminController extends Controller
             isAllowed($request->user());
 
             try {
-                // Fetch dashboard statistics
+                // Fetch general dashboard statistics
                 $totalUsers = User::count();
                 $totalArtworks = Artwork::count();
                 $totalEvents = Event::count();
+                $totalOrders = Order::count();
 
-                return view('admin.dashboard', compact('totalUsers', 'totalArtworks', 'totalEvents'));
+                // Count orders by status
+                $orderStatusCounts = Order::selectRaw('status, COUNT(*) as count')
+                    ->groupBy('status')
+                    ->pluck('count', 'status'); // Returns an associative array like ['pending' => 5, 'completed' => 10]
+
+                return view('admin.dashboard', [
+                    'totalUsers' => $totalUsers,
+                    'totalArtworks' => $totalArtworks,
+                    'totalEvents' => $totalEvents,
+                    'totalOrders' => $totalOrders,
+                    'orderStatusCounts' => $orderStatusCounts,
+                ]);
             } catch (\Exception $dbException) {
                 // Log database errors separately
                 Log::error('Error fetching admin dashboard stats: ' . $dbException->getMessage());

@@ -6,34 +6,41 @@
 
         <!-- Left Section: Artwork Image -->
         <div class="flex-none w-full lg:w-1/3 relative">
-            <!-- Artwork Image with Lightbox -->
             <a href="{{ Storage::url($artwork->image) }}" class="artwork-lightbox" data-lightbox="gallery" data-title="{{ $artwork->name }}">
                 <img src="{{ Storage::url($artwork->image) }}" alt="{{ $artwork->name }}" class="w-full h-80 object-cover rounded-lg shadow-xl cursor-pointer transition-transform duration-300">
             </a>
 
-            <!-- Featured Badge -->
-            @if($artwork->is_featured)
-            <div class="absolute top-4 left-4 text-white font-semibold bg-teal-600 rounded-full px-6 py-2">
-                {{ __('Featured Artwork') }}
+            <!-- Status Badges (Updated for compact design) -->
+            <div class="absolute top-4 left-4 flex flex-col space-y-1">
+                @if($artwork->is_featured)
+                    <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center">
+                        <i class="bi bi-star-fill mr-1"></i> {{ __('Featured') }}
+                    </span>
+                @endif
+                @if($artwork->is_on_sale)
+                    <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center">
+                        <i class="bi bi-tag-fill mr-1"></i> {{ __('For Sale') }}
+                    </span>
+                @endif
+                @if($artwork->is_for_event && $artwork->event)
+                    <span class="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center">
+                        <i class="bi bi-calendar-event-fill mr-1"></i> {{ __('Event Exclusive') }}
+                    </span>
+                @endif
             </div>
-            @endif
         </div>
 
-        <!-- Right Section: Content (Artist Info, Description, Event, Categories) -->
+        <!-- Right Section: Content (Details, Artist Info, Event, etc.) -->
         <div class="flex-1 space-y-6">
             <!-- Artwork Title -->
             <h2 class="text-3xl font-bold text-navy-blue">{{ $artwork->name }}</h2>
 
-            <!-- Artist Info -->
+            <!-- Artwork Details (Dimensions & Price) -->
             <div class="bg-teal-50 p-4 rounded-lg">
-                <h3 class="text-xl font-semibold text-teal-600">{{ __('Artist') }}</h3>
-                <div class="flex items-center space-x-6 mt-4">
-                    <img src="{{ asset($artwork->artist->photo) }}" alt="{{ $artwork->artist->name }}" class="w-24 h-24 object-cover rounded-full border-4 border-deep-emerald shadow-md">
-                    <div>
-                        <p class="text-gray-800 text-lg">{{ $artwork->artist->name }}</p>
-                        <p class="text-gray-600 text-sm italic mt-2">{{ $artwork->artist->bio }}</p>
-                    </div>
-                </div>
+                <h3 class="text-xl font-semibold text-teal-600">{{ __('Artwork Details') }}</h3>
+                <ul class="text-gray-700 list-disc list-inside mt-2">
+                    <li><strong>{{ __('Dimensions') }}:</strong> {{ $artwork->width }} cm × {{ $artwork->height }} cm</li>
+                </ul>
             </div>
 
             <!-- Description -->
@@ -57,13 +64,35 @@
             </div>
 
             <!-- Event Info -->
+            @if($artwork->event)
             <div class="bg-teal-50 p-4 rounded-lg">
-                <h3 class="text-xl font-semibold text-teal-600">{{ __('Event') }}</h3>
-                @if($artwork->event)
-                    <p class="text-gray-700 text-lg">{{ $artwork->event->name }} - <span class="font-semibold text-teal-600">{{ $artwork->event->start_date->format('M d, Y') }} to {{ $artwork->event->end_date->format('M d, Y') }}</span></p>
-                @else
-                    <p class="text-gray-700 italic">{{ __('No event for this artwork.') }}</p>
+                <h3 class="text-xl font-semibold text-teal-600">{{ __('Event Details') }}</h3>
+                <p class="text-gray-700">
+                    <strong>{{ $artwork->event->name }}</strong> <br>
+                    {{ __('From') }} <span class="font-semibold text-teal-600">{{ $artwork->event->start_date->format('M d, Y') }}</span>
+                    {{ __('to') }} <span class="font-semibold text-teal-600">{{ $artwork->event->end_date->format('M d, Y') }}</span>
+                </p>
+                @if($artwork->event->location)
+                    <p class="mt-2">
+                        <strong>{{ __('Location') }}:</strong> {{ $artwork->event->location }}
+                    </p>
                 @endif
+                <p class="mt-2 text-sm text-gray-600">
+                    {{ $artwork->event->description }}
+                </p>
+            </div>
+            @endif
+
+            <!-- Artist Info -->
+            <div class="bg-teal-50 p-4 rounded-lg">
+                <h3 class="text-xl font-semibold text-teal-600">{{ __('Artist') }}</h3>
+                <div class="flex items-center space-x-6 mt-4">
+                    <img src="{{ asset($artwork->artist->photo) }}" alt="{{ $artwork->artist->name }}" class="w-24 h-24 object-cover rounded-full border-4 border-deep-emerald shadow-md">
+                    <div>
+                        <p class="text-gray-800 text-lg">{{ $artwork->artist->name }}</p>
+                        <p class="text-gray-600 text-sm italic mt-2">{{ $artwork->artist->bio }}</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Back to Gallery Button -->

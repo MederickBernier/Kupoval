@@ -70,4 +70,5 @@ return [
     'edit_order' => 'Edit Order',
     'remove' => 'Remove',
     'update_order' => 'Update Order',
+    'deactivate' => 'Deactivate',
 ];

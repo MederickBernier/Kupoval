@@ -6,7 +6,7 @@
 <div class="bg-white p-6 rounded-lg shadow-lg max-w-2xl mx-auto">
     <h2 class="text-2xl font-bold mb-6 text-gray-700">{{ __('admin/artworks.edit_title') }}</h2>
 
-    <!-- Affichage des erreurs -->
+    <!-- Display Errors -->
     @if ($errors->any())
         <div class="bg-red-100 text-red-700 p-4 rounded-lg mb-4">
             <ul>
@@ -17,7 +17,7 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.artworks.update', $artwork->id) }}" method="POST" enctype="multipart/form-data"
+    <form action="{{ route('admin.artworks.update', $artwork->slug) }}" method="POST" enctype="multipart/form-data"
           x-data="{
               isForEvent: '{{ old('is_for_event', $artwork->is_for_event) }}',
               selectedCategories: {{ json_encode($artwork->categories->pluck('id')->toArray()) }}
@@ -25,7 +25,7 @@
         @csrf
         @method('PUT')
 
-        <!-- 🖼️ Informations générales -->
+        <!-- 🖼️ Artwork Details -->
         <div class="mb-6 border-b pb-4">
             <h3 class="text-lg font-semibold text-gray-600 mb-4">{{ __('admin/artworks.details') }}</h3>
 
@@ -56,11 +56,10 @@
             </div>
         </div>
 
-        <!-- 🏷️ Sélection des catégories -->
+        <!-- 🏷️ Category Selection -->
         <div class="mb-6 border-b pb-4">
             <h3 class="text-lg font-semibold text-gray-600 mb-4">{{ __('admin/artworks.categories') }}</h3>
 
-            <!-- Input caché pour envoyer les catégories sélectionnées -->
             <input type="hidden" name="categories" x-bind:value="selectedCategories.join(',')">
 
             <div class="flex flex-wrap gap-2">
@@ -80,7 +79,7 @@
             </div>
         </div>
 
-        <!-- 📏 Dimensions & Prix -->
+        <!-- 📏 Dimensions & Price -->
         <div class="mb-6 border-b pb-4">
             <h3 class="text-lg font-semibold text-gray-600 mb-4">{{ __('admin/artworks.size_pricing') }}</h3>
 
@@ -109,7 +108,7 @@
 
             <div class="mb-4">
                 <label class="block text-sm font-semibold text-gray-700 mb-1">{{ __('admin/artworks.current_image') }}:</label>
-                <img src="{{ asset('storage/artworks/' . basename($artwork->image)) }}"
+                <img src="{{ asset('storage/' . $artwork->image) }}"
                      alt="{{ __('admin/artworks.image_alt') }}" class="w-32 h-32 object-cover rounded-lg shadow">
             </div>
 
@@ -119,15 +118,31 @@
             </div>
         </div>
 
-        <!-- Boutons -->
-        <div class="flex justify-between mt-6">
-            <a href="{{ route('admin.artworks.index') }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
-                {{ __('admin/artworks.return') }}
-            </a>
-            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                {{ __('admin/artworks.save_changes') }}
-            </button>
+        <!-- 📢 Sale & Event Status -->
+        <div class="mb-6 border border-gray-300 rounded-lg p-4 bg-gray-50">
+            <h3 class="text-lg font-semibold text-gray-600 mb-4">{{ __('admin/artworks.sale_event_options') }}</h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">{{ __('admin/artworks.for_sale') }}:</label>
+                    <select name="is_on_sale" class="w-full border border-gray-300 px-4 py-2 rounded-lg">
+                        <option value="1" {{ $artwork->is_on_sale ? 'selected' : '' }}>{{ __('admin/artworks.yes') }}</option>
+                        <option value="0" {{ !$artwork->is_on_sale ? 'selected' : '' }}>{{ __('admin/artworks.no') }}</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">{{ __('admin/artworks.featured') }}:</label>
+                    <select name="is_featured" class="w-full border border-gray-300 px-4 py-2 rounded-lg">
+                        <option value="1" {{ $artwork->is_featured ? 'selected' : '' }}>{{ __('admin/artworks.yes') }}</option>
+                        <option value="0" {{ !$artwork->is_featured ? 'selected' : '' }}>{{ __('admin/artworks.no') }}</option>
+                    </select>
+                </div>
+            </div>
         </div>
+
+        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+            {{ __('admin/artworks.save_changes') }}
+        </button>
     </form>
 </div>
 @endsection

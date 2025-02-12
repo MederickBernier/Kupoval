@@ -45,10 +45,10 @@
                             @endif
                         </td>
                         <td class="px-4 py-2 border text-center space-x-2">
-                            <a href="{{ route('admin.artworks.edit', $artwork->id) }}" class="text-blue-500 hover:underline">
+                            <a href="{{ route('admin.artworks.edit', $artwork->slug) }}" class="text-blue-500 hover:underline">
                                 <i class="bi bi-pencil"></i> {{ __('admin/artworks.edit') }}
                             </a>
-                            <button @click="setDeleteArtwork({{ json_encode($artwork) }}, '{{ route('admin.artworks.destroy', $artwork->id) }}')"
+                            <button @click="setDeleteArtwork({{ json_encode($artwork) }}, '{{ route('admin.artworks.destroy', $artwork->slug) }}')"
                                     class="text-red-500 hover:underline">
                                 <i class="bi bi-trash"></i> {{ __('admin/artworks.delete') }}
                             </button>

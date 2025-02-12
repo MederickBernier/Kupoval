@@ -60,7 +60,7 @@
                                     {{ __('admin/orders.anonymous') }}
                                 @endif
                             </td>
-                            <td class="px-4 py-2 border font-semibold">${{ number_format($order->total_price, 2) }}</td>
+                            <td class="px-4 py-2 border font-semibold">${{ number_format($order->total, 2) }}</td>
                             <td class="px-4 py-2 border text-center">
                                 <span class="px-2 py-1 text-sm font-semibold rounded-full
                                     {{ $order->status === 'pending' ? 'bg-yellow-200 text-yellow-800' : '' }}
@@ -82,7 +82,7 @@
                                 </a>
                                 <button @click="setDeleteOrder({{ json_encode($order) }}, '{{ route('admin.orders.destroy', $order->id) }}')"
                                         class="text-red-500 hover:underline">
-                                    <i class="bi bi-trash"></i> {{ __('admin/orders.delete') }}
+                                    <i class="bi bi-trash"></i> {{ __('admin/orders.deactivate') }}
                                 </button>
                             </td>
                         </tr>
