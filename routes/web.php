@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArtworkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\EventController;
@@ -15,6 +16,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/gallery', [HomeController::class, 'gallery'])->name('gallery');
+Route::get('/artwork/{artwork}', [ArtworkController::class, 'show'])->name('artwork.show');
 Route::get('/events', [HomeController::class, 'events'])->name('events');
 Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show');
 

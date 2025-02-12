@@ -16,4 +16,7 @@ return [
     'artists' => 'Artistes',
     'reset_filters' => 'Réinitialiser les filtres',
     'no_artworks_found' => 'Aucune œuvre d\'art trouvée',
+    'view_details' => 'Voir les détails',
+    'price' => 'Prix',
+    'back_to_gallery' => 'Retour à la galerie',
 ];

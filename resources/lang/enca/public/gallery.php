@@ -16,4 +16,7 @@ return [
     'artists' => 'Artists',
     'reset_filters' => 'Reset Filters',
     'no_artworks_found' => 'No artworks found',
+    'view_details' => 'View Details',
+    'price' => 'Price',
+    'back_to_gallery' => 'Back to Gallery',
 ];

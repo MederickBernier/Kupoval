@@ -20,6 +20,11 @@
 
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
 
+    <!-- SimpleLightbox CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/simplelightbox@2.4.0/dist/simple-lightbox.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/simplelightbox@2.4.0/dist/simple-lightbox.min.js"></script>
+
+
     <title>@yield('title', 'Kupoval')</title>
     @livewireStyles
     @vite(['resources/css/app.css','resources/js/app.js'])
@@ -41,6 +46,7 @@
             <a href="#" class="text-link hover:underline"><i class="bi bi-instagram"></i></a>
         </div>
     </footer>
+    @stack('scripts')
     <script>
         window.addEventListener('reload-page', function () {
             console.log('🔄 Rechargement forcé après changement de langue');

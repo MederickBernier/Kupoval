@@ -108,11 +108,19 @@
         @forelse($artworks as $artwork)
             <div class="bg-white p-6 shadow-lg rounded-xl border border-deep-emerald transition-transform hover:scale-105 hover:shadow-xl">
                 <img src="{{ Storage::url($artwork->image) }}"
-                     alt="{{ $artwork->name }}"
-                     class="w-full h-60 object-cover rounded-lg shadow-md"
-                     loading="lazy">
+                    alt="{{ $artwork->name }}"
+                    class="w-full h-60 object-cover rounded-lg shadow-md"
+                    loading="lazy">
                 <h3 class="mt-4 text-lg font-semibold text-navy-blue">{{ $artwork->name }}</h3>
                 <p class="text-gray-600 italic">{{ $artwork->artist->name }}</p>
+
+                <!-- View Details Button -->
+                <div class="mt-4 flex justify-between">
+                    <a href="{{ route('artwork.show', $artwork->id) }}"
+                    class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg shadow-md transition">
+                        {{ __('public/gallery.view_details') }}
+                    </a>
+                </div>
             </div>
         @empty
             <p class="col-span-full text-center text-gray-600 text-lg italic">{{ __('public/gallery.no_artworks_found') }}</p>
