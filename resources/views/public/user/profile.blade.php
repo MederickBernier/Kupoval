@@ -108,7 +108,8 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-2 text-center">
-                                    <a href="{{ route('order.details', $order->id) }}" class="text-link hover:underline">
+                                    {{-- <a href="{{ route('order.details', $order->id) }}" class="text-link hover:underline"> --}}
+                                    <a href="#" class="text-link hover:underline">
                                         {{ __('public/profile.view_order') }}
                                     </a>
                                 </td>

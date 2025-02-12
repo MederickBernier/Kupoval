@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminUsersController;
 
-Route::get('/users', [AdminUsersController::class, 'index'])->name('admin.users.list');
+Route::get('/users', [AdminUsersController::class, 'index'])->name('admin.users.index');
 Route::delete('/users/{user}', [AdminUsersController::class, 'destroy'])->name('admin.users.destroy');
 
 Route::get('/users/deactivated', [AdminUsersController::class, 'trashed'])->name('admin.users.trashed');

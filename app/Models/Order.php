@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -15,30 +14,35 @@ class Order extends Model
         'shipping_condition_id',
         'status',
         'total',
-        'billing_address',
-        'billing_city',
-        'billing_state',
-        'billing_country',
-        'billing_zipcode',
-        'shipping_address',
-        'shipping_city',
-        'shipping_state',
-        'shipping_country',
-        'shipping_zipcode',
+        'billing_address_id',
+        'shipping_address_id',
         'recipient_name',
         'recipient_email',
         'recipient_phone',
     ];
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function shippingCondition(){
+    public function shippingCondition()
+    {
         return $this->belongsTo(ShippingCondition::class, 'shipping_condition_id');
     }
 
-    public function items(){
+    public function items()
+    {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function billingAddress()
+    {
+        return $this->belongsTo(Address::class, 'billing_address_id');
+    }
+
+    public function shippingAddress()
+    {
+        return $this->belongsTo(Address::class, 'shipping_address_id');
     }
 }

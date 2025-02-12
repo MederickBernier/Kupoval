@@ -37,4 +37,5 @@ return [
     'force_delete_title' => 'Confirm Permanent Deletion',
     'confirm_force_delete' => 'Are you sure you want to permanently delete this artist?',
     'update' => 'Update',
+    'list_heading' => 'Artists List',
 ];

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Artist;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 class AdminArtistsController extends Controller
 {
@@ -35,6 +36,7 @@ class AdminArtistsController extends Controller
     {
         try {
             isAllowed($request->user());
+
             $request->validate([
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
@@ -43,13 +45,16 @@ class AdminArtistsController extends Controller
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
 
+            // Generate unique slug
             $slug = Str::slug($request->name);
             if (Artist::where('slug', $slug)->exists()) {
                 $slug .= '-' . (Artist::where('slug', 'LIKE', "{$slug}%")->count() + 1);
             }
 
-            $photoPath = $request->file('photo') ? $request->file('photo')->store('artists', 'public') : null;
+            // Handle photo upload
+            $photoPath = $request->hasFile('photo') ? $request->file('photo')->store('artists', 'public') : null;
 
+            // Create artist
             Artist::create([
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
@@ -79,6 +84,7 @@ class AdminArtistsController extends Controller
     {
         try {
             isAllowed($request->user());
+
             $request->validate([
                 'first_name' => 'required|string|max:255',
                 'last_name' => 'required|string|max:255',
@@ -87,11 +93,13 @@ class AdminArtistsController extends Controller
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
 
+            // Generate unique slug
             $slug = Str::slug($request->name);
             if (Artist::where('slug', $slug)->where('id', '!=', $artist->id)->exists()) {
                 $slug .= '-' . (Artist::where('slug', 'LIKE', "{$slug}%")->count() + 1);
             }
 
+            // Handle photo update
             if ($request->hasFile('photo')) {
                 if ($artist->photo) {
                     Storage::disk('public')->delete(str_replace('storage/', '', $artist->photo));
@@ -100,6 +108,7 @@ class AdminArtistsController extends Controller
                 $artist->photo = 'storage/' . $photoPath;
             }
 
+            // Update artist details
             $artist->update([
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
@@ -118,7 +127,14 @@ class AdminArtistsController extends Controller
     {
         try {
             isAllowed($request->user());
+
+            // Prevent deletion if artist has artworks
+            if ($artist->artworks()->exists()) {
+                return back()->with('error', __('Cannot delete artist with associated artworks.'));
+            }
+
             $artist->delete();
+
             return redirect()->route('admin.artists.index')->with('success', __('Artist moved to trash successfully.'));
         } catch (\Exception $e) {
             throwError(__('Error deleting artist'), 500, ['details' => $e->getMessage()]);
@@ -141,21 +157,18 @@ class AdminArtistsController extends Controller
         try {
             isAllowed($request->user());
 
-            // Find soft-deleted artist
-            $artist = Artist::onlyTrashed()->where('id', $id)->first();
+            $artist = Artist::onlyTrashed()->findOrFail($id);
 
-            if (!$artist) {
-                return response()->json(['error' => __('Artist not found or not in trash.')], 404);
+            // Ensure name doesn't conflict before restoring
+            if (Artist::where('name', $artist->name)->whereNull('deleted_at')->exists()) {
+                return back()->with('error', __('An artist with this name already exists.'));
             }
 
-            // Restore the artist
             $artist->restore();
 
-            return response()->json(['success' => __('Artist restored successfully.')], 200);
-
+            return redirect()->route('admin.artists.index')->with('success', __('Artist restored successfully.'));
         } catch (\Exception $e) {
-            \Log::error('Error in restore: ' . $e->getMessage());
-            return response()->json(['error' => __('Error restoring artist.')], 500);
+            throwError(__('Error restoring artist'), 500, ['details' => $e->getMessage()]);
         }
     }
 
@@ -164,31 +177,23 @@ class AdminArtistsController extends Controller
         try {
             isAllowed($request->user());
 
-            // Attempt to find the soft-deleted artist
-            $artist = Artist::onlyTrashed()->where('id', $id)->first();
+            $artist = Artist::onlyTrashed()->findOrFail($id);
 
-            if (!$artist) {
-                return response()->json(['error' => __('Artist not found or already deleted.')], 404);
-            }
-
-            // Ensure no related artworks exist before deleting
+            // Prevent deletion if artist has artworks
             if ($artist->artworks()->exists()) {
-                return response()->json(['error' => __('Cannot delete artist with associated artworks.')], 400);
+                return back()->with('error', __('Cannot delete artist with associated artworks.'));
             }
 
-            // Delete artist's photo if it exists
-            if ($artist->photo && \Storage::disk('public')->exists($artist->photo)) {
-                \Storage::disk('public')->delete($artist->photo);
+            // Delete associated photo
+            if ($artist->photo && Storage::disk('public')->exists(str_replace('storage/', '', $artist->photo))) {
+                Storage::disk('public')->delete(str_replace('storage/', '', $artist->photo));
             }
 
-            // Force delete the artist
             $artist->forceDelete();
 
-            return response()->json(['success' => __('Artist deleted permanently.')], 200);
-
+            return redirect()->route('admin.artists.trashed')->with('success', __('Artist permanently deleted.'));
         } catch (\Exception $e) {
-            \Log::error('Error in forceDelete: ' . $e->getMessage());
-            return response()->json(['error' => __('Error deleting artist permanently.')], 500);
+            throwError(__('Error permanently deleting artist'), 500, ['details' => $e->getMessage()]);
         }
     }
 }

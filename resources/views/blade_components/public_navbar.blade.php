@@ -26,7 +26,7 @@
             <a href="{{ route('home') }}" class="relative hover:text-navbar-hover group text-2xl">
                 {{ __('public/interface.home') }}
             </a>
-            <a href="#" class="relative hover:text-navbar-hover group text-2xl">
+            <a href="{{ route('gallery') }}" class="relative hover:text-navbar-hover group text-2xl">
                 {{ __('public/interface.gallery') }}
             </a>
             <a href="{{ route('events') }}" class="relative hover:text-navbar-hover group text-2xl">

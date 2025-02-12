@@ -14,6 +14,7 @@ use App\Http\Controllers\BioController;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::get('/gallery', [HomeController::class, 'gallery'])->name('gallery');
 Route::get('/events', [HomeController::class, 'events'])->name('events');
 Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show');
 
@@ -65,4 +66,5 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     require_once __DIR__ . '/admin/artworks.php';
     require_once __DIR__ . '/admin/categories.php';
     require_once __DIR__ . '/admin/artists.php';
+    require_once __DIR__ . '/admin/orders.php';
 });

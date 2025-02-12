@@ -14,7 +14,6 @@ class AdminCategoriesController extends Controller
         try {
             isAllowed($request->user());
 
-            // Ajout de pagination pour optimiser l'affichage
             $categories = Category::paginate(10);
             return view('admin.categories.index', compact('categories'));
         } catch (\Exception $e) {
@@ -28,7 +27,10 @@ class AdminCategoriesController extends Controller
             isAllowed($request->user());
 
             $request->validate([
-                'name' => 'required|string|max:255|unique:categories,name',
+                'name' => ['required', 'string', 'max:255', Rule::unique('categories')->where(
+                    fn($query) =>
+                    $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)])
+                )],
                 'description' => 'nullable|string',
             ]);
 
@@ -58,7 +60,10 @@ class AdminCategoriesController extends Controller
             isAllowed($request->user());
 
             $request->validate([
-                'name' => ['required', 'string', 'max:255', Rule::unique('categories')->ignore($category->id)],
+                'name' => ['required', 'string', 'max:255', Rule::unique('categories')->where(
+                    fn($query) =>
+                    $query->whereRaw('LOWER(name) = ?', [strtolower($request->name)])
+                )->ignore($category->id)],
                 'description' => 'nullable|string',
             ]);
 
@@ -76,6 +81,11 @@ class AdminCategoriesController extends Controller
         try {
             isAllowed($request->user());
 
+            // Check if category is linked to any artworks
+            if ($category->artworks()->exists()) {
+                return back()->with('error', __('This category is assigned to artworks and cannot be deleted.'));
+            }
+
             $category->delete();
 
             return redirect()->route('admin.categories.index')
@@ -90,7 +100,6 @@ class AdminCategoriesController extends Controller
         try {
             isAllowed($request->user());
 
-            // Ajout de la pagination pour optimiser
             $categories = Category::onlyTrashed()->paginate(10);
             return view('admin.categories.trashed', compact('categories'));
         } catch (\Exception $e) {
@@ -103,8 +112,13 @@ class AdminCategoriesController extends Controller
         try {
             isAllowed($request->user());
 
-            // Utilisation de withTrashed() pour retrouver les catégories supprimées
             $category = Category::withTrashed()->findOrFail($id);
+
+            // Prevent restoring if a category with the same name already exists
+            if (Category::where('name', $category->name)->whereNull('deleted_at')->exists()) {
+                return back()->with('error', __('A category with the same name already exists.'));
+            }
+
             $category->restore();
 
             return redirect()->route('admin.categories.trashed')
@@ -119,8 +133,13 @@ class AdminCategoriesController extends Controller
         try {
             isAllowed($request->user());
 
-            // Utilisation de withTrashed() pour retrouver les catégories supprimées
             $category = Category::withTrashed()->findOrFail($id);
+
+            // Prevent force deletion if linked to artworks
+            if ($category->artworks()->exists()) {
+                return back()->with('error', __('This category is linked to artworks and cannot be permanently deleted.'));
+            }
+
             $category->forceDelete();
 
             return redirect()->route('admin.categories.trashed')

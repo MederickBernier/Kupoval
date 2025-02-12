@@ -44,8 +44,16 @@ class AdminArtworksController extends Controller
         try {
             isAllowed($request->user());
 
-            // Convertir les catégories en tableau avant validation
-            $request->merge(['categories' => explode(',', $request->categories)]);
+            // Ensure `categories` is an array (handle both comma-separated and JSON formats)
+            $categories = is_array($request->categories)
+                ? $request->categories
+                : explode(',', (string) $request->categories);
+
+            // Convert values to integers and remove invalid entries
+            $categories = collect($categories)
+                ->map(fn($id) => intval(trim($id)))
+                ->filter(fn($id) => $id > 0) // Remove empty or invalid IDs
+                ->toArray();
 
             $validated = $request->validate([
                 'artist_id'     => 'required|exists:artists,id',
@@ -58,7 +66,7 @@ class AdminArtworksController extends Controller
                 'is_featured'   => 'boolean',
                 'is_for_event'  => 'boolean',
                 'event_id'      => 'nullable|exists:events,id',
-                'categories'    => 'array',
+                'categories'    => 'sometimes|array',
                 'categories.*'  => 'exists:categories,id',
                 'image'         => 'nullable|image|max:2048',
             ]);
@@ -67,10 +75,13 @@ class AdminArtworksController extends Controller
                 $validated['image'] = $request->file('image')->store('artworks', 'public');
             }
 
+            // Create Artwork
             $artwork = Artwork::create($validated);
-            $artwork->categories()->sync($request->categories ?? []);
 
-            return redirect()->route('admin.artworks.index')->with('success', __('Artwork created successfully'));
+            // Attach Categories
+            $artwork->categories()->sync($categories);
+
+            return redirect()->route('admin.artworks.index')->with('success', __('Artwork created successfully.'));
         } catch (\Exception $e) {
             throwError(__('Error creating artwork'), 500, ['exception' => $e->getMessage()]);
         }
@@ -81,8 +92,7 @@ class AdminArtworksController extends Controller
         try {
             isAllowed($request->user());
 
-            // Convertir les catégories en tableau avant validation
-            $request->merge(['categories' => explode(',', $request->categories)]);
+            $request->merge(['categories' => (array) $request->categories]);
 
             $validated = $request->validate([
                 'artist_id'     => 'required|exists:artists,id',
@@ -94,17 +104,19 @@ class AdminArtworksController extends Controller
                 'is_on_sale'    => 'boolean',
                 'is_featured'   => 'boolean',
                 'is_for_event'  => 'boolean',
-                'event_id'      => 'nullable|exists:events,id',
+                'event_id'      => 'nullable|exists:events,id|required_if:is_for_event,true',
                 'categories'    => 'array',
                 'categories.*'  => 'exists:categories,id',
                 'image'         => 'nullable|image|max:2048',
             ]);
 
             if ($request->hasFile('image')) {
-                if ($artwork->image && Storage::disk('public')->exists($artwork->image)) {
+                $newImagePath = $request->file('image')->store('artworks', 'public');
+
+                if ($newImagePath) {
                     Storage::disk('public')->delete($artwork->image);
+                    $validated['image'] = $newImagePath;
                 }
-                $validated['image'] = $request->file('image')->store('artworks', 'public');
             }
 
             $artwork->update($validated);

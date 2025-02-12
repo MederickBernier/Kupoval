@@ -1,0 +1,62 @@
+<?php
+
+return [
+    'list_title' => 'Gestion des commandes',
+    'list_heading' => 'Liste des commandes',
+    'create_order' => 'Créer une commande',
+    'order_id' => 'ID de commande',
+    'customer' => 'Client',
+    'total_price' => 'Prix total',
+    'status' => 'Statut',
+    'date' => 'Date',
+    'actions' => 'Actions',
+    'view' => 'Voir',
+    'edit' => 'Modifier',
+    'delete' => 'Supprimer',
+    'confirm_delete' => 'Êtes-vous sûr de vouloir supprimer cette commande?',
+    'no_orders' => 'Aucune commande disponible.',
+    'search_placeholder' => 'Rechercher des commandes...',
+    'filter_status' => 'Filtrer par statut',
+
+    // Statuts
+    'status.pending' => 'En attente',
+    'status.completed' => 'Terminée',
+    'status.canceled' => 'Annulée',
+    'status.refunded' => 'Remboursée',
+
+    // Création & Modification
+    'create_title' => 'Créer une nouvelle commande',
+    'edit_title' => 'Modifier la commande',
+    'customer_name' => 'Nom du client',
+    'order_items' => 'Articles commandés',
+    'payment_status' => 'Statut du paiement',
+    'save_order' => 'Enregistrer la commande',
+    'back_to_orders' => 'Retour aux commandes',
+
+    // Suppression & Restauration
+    'trashed_title' => 'Commandes supprimées',
+    'restore' => 'Restaurer',
+    'force_delete' => 'Suppression définitive',
+    'restore_confirm' => 'Êtes-vous sûr de vouloir restaurer cette commande?',
+    'force_delete_confirm' => 'Cela supprimera définitivement la commande. Continuer?',
+
+    // Divers
+    'anonymous' => 'Utilisateur anonyme',
+    'artworks' => 'Œuvres',
+    'cancel' => 'Annuler',
+    'create' => 'Créer',
+    'select_customer' => 'Sélectionner un client',
+    'billing_address' => 'Adresse de facturation',
+    'address' => 'Adresse',
+    'city' => 'Ville',
+    'state' => 'Province',
+    'country' => 'Pays',
+    'zipcode' => 'Code postal',
+    'use_different_shipping' => 'Utiliser une adresse de livraison différente',
+    'shipping_address' => 'Adresse de livraison',
+    'shipping_condition' => 'Condition de livraison',
+    'select_shipping_condition' => 'Sélectionner une condition de livraison',
+    'recipient_name' => 'Nom du destinataire',
+    'recipient_email' => 'Courriel du destinataire',
+    'recipient_phone' => 'Téléphone du destinataire',
+];

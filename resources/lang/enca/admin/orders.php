@@ -1,0 +1,62 @@
+<?php
+
+return [
+    'list_title' => 'Orders Management',
+    'list_heading' => 'Orders List',
+    'create_order' => 'Create Order',
+    'order_id' => 'Order ID',
+    'customer' => 'Customer',
+    'total_price' => 'Total Price',
+    'status' => 'Status',
+    'date' => 'Date',
+    'actions' => 'Actions',
+    'view' => 'View',
+    'edit' => 'Edit',
+    'delete' => 'Delete',
+    'confirm_delete' => 'Are you sure you want to delete this order?',
+    'no_orders' => 'No orders available.',
+    'search_placeholder' => 'Search orders...',
+    'filter_status' => 'Filter by status',
+
+    // Statuses
+    'status.pending' => 'Pending',
+    'status.completed' => 'Completed',
+    'status.canceled' => 'Canceled',
+    'status.refunded' => 'Refunded',
+
+    // Create & Edit
+    'create_title' => 'Create a New Order',
+    'edit_title' => 'Edit Order',
+    'customer_name' => 'Customer Name',
+    'order_items' => 'Order Items',
+    'payment_status' => 'Payment Status',
+    'save_order' => 'Save Order',
+    'back_to_orders' => 'Back to Orders',
+
+    // Trashed & Restore
+    'trashed_title' => 'Deleted Orders',
+    'restore' => 'Restore',
+    'force_delete' => 'Force Delete',
+    'restore_confirm' => 'Are you sure you want to restore this order?',
+    'force_delete_confirm' => 'This will permanently delete the order. Continue?',
+
+    // Misc
+    'anonymous' => 'Anonymous User',
+    'artworks' => 'Artworks',
+    'cancel' => 'Cancel',
+    'create' => 'Create',
+    'select_customer' => 'Select a customer',
+    'billing_address' => 'Billing Address',
+    'address' => 'Address',
+    'city' => 'City',
+    'state' => 'State',
+    'country' => 'Country',
+    'zipcode' => 'Zipcode',
+    'use_different_shipping' => 'Use Different Shipping Address',
+    'shipping_address' => 'Shipping Address',
+    'shipping_condition' => 'Shipping Condition',
+    'select_shipping_condition' => 'Select a shipping condition',
+    'recipient_name' => 'Recipient Name',
+    'recipient_email' => 'Recipient Email',
+    'recipient_phone' => 'Recipient Phone',
+];

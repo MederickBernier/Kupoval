@@ -1,7 +1,7 @@
 <aside class="w-64 bg-white shadow-lg h-full fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out z-50"
        x-bind:class="open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'">
 
-    <!-- Header du Menu -->
+    <!-- Sidebar Header -->
     <div class="p-6 border-b flex justify-between items-center">
         <h1 class="text-lg font-semibold">
             <a href="{{ route('home') }}">{{ __('admin/sidenav.brand') }}</a>
@@ -15,7 +15,7 @@
     <nav class="mt-4">
         <ul class="space-y-1">
 
-            <!-- Retour au site -->
+            <!-- Return to Site -->
             <li>
                 <a href="{{ route('home') }}"
                    class="flex items-center px-4 py-2 hover:bg-gray-200
@@ -40,6 +40,27 @@
                 </a>
             </li>
 
+            <!-- Orders Management -->
+            <li x-data="{ openOrders: {{ request()->routeIs('admin.orders.*') ? 'true' : 'false' }} }">
+                <button @click="openOrders = !openOrders"
+                        class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
+                    <i class="bi bi-receipt mr-2"></i> {{ __('admin/sidenav.orders') }}
+                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openOrders}"></i>
+                </button>
+                <ul x-show="openOrders" class="pl-8 mt-1 space-y-1">
+                    <li><a href="{{ route('admin.orders.index') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.orders.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.list_orders') }}
+                    </a></li>
+                    <li><a href="{{ route('admin.orders.trashed') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.orders.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.deactivated_orders') }}
+                    </a></li>
+                </ul>
+            </li>
+
             <!-- Artworks -->
             <li x-data="{ openArtworks: {{ request()->routeIs('admin.artworks.*') ? 'true' : 'false' }} }">
                 <button @click="openArtworks = !openArtworks"
@@ -61,27 +82,6 @@
                 </ul>
             </li>
 
-            <!-- Categories -->
-            <li x-data="{ openCategories: {{ request()->routeIs('admin.categories.*') ? 'true' : 'false' }} }">
-                <button @click="openCategories = !openCategories"
-                        class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
-                    <i class="bi bi-tags mr-2"></i> {{ __('admin/sidenav.categories') }}
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openCategories}"></i>
-                </button>
-                <ul x-show="openCategories" class="pl-8 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.categories.index') }}"
-                           class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.categories.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
-                            {{ __('admin/sidenav.list_categories') }}
-                    </a></li>
-                    <li><a href="{{ route('admin.categories.trashed') }}"
-                           class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.categories.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
-                            {{ __('admin/sidenav.deactivated_categories') }}
-                    </a></li>
-                </ul>
-            </li>
-
             <!-- Events -->
             <li x-data="{ openEvents: {{ request()->routeIs('admin.events.*') ? 'true' : 'false' }} }">
                 <button @click="openEvents = !openEvents"
@@ -90,38 +90,47 @@
                     <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openEvents}"></i>
                 </button>
                 <ul x-show="openEvents" class="pl-8 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.events.list') }}"
+                    <li><a href="{{ route('admin.events.index') }}"
                            class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.events.list') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                                  {{ request()->routeIs('admin.events.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
                             {{ __('admin/sidenav.list_events') }}
-                        </a></li>
+                    </a></li>
                     <li><a href="{{ route('admin.events.trashed') }}"
                            class="block px-4 py-2 hover:bg-gray-100
                                   {{ request()->routeIs('admin.events.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
                             {{ __('admin/sidenav.deactivated_events') }}
-                        </a></li>
+                    </a></li>
                 </ul>
             </li>
 
-            <!-- Artists -->
-            <li x-data="{ openArtists: {{ request()->routeIs('admin.artists.*') ? 'true' : 'false' }} }">
-                <button @click="openArtists = !openArtists"
+            <!-- Users -->
+            <li x-data="{ openUsers: {{ request()->routeIs('admin.users.*') ? 'true' : 'false' }} }">
+                <button @click="openUsers = !openUsers"
                         class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
-                    <i class="bi bi-person-bounding-box mr-2"></i> {{ __('admin/sidenav.artists') }}
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openArtists}"></i>
+                    <i class="bi bi-people mr-2"></i> {{ __('admin/sidenav.users') }}
+                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openUsers}"></i>
                 </button>
-                <ul x-show="openArtists" class="pl-8 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.artists.index') }}"
+                <ul x-show="openUsers" class="pl-8 mt-1 space-y-1">
+                    <li><a href="{{ route('admin.users.index') }}"
                            class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.artists.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
-                            {{ __('admin/sidenav.list_artists') }}
+                                  {{ request()->routeIs('admin.users.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.list_users') }}
                     </a></li>
-                    <li><a href="{{ route('admin.artists.trashed') }}"
+                    <li><a href="{{ route('admin.users.trashed') }}"
                            class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.artists.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
-                            {{ __('admin/sidenav.deactivated_artists') }}
+                                  {{ request()->routeIs('admin.users.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.deactivated_users') }}
                     </a></li>
                 </ul>
+            </li>
+
+            <!-- Settings -->
+            <li>
+                <a href="{{ route('admin.settings.index') }}"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200
+                          {{ request()->routeIs('admin.settings.index') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                    <i class="bi bi-gear mr-2"></i> {{ __('admin/sidenav.settings') }}
+                </a>
             </li>
 
             <!-- Logout -->

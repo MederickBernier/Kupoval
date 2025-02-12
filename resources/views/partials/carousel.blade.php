@@ -8,7 +8,7 @@
                         <img src="{{ asset('storage/' . $item['image']) }}" alt="{{ $item['title'] }}" class="w-full h-128 object-cover rounded-lg">
                         <div class="absolute bottom-0 left-0 w-full bg-white bg-opacity-80 p-4">
                             <h3 class="text-xl font-title text-heading">{{ $item['title'] }}</h3>
-                            <p class="text-sm text-body">{{ $item['description'] }}</p>
+                            <p class="text-sm text-body">{!! $item['description'] !!}</p>
                         </div>
                     </div>
                 </li>

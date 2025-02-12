@@ -25,4 +25,9 @@ return [
     'artists' => 'Artists',
     'list_artists' => 'List Artists',
     'deactivated_artists' => 'Deactivated Artists',
+    'social_media' => 'Social Media',
+    'account_settings' => 'Account Settings',
+    'list_orders' => 'List Orders',
+    'deactivated_orders' => 'Deactivated Orders',
+    'list_users' => 'List Users',
 ];

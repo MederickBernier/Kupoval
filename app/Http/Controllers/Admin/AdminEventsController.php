@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Event;
+use Illuminate\Support\Facades\Log;
 
 class AdminEventsController extends Controller
 {
     /**
-     * Affiche la liste des événements.
+     * Display a list of events.
      */
     public function index(Request $request)
     {
@@ -17,16 +18,15 @@ class AdminEventsController extends Controller
             isAllowed($request->user());
 
             $events = Event::orderBy('start_date', 'asc')->paginate(10);
-            return view('admin.events.index', [
-                'events' => $events
-            ]);
+            return view('admin.events.index', compact('events'));
         } catch (\Exception $e) {
-            throwError(__("Error loading events list"), 500, ['details' => $e->getMessage()]);
+            Log::error('Error loading events list: ' . $e->getMessage());
+            return response()->json(['error' => __('Error loading events list')], 500);
         }
     }
 
     /**
-     * Stocke un nouvel événement.
+     * Store a newly created event.
      */
     public function store(Request $request)
     {
@@ -41,16 +41,17 @@ class AdminEventsController extends Controller
                 'location' => 'required|string|max:255',
             ]);
 
-            Event::create($validated);
+            $event = Event::create($validated);
 
-            return response()->json(['success' => __('Event created successfully')], 200);
+            return response()->json(['success' => __('Event created successfully'), 'event' => $event], 201);
         } catch (\Exception $e) {
-            throwError(__("Error creating event"), 500, ['details' => $e->getMessage()]);
+            Log::error('Error creating event: ' . $e->getMessage());
+            return response()->json(['error' => __('Error creating event')], 500);
         }
     }
 
     /**
-     * Met à jour un événement existant.
+     * Update an existing event.
      */
     public function update(Request $request, Event $event)
     {
@@ -58,23 +59,24 @@ class AdminEventsController extends Controller
             isAllowed($request->user());
 
             $validated = $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'sometimes|required|string|max:255',
                 'description' => 'nullable|string',
-                'start_date' => 'required|date',
+                'start_date' => 'sometimes|required|date',
                 'end_date' => 'nullable|date|after_or_equal:start_date',
-                'location' => 'required|string|max:255',
+                'location' => 'sometimes|required|string|max:255',
             ]);
 
             $event->update($validated);
 
-            return redirect()->route('admin.events.index')->with('success', __('Event updated successfully'));
+            return response()->json(['success' => __('Event updated successfully'), 'event' => $event], 200);
         } catch (\Exception $e) {
-            throwError(__("Error updating event"), 500, ['details' => $e->getMessage()]);
+            Log::error('Error updating event: ' . $e->getMessage());
+            return response()->json(['error' => __('Error updating event')], 500);
         }
     }
 
     /**
-     * Supprime un événement (soft delete).
+     * Soft delete an event.
      */
     public function destroy(Request $request, Event $event)
     {
@@ -85,12 +87,13 @@ class AdminEventsController extends Controller
 
             return response()->json(['success' => __('Event deleted successfully')], 200);
         } catch (\Exception $e) {
-            throwError(__("Error deleting event"), 500, ['details' => $e->getMessage()]);
+            Log::error('Error deleting event: ' . $e->getMessage());
+            return response()->json(['error' => __('Error deleting event')], 500);
         }
     }
 
     /**
-     * Affiche les événements supprimés.
+     * Display a list of soft-deleted events.
      */
     public function trashed(Request $request)
     {
@@ -98,43 +101,56 @@ class AdminEventsController extends Controller
             isAllowed($request->user());
 
             $events = Event::onlyTrashed()->paginate(10);
-            return view('admin.events.trashed', [
-                'events' => $events
-            ]);
+            return view('admin.events.trashed', compact('events'));
         } catch (\Exception $e) {
-            throwError(__("Error loading trashed events list"), 500, ['details' => $e->getMessage()]);
+            Log::error('Error loading trashed events: ' . $e->getMessage());
+            return response()->json(['error' => __('Error loading trashed events')], 500);
         }
     }
 
     /**
-     * Restaure un événement supprimé.
+     * Restore a soft-deleted event.
      */
-    public function restore(Request $request, Event $event)
+    public function restore(Request $request, $id)
     {
         try {
             isAllowed($request->user());
+
+            $event = Event::onlyTrashed()->find($id);
+
+            if (!$event) {
+                return response()->json(['error' => __('Event not found or already restored')], 404);
+            }
 
             $event->restore();
 
             return response()->json(['success' => __('Event restored successfully')], 200);
         } catch (\Exception $e) {
-            throwError(__("Error restoring event"), 500, ['details' => $e->getMessage()]);
+            Log::error('Error restoring event: ' . $e->getMessage());
+            return response()->json(['error' => __('Error restoring event')], 500);
         }
     }
 
     /**
-     * Supprime définitivement un événement.
+     * Permanently delete an event.
      */
-    public function forceDelete(Request $request, Event $event)
+    public function forceDelete(Request $request, $id)
     {
         try {
             isAllowed($request->user());
+
+            $event = Event::onlyTrashed()->find($id);
+
+            if (!$event) {
+                return response()->json(['error' => __('Event not found or already deleted')], 404);
+            }
 
             $event->forceDelete();
 
             return response()->json(['success' => __('Event permanently deleted')], 200);
         } catch (\Exception $e) {
-            throwError(__("Error permanently deleting event"), 500, ['details' => $e->getMessage()]);
+            Log::error('Error permanently deleting event: ' . $e->getMessage());
+            return response()->json(['error' => __('Error permanently deleting event')], 500);
         }
     }
 }
