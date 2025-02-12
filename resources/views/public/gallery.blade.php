@@ -1,4 +1,5 @@
 @extends('layouts.public')
+
 @section('content')
-GALLERY
+    <livewire:gallery-component />
 @endsection
