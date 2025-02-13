@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\BioController;
+use App\Http\Controllers\Webhooks\StripeWebhookController;
+use Illuminate\Routing\Middleware\SubstituteBindings;
 
 // Pages publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -24,6 +26,10 @@ Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show
 Route::get('/bio', [BioController::class, 'index'])->name('bio.index');
 Route::get('/bio/artist/{artist:slug}', [BioController::class, 'show'])->name('bio.show');
 
+// Stripe Webhook Route
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
+    ->name('stripe.webhook')
+    ->withoutMiddleware(['Illuminate\Foundation\Http\Middleware\VerifyCsrfToken', SubstituteBindings::class]);
 
 // Authentification (guest seulement)
 Route::middleware('guest')->group(function () {
@@ -58,6 +64,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 // Lang Switching Route
 Route::post('/lang-switch', [LanguageController::class, 'switch'])->middleware('auth')->name('lang.switch');
+
+// Routes for the Shop and Checkout
+require_once __DIR__ . '/shop.php';
 
 // Charger les routes Admin
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {

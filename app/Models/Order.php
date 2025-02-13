@@ -20,6 +20,7 @@ class Order extends Model
         'recipient_name',
         'recipient_email',
         'recipient_phone',
+        'stripe_session_id',
     ];
 
     public function user()

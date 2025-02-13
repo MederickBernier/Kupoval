@@ -21,9 +21,11 @@ services:
             - '.:/var/www/html'
         networks:
             - sail
+            - kupoval_sail
         depends_on:
             - pgsql
             - redis
+
     pgsql:
         image: 'postgres:17'
         ports:
@@ -49,6 +51,7 @@ services:
                 - '${DB_USERNAME}'
             retries: 3
             timeout: 5s
+
     pgadmin:
         image: dpage/pgadmin4
         container_name: sail-pgadmin
@@ -61,6 +64,7 @@ services:
             - pgsql
         networks:
             - sail
+
     redis:
         image: 'redis:alpine'
         ports:
@@ -76,9 +80,28 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+
+    stripe-cli:
+        image: stripe/stripe-cli
+        container_name: stripe-cli
+        environment:
+            - STRIPE_API_KEY=${STRIPE_SECRET}
+            - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+        entrypoint: []
+        command: >
+            sh -c "stripe listen --api-key ${STRIPE_SECRET} --forward-to ${STRIPE_WEBHOOK_DOMAIN}/stripe/webhook"
+        networks:
+            - sail
+            - kupoval_sail
+        depends_on:
+            - laravel.test
+
 networks:
     sail:
         driver: bridge
+    kupoval_sail:
+        driver: bridge
+
 volumes:
     sail-pgsql:
         driver: local

@@ -150,6 +150,7 @@ class AdminOrdersController extends Controller
                 'billing_address_id' => $billingAddress->id,
                 'shipping_address_id' => $shippingAddress ? $shippingAddress->id : null,
                 'total' => $validatedData['total_price'],
+                'stripe_session_id' => 'manual_test_'. uniqid(),
                 'shipping_condition_id' => $validatedData['shipping_condition_id'],
                 'recipient_name' => $validatedData['recipient_name'] ?? 'Unknown Recipient',
                 'recipient_email' => $validatedData['recipient_email'] ?? User::find($validatedData['user_id'])->email,
