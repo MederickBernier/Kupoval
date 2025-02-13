@@ -65,9 +65,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Lang Switching Route
 Route::post('/lang-switch', [LanguageController::class, 'switch'])->middleware('auth')->name('lang.switch');
 
-// Routes for the Shop and Checkout
-require_once __DIR__ . '/shop.php';
-
 // Charger les routes Admin
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     require_once __DIR__ . '/admin/dashboard.php';

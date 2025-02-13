@@ -1,5 +1,4 @@
 <div class="p-6 bg-soft-aqua text-charcoal-gray min-h-screen">
-    <!-- 🎨 Filter Panel Header -->
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-bold text-navy-blue tracking-wide">{{ __('public/gallery.browse_artworks') }}</h2>
         <button wire:click="toggleFilters"
@@ -11,15 +10,12 @@
 
     @if($filtersVisible)
     <div class="mb-4 p-4 bg-white shadow-md rounded-lg border border-deep-emerald transition-all duration-300">
-        <!-- 🔹 Filters Header -->
         <div class="flex items-center space-x-2">
             <i class="bi bi-funnel-fill text-teal-600"></i>
             <h3 class="text-xl font-semibold text-navy-blue">{{ __('public/gallery.filters') }}</h3>
         </div>
 
-        <!-- 🔹 First Row: Search, Sort, Event (NOW TAKES FULL WIDTH) -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
-            <!-- 🔍 Search Input -->
             <div class="flex flex-col md:col-span-3">
                 <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
                     <i class="bi bi-search text-gray-500 mr-1"></i>{{ __('public/gallery.search') }}
@@ -29,9 +25,7 @@
                        placeholder="{{ __('public/gallery.search') }}">
             </div>
 
-            <!-- 📊 Sorting & Event (Properly Spaced) -->
             <div class="grid grid-cols-2 gap-3 md:col-span-3">
-                <!-- Sort Dropdown -->
                 <div class="flex flex-col">
                     <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
                         <i class="bi bi-sort-down text-blue-500 mr-1"></i>{{ __('public/gallery.sort_by') }}
@@ -44,7 +38,6 @@
                     </select>
                 </div>
 
-                <!-- Event Dropdown -->
                 <div class="flex flex-col">
                     <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
                         <i class="bi bi-calendar-event text-orange-500 mr-1"></i>{{ __('public/gallery.event') }}
@@ -60,9 +53,7 @@
             </div>
         </div>
 
-        <!-- 🔹 Second Row: Categories & Artists -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
-            <!-- 📂 Category Filter -->
             <div class="border border-deep-emerald rounded-md p-3 shadow-sm bg-gray-100">
                 <h4 class="text-gray-700 font-medium mb-2 flex items-center text-sm">
                     <i class="bi bi-tags text-emerald-green mr-1"></i>{{ __('public/gallery.categories') }}
@@ -77,7 +68,6 @@
                 </div>
             </div>
 
-            <!-- 🎨 Artist Filter -->
             <div class="border border-deep-emerald rounded-md p-3 shadow-sm bg-gray-100">
                 <h4 class="text-gray-700 font-medium mb-2 flex items-center text-sm">
                     <i class="bi bi-brush text-teal-600 mr-1"></i>{{ __('public/gallery.artists') }}
@@ -93,7 +83,6 @@
             </div>
         </div>
 
-        <!-- 🔥 Reset Filters Button -->
         <div class="mt-4 flex justify-end">
             <button wire:click="resetFilters" onclick="window.location.reload();"
                     class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md shadow-md border border-orange-700 transition-all duration-200 flex items-center text-sm">
@@ -103,7 +92,6 @@
     </div>
 @endif
 
-    <!-- 🎭 Artwork Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         @forelse($artworks as $artwork)
             <div class="bg-white p-6 shadow-lg rounded-xl border border-deep-emerald transition-transform hover:scale-105 hover:shadow-xl">
@@ -114,7 +102,6 @@
                 <h3 class="mt-4 text-lg font-semibold text-navy-blue">{{ $artwork->name }}</h3>
                 <p class="text-gray-600 italic">{{ $artwork->artist->name }}</p>
 
-                <!-- View Details Button -->
                 <div class="mt-4 flex justify-between">
                     <a href="{{ route('artwork.show', $artwork->slug) }}"
                     class="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-lg shadow-md transition">
@@ -127,7 +114,6 @@
         @endforelse
     </div>
 
-    <!-- 📄 Pagination -->
     <div class="mt-8 flex justify-center">
         {{ $artworks->links() }}
     </div>

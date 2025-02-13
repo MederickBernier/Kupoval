@@ -30,4 +30,5 @@ return [
     'list_orders' => 'Liste des commandes',
     'deactivated_orders' => 'Commandes désactivées',
     'list_users' => 'Liste des utilisateurs',
+    'promotions' => 'Promotions',
 ];

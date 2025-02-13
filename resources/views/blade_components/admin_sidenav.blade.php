@@ -103,25 +103,31 @@
                 </ul>
             </li>
 
-            <!-- Users -->
-            <li x-data="{ openUsers: {{ request()->routeIs('admin.users.*') ? 'true' : 'false' }} }">
-                <button @click="openUsers = !openUsers"
-                        class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
-                    <i class="bi bi-people mr-2"></i> {{ __('admin/sidenav.users') }}
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openUsers}"></i>
-                </button>
-                <ul x-show="openUsers" class="pl-8 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.users.index') }}"
-                           class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.users.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
-                            {{ __('admin/sidenav.list_users') }}
-                    </a></li>
-                    <li><a href="{{ route('admin.users.trashed') }}"
-                           class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.users.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
-                            {{ __('admin/sidenav.deactivated_users') }}
-                    </a></li>
-                </ul>
+            <!-- Promotions -->
+            <li>
+                <a href="#"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200
+                          {{ request()->routeIs('admin.promotions.index') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                    <i class="bi bi-tags mr-2"></i> {{ __('admin/sidenav.promotions') }}
+                </a>
+            </li>
+
+            <!-- Accounting -->
+            <li>
+                <a href="#"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200
+                          {{ request()->routeIs('admin.accounting.index') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                    <i class="bi bi-calculator mr-2"></i> {{ __('admin/sidenav.accounting') }}
+                </a>
+            </li>
+
+            <!-- Social Media -->
+            <li>
+                <a href="#"
+                   class="flex items-center px-4 py-2 hover:bg-gray-200
+                          {{ request()->routeIs('admin.socialmedia.index') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                    <i class="bi bi-share mr-2"></i> {{ __('admin/sidenav.social_media') }}
+                </a>
             </li>
 
             <!-- Settings -->

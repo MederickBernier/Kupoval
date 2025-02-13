@@ -30,4 +30,5 @@ return [
     'list_orders' => 'List Orders',
     'deactivated_orders' => 'Deactivated Orders',
     'list_users' => 'List Users',
+    'promotions' => 'Promotions',
 ];
