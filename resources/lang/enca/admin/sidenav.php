@@ -31,4 +31,7 @@ return [
     'deactivated_orders' => 'Deactivated Orders',
     'list_users' => 'List Users',
     'promotions' => 'Promotions',
+    'statics' => 'Static Pages',
+    'list_promotions' => 'List Promotions',
+    'deactivated_promotions' => 'Deactivated Promotions',
 ];

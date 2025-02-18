@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('order_id')->constrained()->onDelete('set null');
             $table->string('payment_method')->default('');
             $table->decimal('amount', 10, 2)->default(0.00);
-            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->enum('status', ['pending', 'successful', 'failed', 'refunded', 'disputed'])->default('pending');
             $table->string('transaction_id')->nullable();
             $table->timestamps();
             $table->softDeletes();

@@ -71,4 +71,6 @@ return [
     'remove' => 'Retirer',
     'update_order' => 'Mettre à jour la commande',
     'deactivate' => 'Désactiver',
+    'warning' => 'Avertissement',
+    'warning_message'=> 'Ce formulaire est principalement un outil de développement. Bien qu\'il soit possible de créer des commandes manuellement ici, ce n\'est pas la méthode recommandée. Certaines erreurs peuvent survenir en raison d\'une implémentation incomplète ou obsolète.'
 ];

@@ -13,9 +13,14 @@ return new class extends Migration
     {
         Schema::create('promotions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->string('name', 255);
+            $table->string('code')->unique()->nullable();
             $table->text('description')->nullable();
-            $table->decimal('discount_percentage', 5, 2)->default(0.00);
+            $table->decimal('discount_percentage', 5, 2)->nullable();
+            $table->decimal('discount_amount', 10, 2)->nullable();
+            $table->integer('usage_limit')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();

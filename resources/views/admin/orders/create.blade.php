@@ -3,6 +3,15 @@
 @section('content')
 <div class="container mx-auto px-6 py-8">
     <h1 class="text-2xl font-semibold text-gray-800">{{ __('admin/orders.create_order') }}</h1>
+    <!-- Warning Message -->
+    <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded-md shadow-md mt-4">
+        <p class="font-semibold">
+            ⚠️ {{ __('admin/orders.warning') }}
+        </p>
+        <p class="text-sm">
+            {{ __('admin/orders.warning_message') }}
+        </p>
+    </div>
 
     <!-- Alpine.js Data Initialization -->
     <script>

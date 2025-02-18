@@ -7,7 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Wishlist;
+use App\Models\UserProfile;
+use App\Models\Order;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|Wishlist[] $wishlist
+ */
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasFactory, Notifiable, SoftDeletes;
@@ -31,13 +37,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
-    public function isAdmin(){
+    public function isAdmin()
+    {
         return $this->role === 'admin';
     }
 
     public function profile()
     {
-        return $this->hasOne(UserProfile::class,'user_id', 'id');
+        return $this->hasOne(UserProfile::class, 'user_id', 'id');
     }
 
     public function orders()
@@ -50,7 +57,13 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Wishlist::class);
     }
 
-    public function activeUsers(){
+    public function activeUsers()
+    {
         return self::whereNull('deleted_at')->get();
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
     }
 }

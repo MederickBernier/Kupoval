@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('set null');
             $table->foreignId('shipping_condition_id')->constrained()->onDelete('cascade');
-            $table->enum('status', ['pending', 'completed', 'canceled', 'refunded'])->default('pending');
+            $table->enum('status', ['pending', 'processing', 'completed', 'canceled', 'disputed'])->default('pending');
             $table->decimal('total', 10, 2)->default(0.00);
 
             $table->unsignedBigInteger('billing_address_id')->nullable();

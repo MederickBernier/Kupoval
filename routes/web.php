@@ -10,14 +10,18 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\BioController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Webhooks\StripeWebhookController;
-use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 // Pages publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/gallery', [HomeController::class, 'gallery'])->name('gallery');
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/cart', [ShopController::class, 'cart'])->name('shop.cart');
 Route::get('/artwork/{artwork}', [ArtworkController::class, 'show'])->name('artwork.show');
 Route::get('/events', [HomeController::class, 'events'])->name('events');
 Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show');
@@ -25,11 +29,6 @@ Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show
 // Bio Routes
 Route::get('/bio', [BioController::class, 'index'])->name('bio.index');
 Route::get('/bio/artist/{artist:slug}', [BioController::class, 'show'])->name('bio.show');
-
-// Stripe Webhook Route
-Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])
-    ->name('stripe.webhook')
-    ->withoutMiddleware(['Illuminate\Foundation\Http\Middleware\VerifyCsrfToken', SubstituteBindings::class]);
 
 // Authentification (guest seulement)
 Route::middleware('guest')->group(function () {
@@ -41,6 +40,9 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->name('logout');
+
+// Stripe webhook route
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handleWebhook'])->withoutMiddleware([VerifyCsrfToken::class]);
 
 // Vérification d'email
 Route::middleware('auth')->group(function () {
@@ -65,6 +67,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Lang Switching Route
 Route::post('/lang-switch', [LanguageController::class, 'switch'])->middleware('auth')->name('lang.switch');
 
+//Checkout routes
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'createCheckoutSession'])->name('checkout');
+    Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+    Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+    Route::get('/checkout/confirmation', [CheckoutController::class, 'confirmation'])->name('checkout.confirmation');
+    Route::post('/checkout/apply-promo', [CheckoutController::class, 'applyPromoCode'])->name('checkout.applyPromo');
+    Route::post('/checkout/remove-promo', [CheckoutController::class, 'removePromoCode'])->name('checkout.removePromo');
+    Route::post('/checkout/update-shipping', [CheckoutController::class, 'updateShipping'])->name('checkout.updateShipping');
+    Route::post('/checkout/store-session', [CheckoutController::class, 'storeSession'])->name('checkout.storeSession');
+});
+
 // Charger les routes Admin
 Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     require_once __DIR__ . '/admin/dashboard.php';
@@ -75,4 +89,5 @@ Route::middleware(['auth', 'verified'])->prefix('admin')->group(function () {
     require_once __DIR__ . '/admin/categories.php';
     require_once __DIR__ . '/admin/artists.php';
     require_once __DIR__ . '/admin/orders.php';
+    require_once __DIR__ . '/admin/promotions.php';
 });

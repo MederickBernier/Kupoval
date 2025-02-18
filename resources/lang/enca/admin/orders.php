@@ -71,4 +71,6 @@ return [
     'remove' => 'Remove',
     'update_order' => 'Update Order',
     'deactivate' => 'Deactivate',
+    'warning' => 'Warning',
+    'warning_message'=> 'This form is primarily a development tool. While it is possible to create orders manually here, it is not the recommended method. Some errors may occur due to incomplete or outdated implementation.'
 ];

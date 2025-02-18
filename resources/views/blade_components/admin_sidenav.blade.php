@@ -82,59 +82,43 @@
                 </ul>
             </li>
 
-            <!-- Events -->
-            <li x-data="{ openEvents: {{ request()->routeIs('admin.events.*') ? 'true' : 'false' }} }">
-                <button @click="openEvents = !openEvents"
+            <!-- Promotions (Updated Section) -->
+            <li x-data="{ openPromotions: {{ request()->routeIs('admin.promotions.*') ? 'true' : 'false' }} }">
+                <button @click="openPromotions = !openPromotions"
                         class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
-                    <i class="bi bi-calendar-event mr-2"></i> {{ __('admin/sidenav.events') }}
-                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openEvents}"></i>
-                </button>
-                <ul x-show="openEvents" class="pl-8 mt-1 space-y-1">
-                    <li><a href="{{ route('admin.events.index') }}"
-                           class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.events.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
-                            {{ __('admin/sidenav.list_events') }}
-                    </a></li>
-                    <li><a href="{{ route('admin.events.trashed') }}"
-                           class="block px-4 py-2 hover:bg-gray-100
-                                  {{ request()->routeIs('admin.events.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
-                            {{ __('admin/sidenav.deactivated_events') }}
-                    </a></li>
-                </ul>
-            </li>
-
-            <!-- Promotions -->
-            <li>
-                <a href="#"
-                   class="flex items-center px-4 py-2 hover:bg-gray-200
-                          {{ request()->routeIs('admin.promotions.index') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
                     <i class="bi bi-tags mr-2"></i> {{ __('admin/sidenav.promotions') }}
-                </a>
+                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openPromotions}"></i>
+                </button>
+                <ul x-show="openPromotions" class="pl-8 mt-1 space-y-1">
+                    <li>
+                        <a href="{{ route('admin.promotions.index') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.promotions.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.list_promotions') }}
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('admin.promotions.trashed') }}"
+                           class="block px-4 py-2 hover:bg-gray-100
+                                  {{ request()->routeIs('admin.promotions.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.deactivated_promotions') }}
+                        </a>
+                    </li>
+                </ul>
             </li>
 
             <!-- Accounting -->
             <li>
                 <a href="#"
-                   class="flex items-center px-4 py-2 hover:bg-gray-200
-                          {{ request()->routeIs('admin.accounting.index') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                   class="flex items-center px-4 py-2 hover:bg-gray-200">
                     <i class="bi bi-calculator mr-2"></i> {{ __('admin/sidenav.accounting') }}
-                </a>
-            </li>
-
-            <!-- Social Media -->
-            <li>
-                <a href="#"
-                   class="flex items-center px-4 py-2 hover:bg-gray-200
-                          {{ request()->routeIs('admin.socialmedia.index') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
-                    <i class="bi bi-share mr-2"></i> {{ __('admin/sidenav.social_media') }}
                 </a>
             </li>
 
             <!-- Settings -->
             <li>
                 <a href="{{ route('admin.settings.index') }}"
-                   class="flex items-center px-4 py-2 hover:bg-gray-200
-                          {{ request()->routeIs('admin.settings.index') ? 'bg-gray-300 font-semibold' : 'text-gray-700' }}">
+                   class="flex items-center px-4 py-2 hover:bg-gray-200">
                     <i class="bi bi-gear mr-2"></i> {{ __('admin/sidenav.settings') }}
                 </a>
             </li>

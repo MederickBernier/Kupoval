@@ -35,7 +35,7 @@
             <a href="{{ route('bio.index') }}" class="relative hover:text-navbar-hover group text-2xl">
                 {{ __('public/interface.bio') }}
             </a>
-            <a href="#" class="relative hover:text-navbar-hover group text-2xl">
+            <a href="{{ route('shop.index') }}" class="relative hover:text-navbar-hover group text-2xl">
                 {{ __('public/interface.shop') }}
             </a>
             <a href="{{ route('about') }}" class="relative hover:text-navbar-hover group text-2xl">
