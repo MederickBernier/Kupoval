@@ -84,7 +84,7 @@
         </div>
 
         <div class="mt-4 flex justify-end">
-            <button wire:click="resetFilters" onclick="window.location.reload();"
+            <button wire:click="resetFilters"
                     class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md shadow-md border border-orange-700 transition-all duration-200 flex items-center text-sm">
                 <i class="bi bi-arrow-counterclockwise mr-2"></i> {{ __('public/gallery.reset_filters') }}
             </button>
@@ -92,7 +92,8 @@
     </div>
 @endif
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+    <!-- ✅ Fully Responsive Grid (4 items on large, 3 on medium, 2 on small screens) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8">
         @forelse($artworks as $artwork)
             <div class="bg-white p-6 shadow-lg rounded-xl border border-deep-emerald transition-transform hover:scale-105 hover:shadow-xl">
                 <img src="{{ Storage::url($artwork->image) }}"

@@ -31,8 +31,53 @@
         </div>
 
         <h3 class="text-lg font-semibold text-gray-800 mt-4">Subtotal:
-            <span class="text-green-600 font-bold">${{ number_format(session('cart_total', 0), 2) }}</span>
+            <span class="text-green-600 font-bold">$<span x-text="subtotal.toFixed(2)"></span></span>
         </h3>
+
+        <!-- Billing Address -->
+        <div class="bg-gray-100 p-4 rounded-md shadow-md mt-4">
+            <h3 class="text-lg font-semibold text-gray-800">Billing Address</h3>
+            <p class="text-gray-700">
+                {{ $billingAddress['address'] ?? 'N/A' }}<br>
+                {{ $billingAddress['city'] ?? '' }}, {{ $billingAddress['state'] ?? '' }}<br>
+                {{ $billingAddress['country'] ?? '' }} - {{ $billingAddress['zipcode'] ?? '' }}
+            </p>
+        </div>
+
+        <!-- Shipping Address (Now as Editable Fields) -->
+        <div class="bg-gray-100 p-4 rounded-md shadow-md mt-4">
+            <h3 class="text-lg font-semibold text-gray-800">Shipping Address</h3>
+
+            <label class="flex items-center space-x-2">
+                <input type="checkbox" id="use_different_shipping" x-model="useDifferentShipping">
+                <span>Use a different shipping address</span>
+            </label>
+
+            <div x-show="useDifferentShipping" class="mt-4 space-y-2" x-transition>
+                <input type="text" x-model="shippingAddress.recipient_name" placeholder="Recipient Name" class="w-full border p-2 rounded">
+                <input type="email" x-model="shippingAddress.recipient_email" placeholder="Recipient Email" class="w-full border p-2 rounded">
+                <input type="text" x-model="shippingAddress.recipient_phone" placeholder="Recipient Phone" class="w-full border p-2 rounded">
+                <input type="text" x-model="shippingAddress.address" placeholder="Street Address" class="w-full border p-2 rounded">
+                <input type="text" x-model="shippingAddress.city" placeholder="City" class="w-full border p-2 rounded">
+                <input type="text" x-model="shippingAddress.state" placeholder="State" class="w-full border p-2 rounded">
+                <input type="text" x-model="shippingAddress.country" placeholder="Country" class="w-full border p-2 rounded">
+                <input type="text" x-model="shippingAddress.zipcode" placeholder="Zip Code" class="w-full border p-2 rounded">
+            </div>
+        </div>
+
+        <!-- Shipping Selection -->
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-gray-800">Shipping Option</h3>
+            <select x-model="shippingConditionId" @change="updateShippingFee"
+                    class="border p-2 rounded-md w-full focus:ring focus:ring-blue-200">
+                <option value="">Select Shipping</option>
+                @foreach($shippingConditions as $condition)
+                    <option value="{{ $condition->id }}">
+                        {{ $condition->name }} - ${{ number_format($condition->fee, 2) }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
         <!-- Promo Code Section -->
         <div class="mt-4">
@@ -49,24 +94,11 @@
                :class="discount > 0 ? 'text-green-600' : 'text-red-600'"></p>
         </div>
 
-        <!-- Shipping Selection -->
-        <div class="mt-6">
-            <label class="block font-bold text-gray-700">Select Shipping:</label>
-            <select x-model="shippingConditionId" @change="updateShippingFee"
-                    class="border p-2 rounded-md w-1/2 focus:ring focus:ring-blue-200">
-                <option value="">Select Shipping</option>
-                @foreach($shippingConditions as $condition)
-                    <option value="{{ $condition->id }}">{{ $condition->name }} -
-                        ${{ number_format($condition->fee, 2) }}</option>
-                @endforeach
-            </select>
-        </div>
-
         <!-- Total Price -->
         <h3 class="text-xl font-bold text-gray-800 mt-6">Total:
-            <span class="text-green-600 font-extrabold">$<span x-text="finalTotal"></span></span>
+            <span class="text-green-600 font-extrabold">$<span x-text="finalTotal.toFixed(2)"></span></span>
         </h3>
-        <p x-show="discount > 0" class="text-gray-500 text-sm">You saved: $<span x-text="discount"></span></p>
+        <p x-show="discount > 0" class="text-gray-500 text-sm">You saved: $<span x-text="discount.toFixed(2)"></span></p>
 
         <!-- Checkout Button -->
         <button @click="proceedToCheckout"
@@ -78,82 +110,55 @@
 
 <script>
 function checkoutForm() {
-        return {
-            promoCode: '',
-            appliedPromo: "{{ session('applied_promo', '') }}",
-            promoMessage: '',
-            discount: {{ session('discount_amount', 0) }},
-            shippingConditionId: null,
-            shippingFee: 0,
-            subtotal: {{ session('cart_total', 0) }},
-            finalTotal: {{ session('cart_total', 0) }},
+    return {
+        promoCode: '',
+        appliedPromo: "{{ session('applied_promo', '') }}",
+        promoMessage: '',
+        discount: 0, // Reset discount to avoid pre-applied reductions
+        shippingConditionId: "{{ session('shipping_condition_id', '') }}",
+        shippingFee: parseFloat({{ session('shipping_fee', 0) }}),
+        subtotal: parseFloat({{ session('cart_total', 0) }}),
+        finalTotal: 0.00,
+        useDifferentShipping: false,
+        shippingAddress: {
+            recipient_name: '',
+            recipient_email: '',
+            recipient_phone: '',
+            address: '',
+            city: '',
+            state: '',
+            country: '',
+            zipcode: ''
+        },
 
-            applyPromoCode() {
-                fetch("{{ route('checkout.applyPromo') }}", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                    body: JSON.stringify({ code: this.promoCode })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.discount = parseFloat(data.discount);
-                        this.appliedPromo = this.promoCode;
-                        this.promoMessage = "Promo code applied!";
-                    } else {
-                        this.promoMessage = "Invalid promo code!";
-                        this.discount = 0;
-                        this.appliedPromo = '';
-                    }
+        updateShippingFee() {
+            fetch("{{ route('checkout.updateShipping') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: JSON.stringify({ shipping_id: this.shippingConditionId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.shippingFee = parseFloat(data.shipping_fee);
                     this.updateTotal();
-                });
-            },
+                }
+            });
+        },
 
-            removePromoCode() {
-                fetch("{{ route('checkout.removePromo') }}", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.discount = 0;
-                        this.appliedPromo = '';
-                        this.promoCode = '';
-                        this.promoMessage = "Promo code removed.";
-                    }
-                    this.updateTotal();
-                });
-            },
+        updateTotal() {
+            this.finalTotal = (this.subtotal - this.discount + this.shippingFee);
+        },
 
-            updateShippingFee() {
-                fetch("{{ route('checkout.updateShipping') }}", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                    body: JSON.stringify({ shipping_id: this.shippingConditionId })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        this.shippingFee = parseFloat(data.shipping_fee);
-                        this.updateTotal();
-                    }
-                });
-            },
-
-            updateTotal() {
-                this.finalTotal = (parseFloat(this.subtotal) - parseFloat(this.discount) + parseFloat(this.shippingFee)).toFixed(2);
-            },
-
-            proceedToCheckout() {
-                fetch("{{ route('checkout.storeSession') }}", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                    body: JSON.stringify({ final_total: this.finalTotal })
-                })
-                .then(() => window.location.href = "{{ route('checkout') }}");
-            }
+        proceedToCheckout() {
+            fetch("{{ route('checkout.storeSession') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: JSON.stringify({ final_total: this.finalTotal, shipping_address: this.shippingAddress })
+            })
+            .then(() => window.location.href = "{{ route('checkout') }}");
         }
-    }
+    };
+}
 </script>
 @endsection

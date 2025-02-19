@@ -50,25 +50,29 @@
 
         <!-- Addresses -->
         <div class="grid grid-cols-2 gap-6 mt-6">
-            <!-- Billing Address -->
-            <div class="bg-gray-100 p-4 rounded-lg">
-                <h3 class="text-lg font-semibold">{{ __('admin/orders.billing_address') }}</h3>
-                <input type="text" name="billing_address" value="{{ $order->billingAddress->address ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-                <input type="text" name="billing_city" value="{{ $order->billingAddress->city ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-                <input type="text" name="billing_state" value="{{ $order->billingAddress->state ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-                <input type="text" name="billing_country" value="{{ $order->billingAddress->country ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-                <input type="text" name="billing_zipcode" value="{{ $order->billingAddress->zipcode ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-            </div>
+        <!-- Billing Address -->
+        <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold">{{ __('admin/orders.billing_address') }}</h3>
+            <input type="text" name="billing_address" value="{{ old('billing_address', $order->billingAddress->address ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+            <input type="text" name="billing_city" value="{{ old('billing_city', $order->billingAddress->city ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+            <input type="text" name="billing_state" value="{{ old('billing_state', $order->billingAddress->state ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+            <input type="text" name="billing_country" value="{{ old('billing_country', $order->billingAddress->country ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+            <input type="text" name="billing_zipcode" value="{{ old('billing_zipcode', $order->billingAddress->zipcode ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+        </div>
 
-            <!-- Shipping Address -->
-            <div class="bg-gray-100 p-4 rounded-lg">
-                <h3 class="text-lg font-semibold">{{ __('admin/orders.shipping_address') }}</h3>
-                <input type="text" name="shipping_address" value="{{ $order->shippingAddress->address ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-                <input type="text" name="shipping_city" value="{{ $order->shippingAddress->city ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-                <input type="text" name="shipping_state" value="{{ $order->shippingAddress->state ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-                <input type="text" name="shipping_country" value="{{ $order->shippingAddress->country ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-                <input type="text" name="shipping_zipcode" value="{{ $order->shippingAddress->zipcode ?? '' }}" class="w-full border px-4 py-2 rounded-lg mt-2">
-            </div>
+        <!-- Shipping Address -->
+        <div class="bg-gray-100 p-4 rounded-lg">
+            <h3 class="text-lg font-semibold">{{ __('admin/orders.shipping_address') }}</h3>
+            <input type="text" name="shipping_address" value="{{ old('shipping_address', $order->shippingAddress->address ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+            <input type="text" name="shipping_city" value="{{ old('shipping_city', $order->shippingAddress->city ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+            <input type="text" name="shipping_state" value="{{ old('shipping_state', $order->shippingAddress->state ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+            <input type="text" name="shipping_country" value="{{ old('shipping_country', $order->shippingAddress->country ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+            <input type="text" name="shipping_zipcode" value="{{ old('shipping_zipcode', $order->shippingAddress->zipcode ?? '') }}" class="w-full border px-4 py-2 rounded-lg mt-2">
+        </div>
+
+        <!-- Order Total -->
+        <div class="mt-4 text-right text-lg font-semibold">
+            {{ __('admin/orders.total') }}: ${{ number_format($order->total, 2) }}
         </div>
 
         <!-- Order Items -->

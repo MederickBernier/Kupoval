@@ -75,6 +75,7 @@ class AdminOrdersController extends Controller
         try {
             isAllowed($request->user());
 
+            // Eager load related models
             $order->load([
                 'items.artwork',
                 'user',
@@ -82,6 +83,10 @@ class AdminOrdersController extends Controller
                 'shippingAddress',
                 'shippingCondition',
             ]);
+
+            // Debugging: Check if billing and shipping addresses exist
+            logger()->info('Billing Address: ', [$order->billingAddress]);
+            logger()->info('Shipping Address: ', [$order->shippingAddress]);
 
             return view('admin.orders.edit', [
                 'order' => $order,

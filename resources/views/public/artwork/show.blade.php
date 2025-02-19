@@ -2,15 +2,15 @@
 
 @section('content')
 <div class="p-6 bg-soft-aqua text-charcoal-gray min-h-screen">
-    <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-8 flex flex-col lg:flex-row gap-8">
+    <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-8 grid lg:grid-cols-2 gap-8">
 
         <!-- Left Section: Artwork Image -->
-        <div class="flex-none w-full lg:w-1/3 relative">
+        <div class="relative">
             <a href="{{ Storage::url($artwork->image) }}" class="artwork-lightbox" data-lightbox="gallery" data-title="{{ $artwork->name }}">
                 <img src="{{ Storage::url($artwork->image) }}" alt="{{ $artwork->name }}" class="w-full h-80 object-cover rounded-lg shadow-xl cursor-pointer transition-transform duration-300">
             </a>
 
-            <!-- Status Badges (Updated for compact design) -->
+            <!-- Status Badges -->
             <div class="absolute top-4 left-4 flex flex-col space-y-1">
                 @if($artwork->is_featured)
                     <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center">
@@ -30,12 +30,10 @@
             </div>
         </div>
 
-        <!-- Right Section: Content (Details, Artist Info, Event, etc.) -->
-        <div class="flex-1 space-y-6">
-            <!-- Artwork Title -->
+        <!-- Right Section: Content (Details, Description, Event, etc.) -->
+        <div class="space-y-6">
             <h2 class="text-3xl font-bold text-navy-blue">{{ $artwork->name }}</h2>
 
-            <!-- Artwork Details (Dimensions & Price) -->
             <div class="bg-teal-50 p-4 rounded-lg">
                 <h3 class="text-xl font-semibold text-teal-600">{{ __('Artwork Details') }}</h3>
                 <ul class="text-gray-700 list-disc list-inside mt-2">
@@ -43,13 +41,11 @@
                 </ul>
             </div>
 
-            <!-- Description -->
             <div class="bg-teal-50 p-4 rounded-lg">
                 <h3 class="text-xl font-semibold text-teal-600">{{ __('Description') }}</h3>
                 <p class="text-gray-700">{!! $artwork->description !!}</p>
             </div>
 
-            <!-- Categories -->
             <div class="bg-teal-50 p-4 rounded-lg">
                 <h3 class="text-xl font-semibold text-teal-600">{{ __('Categories') }}</h3>
                 @if($artwork->categories->isNotEmpty())
@@ -63,7 +59,6 @@
                 @endif
             </div>
 
-            <!-- Event Info -->
             @if($artwork->event)
             <div class="bg-teal-50 p-4 rounded-lg">
                 <h3 class="text-xl font-semibold text-teal-600">{{ __('Event Details') }}</h3>
@@ -82,38 +77,45 @@
                 </p>
             </div>
             @endif
+        </div>
 
-            <!-- Artist Info -->
-            <div class="bg-teal-50 p-4 rounded-lg">
-                <h3 class="text-xl font-semibold text-teal-600">{{ __('Artist') }}</h3>
-                <div class="flex items-center space-x-6 mt-4">
-                    <img src="{{ asset($artwork->artist->photo) }}" alt="{{ $artwork->artist->name }}" class="w-24 h-24 object-cover rounded-full border-4 border-deep-emerald shadow-md">
-                    <div>
-                        <p class="text-gray-800 text-lg">{{ $artwork->artist->name }}</p>
-                        <p class="text-gray-600 text-sm italic mt-2">{{ $artwork->artist->bio }}</p>
-                    </div>
+        <!-- Artist Section (Spanning 2 Columns) -->
+        <div class="bg-teal-50 p-4 rounded-lg lg:col-span-2">
+            <h3 class="text-xl font-semibold text-teal-600">{{ __('Artist') }}</h3>
+            <div class="flex items-center space-x-6 mt-4">
+                <img src="{{ asset($artwork->artist->photo) }}" alt="{{ $artwork->artist->name }}"
+                    class="w-24 h-24 object-cover rounded-full border-4 border-deep-emerald shadow-md">
+                <div>
+                    <p class="text-gray-800 text-lg">{{ $artwork->artist->name }}</p>
+                    <p class="text-gray-600 text-sm italic mt-2">{{ $artwork->artist->bio }}</p>
                 </div>
             </div>
-
-            <!-- Back to Gallery Button -->
-            <div class="mt-8 flex justify-center">
-                <a href="{{ route('gallery') }}" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-lg shadow-md transition-all duration-200 flex items-center text-lg">
-                    <i class="bi bi-arrow-left mr-2"></i>{{ __('Back to Gallery') }}
+            <div class="mt-4 flex justify-end">
+                <a href="#"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition-all duration-200">
+                <i class="bi bi-envelope-fill mr-2"></i> {{ __('Contact the Artist') }}
                 </a>
             </div>
         </div>
+
+        <!-- Back to Gallery Button -->
+        <div class="lg:col-span-2 mt-8 flex justify-center">
+            <a href="{{ route('gallery') }}" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-lg shadow-md transition-all duration-200 flex items-center text-lg">
+                <i class="bi bi-arrow-left mr-2"></i>{{ __('Back to Gallery') }}
+            </a>
+        </div>
+
     </div>
 </div>
 @endsection
 
 @push('scripts')
-    <!-- Include SimpleLightbox -->
-    <script src="https://cdn.jsdelivr.net/npm/simplelightbox@2.4.0/dist/simple-lightbox.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var lightbox = new SimpleLightbox('.artwork-lightbox', {
-                overlayOpacity: 0.9,  // Darkens the background further for better focus on the image
-            });
+<script src="https://cdn.jsdelivr.net/npm/simplelightbox@2.4.0/dist/simple-lightbox.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var lightbox = new SimpleLightbox('.artwork-lightbox', {
+            overlayOpacity: 0.9,  // Darkens the background further for better focus on the image
         });
-    </script>
+    });
+</script>
 @endpush

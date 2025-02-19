@@ -14,19 +14,42 @@
         </a>
     </div>
 
-    <!-- Search & Filters -->
-    <div class="flex space-x-2 mb-4">
-        <input type="text" class="border border-gray-300 px-4 py-2 rounded-lg w-60 focus:ring focus:ring-blue-300"
-               placeholder="{{ __('admin/orders.search_placeholder') }}">
+    {{-- <!-- Search & Filters -->
+    <form method="GET" action="{{ route('admin.orders.index') }}" class="flex space-x-2 mb-4">
+        <input type="text" name="search" value="{{ request('search') }}"
+            class="border border-gray-300 px-4 py-2 rounded-lg w-60 focus:ring focus:ring-blue-300"
+            placeholder="{{ __('admin/orders.search_placeholder') }}">
 
-        <select class="border border-gray-300 px-4 py-2 rounded-lg w-48 focus:ring focus:ring-blue-300">
+        <select name="status"
+                class="border border-gray-300 px-4 py-2 rounded-lg w-48 focus:ring focus:ring-blue-300"
+                onchange="this.form.submit()">
             <option value="">{{ __('admin/orders.filter_status') }}</option>
-            <option value="pending">{{ __('admin/orders.status.pending') }}</option>
-            <option value="completed">{{ __('admin/orders.status.completed') }}</option>
-            <option value="canceled">{{ __('admin/orders.status.canceled') }}</option>
-            <option value="refunded">{{ __('admin/orders.status.refunded') }}</option>
+            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>
+                {{ __('admin/orders.status.pending') }}
+            </option>
+            <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>
+                {{ __('admin/orders.status.completed') }}
+            </option>
+            <option value="canceled" {{ request('status') === 'canceled' ? 'selected' : '' }}>
+                {{ __('admin/orders.status.canceled') }}
+            </option>
+            <option value="refunded" {{ request('status') === 'refunded' ? 'selected' : '' }}>
+                {{ __('admin/orders.status.refunded') }}
+            </option>
         </select>
-    </div>
+
+        <button type="submit"
+                class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
+            {{ __('admin/orders.filter') }}
+        </button>
+
+        @if(request()->has('search') || request()->has('status'))
+            <a href="{{ route('admin.orders.index') }}"
+            class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
+                {{ __('admin/orders.clear_filters') }}
+            </a>
+        @endif
+    </form> --}}
 
     <!-- Orders Table -->
     @if($orders->isEmpty())

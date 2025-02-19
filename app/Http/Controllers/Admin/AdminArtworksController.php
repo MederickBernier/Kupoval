@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Artist;
 use App\Models\Category;
 use App\Models\Event;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class AdminArtworksController extends Controller
 {
@@ -44,17 +46,6 @@ class AdminArtworksController extends Controller
         try {
             isAllowed($request->user());
 
-            // Ensure `categories` is an array (handle both comma-separated and JSON formats)
-            $categories = is_array($request->categories)
-                ? $request->categories
-                : explode(',', (string) $request->categories);
-
-            // Convert values to integers and remove invalid entries
-            $categories = collect($categories)
-                ->map(fn($id) => intval(trim($id)))
-                ->filter(fn($id) => $id > 0) // Remove empty or invalid IDs
-                ->toArray();
-
             $validated = $request->validate([
                 'artist_id'     => 'required|exists:artists,id',
                 'name'          => 'required|string|max:255',
@@ -65,7 +56,7 @@ class AdminArtworksController extends Controller
                 'is_on_sale'    => 'boolean',
                 'is_featured'   => 'boolean',
                 'is_for_event'  => 'boolean',
-                'event_id'      => 'nullable|exists:events,id',
+                'event_id'      => 'nullable|exists:events,id|required_if:is_for_event,true',
                 'categories'    => 'sometimes|array',
                 'categories.*'  => 'exists:categories,id',
                 'image'         => 'nullable|image|max:2048',
@@ -75,6 +66,21 @@ class AdminArtworksController extends Controller
                 $validated['image'] = $request->file('image')->store('artworks', 'public');
             }
 
+            // Generate slug from name
+            $slug = Str::slug($validated['name'], '-');
+
+            // Ensure the slug is unique by appending a number if necessary
+            $counter = 1;
+            $originalSlug = $slug;
+            while (Artwork::where('slug', $slug)->exists()) {
+                $slug = $originalSlug . '-' . $counter;
+                $counter++;
+            }
+            $validated['slug'] = $slug;
+
+            // Handle Categories
+            $categories = is_array($request->categories) ? array_filter($request->categories, 'is_numeric') : [];
+
             // Create Artwork
             $artwork = Artwork::create($validated);
 
@@ -83,7 +89,12 @@ class AdminArtworksController extends Controller
 
             return redirect()->route('admin.artworks.index')->with('success', __('Artwork created successfully.'));
         } catch (\Exception $e) {
-            throwError(__('Error creating artwork'), 500, ['exception' => $e->getMessage()]);
+            Log::error('Error creating artwork', [
+                'error' => $e->getMessage(),
+                'request' => $request->all(),
+            ]);
+
+            return redirect()->back()->withErrors(['error' => 'Failed to create artwork. Check logs.']);
         }
     }
 

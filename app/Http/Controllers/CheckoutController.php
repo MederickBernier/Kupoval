@@ -209,12 +209,53 @@ class CheckoutController extends Controller
         // Fetch available shipping conditions
         $shippingConditions = \App\Models\ShippingCondition::all();
 
+        // Retrieve user billing & shipping address from their profile
+        $user = Auth::user();
+        $profile = $user->profile;
+
+        $billingAddress = [
+            'address'  => session('billing_address', $profile->address ?? 'N/A'),
+            'city'     => session('billing_city', $profile->city ?? ''),
+            'state'    => session('billing_state', $profile->state ?? ''),
+            'country'  => session('billing_country', $profile->country ?? ''),
+            'zipcode'  => session('billing_zipcode', $profile->zipcode ?? ''),
+        ];
+
+        $useDifferentShipping = session('use_different_shipping', false);
+        $shippingAddress = [
+            'recipient_name'  => session('recipient_name', $useDifferentShipping ? '' : $user->profile->first_name . ' ' . $user->profile->last_name),
+            'recipient_email' => session('recipient_email', $useDifferentShipping ? '' : $user->email),
+            'recipient_phone' => session('recipient_phone', $useDifferentShipping ? '' : $user->profile->phone ?? ''),
+            'address'         => session('shipping_address', $useDifferentShipping ? '' : $billingAddress['address']),
+            'city'            => session('shipping_city', $useDifferentShipping ? '' : $billingAddress['city']),
+            'state'           => session('shipping_state', $useDifferentShipping ? '' : $billingAddress['state']),
+            'country'         => session('shipping_country', $useDifferentShipping ? '' : $billingAddress['country']),
+            'zipcode'         => session('shipping_zipcode', $useDifferentShipping ? '' : $billingAddress['zipcode']),
+        ];
+
+        // Shipping details
+        $shippingConditionId = session('shipping_condition_id', null);
+        $shippingCondition = $shippingConditionId
+            ? ShippingCondition::find($shippingConditionId)
+            : null;
+
+        $shippingFee = session('shipping_fee', $shippingCondition->fee ?? 0);
+
+        // Calculate final total
+        $finalTotal = $cartTotal - $discountAmount + $shippingFee;
+
         return view('public.checkout.confirmation', [
             'cart' => $cart,
             'cartTotal' => $cartTotal,
             'appliedPromo' => $appliedPromo,
             'discountAmount' => $discountAmount,
             'shippingConditions' => $shippingConditions,
+            'billingAddress' => $billingAddress,
+            'useDifferentShipping' => $useDifferentShipping,
+            'shippingAddress' => $shippingAddress,
+            'shippingCondition' => $shippingCondition,
+            'shippingFee' => $shippingFee,
+            'finalTotal' => $finalTotal,
         ]);
     }
 
