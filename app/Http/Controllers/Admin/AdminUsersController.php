@@ -17,9 +17,12 @@ class AdminUsersController extends Controller
         try {
             isAllowed($request->user());
 
-            $users = User::with(['profile', 'orders'])
-                ->orderBy('id', 'asc')
-                ->paginate(10);
+            $users = User::with([
+                'profile',
+                'profile.billingAddress',  // ✅ Ensure billingAddress is included
+                'profile.shippingAddresses', // ✅ Ensure shippingAddresses are included
+                'orders'
+            ])->orderBy('id', 'asc')->paginate(10);
 
             return view('admin.users.index', compact('users'));
         } catch (\Exception $e) {

@@ -21,17 +21,22 @@ class UserProfile extends Model
         'first_name',
         'last_name',
         'title',
-        'address',
-        'city',
-        'zipcode',
-        'state',
-        'country',
         'phone',
         'language',
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class);
+    }
+
+    public function billingAddress()
+    {
+        return $this->hasOne(Address::class)->where('type', 'billing');
+    }
+
+    public function shippingAddresses()
+    {
+        return $this->hasMany(Address::class)->where('type', 'shipping');
     }
 }

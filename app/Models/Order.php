@@ -14,13 +14,12 @@ class Order extends Model
         'user_id',
         'shipping_condition_id',
         'status',
+        'subtotal',
         'total',
         'billing_address_id',
         'shipping_address_id',
         'recipient_name',
         'recipient_email',
-        'recipient_phone',
-        'stripe_session_id',
     ];
 
     public function user()
@@ -46,5 +45,10 @@ class Order extends Model
     public function shippingAddress()
     {
         return $this->belongsTo(Address::class, 'shipping_address_id')->withTrashed();
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
     }
 }

@@ -53,6 +53,10 @@ return [
     'state' => 'Province',
     'country' => 'Pays',
     'phone' => 'Téléphone',
+    'billing_address' => 'Adresse de facturation',
+    'no_billing_address' => 'Aucune adresse de facturation fournie.',
+    'shipping_addresses' => 'Adresses de livraison',
+    'no_shipping_addresses' => 'Aucune adresse de livraison fournie.',
 
     // Fenêtre de restauration
     'confirm_restore_title' => 'Confirmer la restauration de l\'utilisateur',

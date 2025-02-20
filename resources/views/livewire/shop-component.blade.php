@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Str @endphp
 <div class="p-6 bg-soft-aqua text-charcoal-gray min-h-screen">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-bold text-navy-blue tracking-wide font-serif">{{ __('public/shop.browse_shop') }}</h2>
@@ -62,7 +63,13 @@
         <div class="mb-6 flex items-center">
             <input type="checkbox" wire:model.live="onlyFeatured" class="w-5 h-5 accent-teal-600">
             <label class="ml-2 text-gray-700 font-medium text-sm">{{ __('public/shop.only_featured') }}</label>
+            <input type="checkbox" wire:model.live="onlyWishlisted" class=" ml-5 w-5 h-5 accent-purple-600">
+            <label class="ml-2 text-gray-700 font-medium text-sm">
+                {{ __('public/shop.only_wishlisted') }}
+            </label>
         </div>
+
+
 
         <!-- Categories & Artists Section -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -70,7 +77,7 @@
                 <h4 class="text-gray-700 font-medium mb-2 flex items-center text-sm">
                     <i class="bi bi-tags text-emerald-green mr-1"></i>{{ __('public/shop.categories') }}
                 </h4>
-                <div class="max-h-32 overflow-y-auto p-2 bg-white rounded-md">
+                <div class="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto p-2 bg-white rounded-md">
                     @foreach($categories as $category)
                         <label class="flex items-center space-x-2 px-2 py-1 cursor-pointer hover:bg-gray-200 transition">
                             <input type="checkbox" wire:model.live="selectedCategories" value="{{ (int) $category->id }}" class="w-5 h-5 accent-emerald-green">
@@ -118,6 +125,7 @@
 
                 <h3 class="mt-4 text-lg font-semibold text-navy-blue">{{ $artwork->name }}</h3>
                 <p class="text-gray-600 italic">{{ $artwork->artist->name }}</p>
+                <p class="text-gray-700 text-sm mt-2">{!! Str::limit($artwork->description, 120) !!}</p>
 
                 <div class="mt-4 flex justify-between">
                     <button wire:click="addToCart({{ $artwork->id }})" class="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow-md transition-transform hover:scale-105">

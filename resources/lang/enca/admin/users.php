@@ -53,6 +53,10 @@ return [
     'state' => 'State',
     'country' => 'Country',
     'phone' => 'Phone',
+    'billing_address' => 'Billing Address',
+    'no_billing_address' => 'No billing address provided.',
+    'shipping_addresses' => 'Shipping Addresses',
+    'no_shipping_addresses' => 'No shipping address provided.',
 
     // Restore Modal
     'confirm_restore_title' => 'Confirm User Restoration',

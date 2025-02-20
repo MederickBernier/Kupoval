@@ -23,7 +23,14 @@ class Promotion extends Model
         'created_by',
     ];
 
-    public function artworks(){
+    protected $casts = [
+        'start_date' => 'datetime',
+        'end_date' => 'datetime',
+        'is_active' => 'boolean',
+    ];
+
+    public function artworks()
+    {
         return $this->belongsToMany(Artwork::class, 'artwork_promotions')->withTimestamps();
     }
 

@@ -14,43 +14,6 @@
         </a>
     </div>
 
-    {{-- <!-- Search & Filters -->
-    <form method="GET" action="{{ route('admin.orders.index') }}" class="flex space-x-2 mb-4">
-        <input type="text" name="search" value="{{ request('search') }}"
-            class="border border-gray-300 px-4 py-2 rounded-lg w-60 focus:ring focus:ring-blue-300"
-            placeholder="{{ __('admin/orders.search_placeholder') }}">
-
-        <select name="status"
-                class="border border-gray-300 px-4 py-2 rounded-lg w-48 focus:ring focus:ring-blue-300"
-                onchange="this.form.submit()">
-            <option value="">{{ __('admin/orders.filter_status') }}</option>
-            <option value="pending" {{ request('status') === 'pending' ? 'selected' : '' }}>
-                {{ __('admin/orders.status.pending') }}
-            </option>
-            <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>
-                {{ __('admin/orders.status.completed') }}
-            </option>
-            <option value="canceled" {{ request('status') === 'canceled' ? 'selected' : '' }}>
-                {{ __('admin/orders.status.canceled') }}
-            </option>
-            <option value="refunded" {{ request('status') === 'refunded' ? 'selected' : '' }}>
-                {{ __('admin/orders.status.refunded') }}
-            </option>
-        </select>
-
-        <button type="submit"
-                class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">
-            {{ __('admin/orders.filter') }}
-        </button>
-
-        @if(request()->has('search') || request()->has('status'))
-            <a href="{{ route('admin.orders.index') }}"
-            class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
-                {{ __('admin/orders.clear_filters') }}
-            </a>
-        @endif
-    </form> --}}
-
     <!-- Orders Table -->
     @if($orders->isEmpty())
         <div class="bg-white shadow-lg rounded-lg mt-6 p-6 text-center">
@@ -63,9 +26,10 @@
             <table class="w-full border-collapse border border-gray-300 text-sm sm:text-base">
                 <thead class="bg-gray-200">
                     <tr>
-                        <th class="px-4 py-2 border">{{ __('admin/orders.order_id') }}</th>
+                        <th class="px-2 py-2 border w-16 text-center font-mono">{{ __('admin/orders.id') }}</th>
                         <th class="px-4 py-2 border">{{ __('admin/orders.customer') }}</th>
                         <th class="px-4 py-2 border">{{ __('admin/orders.total_price') }}</th>
+                        <th class="px-4 py-2 border">{{ __('admin/orders.payment_status') }}</th> <!-- New Column -->
                         <th class="px-4 py-2 border">{{ __('admin/orders.status') }}</th>
                         <th class="px-4 py-2 border">{{ __('admin/orders.date') }}</th>
                         <th class="px-4 py-2 border">{{ __('admin/orders.actions') }}</th>
@@ -74,7 +38,7 @@
                 <tbody>
                     @foreach ($orders as $order)
                         <tr class="border">
-                            <td class="px-4 py-2 border">{{ $order->id }}</td>
+                            <td class="px-2 py-2 border text-center font-mono">{{ $order->id }}</td>
                             <td class="px-4 py-2 border">
                                 @if ($order->user && $order->user->profile)
                                     {{ $order->user->profile->first_name ?? '' }} {{ $order->user->profile->last_name ?? '' }}
@@ -84,6 +48,23 @@
                                 @endif
                             </td>
                             <td class="px-4 py-2 border font-semibold">${{ number_format($order->total, 2) }}</td>
+
+                            <!-- Payment Status Column -->
+                            <td class="px-4 py-2 border text-center">
+                                @php
+                                    // Fetch payment status or default to 'unknown'
+                                    $paymentStatus = optional($order->payment)->status ?? 'unknown';
+                                @endphp
+
+                                <span class="px-2 py-1 text-sm font-semibold rounded-full
+                                    {{ $paymentStatus === 'successful' ? 'bg-green-200 text-green-800' : '' }}
+                                    {{ $paymentStatus === 'pending' ? 'bg-yellow-200 text-yellow-800' : '' }}
+                                    {{ $paymentStatus === 'failed' ? 'bg-red-200 text-red-800' : '' }}
+                                    {{ $paymentStatus === 'refunded' ? 'bg-gray-300 text-gray-800' : '' }}">
+                                    {{ __('admin/orders.payment_status.' . $paymentStatus) }}
+                                </span>
+                            </td>
+
                             <td class="px-4 py-2 border text-center">
                                 <span class="px-2 py-1 text-sm font-semibold rounded-full
                                     {{ $order->status === 'pending' ? 'bg-yellow-200 text-yellow-800' : '' }}
@@ -93,14 +74,13 @@
                                     {{ __('admin/orders.status.' . (is_string($order->status) ? $order->status : 'unknown')) }}
                                 </span>
                             </td>
+
                             <td class="px-4 py-2 border text-gray-700">{{ $order->created_at->format('Y-m-d') }}</td>
                             <td class="px-4 py-2 border text-center space-x-2">
-                                <a href="{{ route('admin.orders.show', $order->id) }}"
-                                   class="text-blue-500 hover:underline">
+                                <a href="{{ route('admin.orders.show', $order->id) }}" class="text-blue-500 hover:underline">
                                     <i class="bi bi-eye"></i> {{ __('admin/orders.view') }}
                                 </a>
-                                <a href="{{ route('admin.orders.edit', $order->id) }}"
-                                   class="text-yellow-500 hover:underline">
+                                <a href="{{ route('admin.orders.edit', $order->id) }}" class="text-yellow-500 hover:underline">
                                     <i class="bi bi-pencil"></i> {{ __('admin/orders.edit') }}
                                 </a>
                                 <button @click="setDeleteOrder({{ json_encode($order) }}, '{{ route('admin.orders.destroy', $order->id) }}')"

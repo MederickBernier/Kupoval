@@ -44,24 +44,45 @@
             </p>
         </div>
 
-        <!-- Shipping Address (Now as Editable Fields) -->
+        <!-- Shipping Address Section -->
         <div class="bg-gray-100 p-4 rounded-md shadow-md mt-4">
             <h3 class="text-lg font-semibold text-gray-800">Shipping Address</h3>
 
             <label class="flex items-center space-x-2">
-                <input type="checkbox" id="use_different_shipping" x-model="useDifferentShipping">
+                <input type="checkbox" x-model="useDifferentShipping">
                 <span>Use a different shipping address</span>
             </label>
 
-            <div x-show="useDifferentShipping" class="mt-4 space-y-2" x-transition>
-                <input type="text" x-model="shippingAddress.recipient_name" placeholder="Recipient Name" class="w-full border p-2 rounded">
-                <input type="email" x-model="shippingAddress.recipient_email" placeholder="Recipient Email" class="w-full border p-2 rounded">
-                <input type="text" x-model="shippingAddress.recipient_phone" placeholder="Recipient Phone" class="w-full border p-2 rounded">
-                <input type="text" x-model="shippingAddress.address" placeholder="Street Address" class="w-full border p-2 rounded">
-                <input type="text" x-model="shippingAddress.city" placeholder="City" class="w-full border p-2 rounded">
-                <input type="text" x-model="shippingAddress.state" placeholder="State" class="w-full border p-2 rounded">
-                <input type="text" x-model="shippingAddress.country" placeholder="Country" class="w-full border p-2 rounded">
-                <input type="text" x-model="shippingAddress.zipcode" placeholder="Zip Code" class="w-full border p-2 rounded">
+            <div x-show="useDifferentShipping && !addingNewAddress" class="mt-4 space-y-2" x-transition>
+                <label class="block font-semibold text-gray-700">Select a shipping address</label>
+                <select x-model="selectedShippingAddress" class="border p-2 rounded-md w-full">
+                    <option value="">Choose an address</option>
+                    <template x-for="address in shippingAddresses" :key="address.id">
+                        <option :value="address.id" x-text="`${address.address}, ${address.city}, ${address.state}`"></option>
+                    </template>
+                </select>
+
+                <button type="button"
+                        class="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                        @click="addingNewAddress = true">
+                    {{ __('Add New Address') }}
+                </button>
+            </div>
+
+            <!-- New Shipping Address Form -->
+            <div x-show="addingNewAddress" class="mt-4 p-4 bg-white border rounded-md shadow" x-transition>
+                <h4 class="text-lg font-semibold text-gray-800 mb-3">New Shipping Address</h4>
+
+                <input type="text" x-model="newAddress.address" placeholder="Street Address" class="w-full border p-2 rounded mb-2">
+                <input type="text" x-model="newAddress.city" placeholder="City" class="w-full border p-2 rounded mb-2">
+                <input type="text" x-model="newAddress.state" placeholder="State" class="w-full border p-2 rounded mb-2">
+                <input type="text" x-model="newAddress.country" placeholder="Country" class="w-full border p-2 rounded mb-2">
+                <input type="text" x-model="newAddress.zipcode" placeholder="Zip Code" class="w-full border p-2 rounded mb-2">
+
+                <div class="flex justify-end space-x-2 mt-3">
+                    <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500" @click="cancelNewAddress">Cancel</button>
+                    <button type="button" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700" @click="saveNewAddress">Save</button>
+                </div>
             </div>
         </div>
 
@@ -70,7 +91,7 @@
             <h3 class="text-lg font-semibold text-gray-800">Shipping Option</h3>
             <select x-model="shippingConditionId" @change="updateShippingFee"
                     class="border p-2 rounded-md w-full focus:ring focus:ring-blue-200">
-                <option value="">Select Shipping</option>
+                <option value="" disabled selected>Select Shipping</option>
                 @foreach($shippingConditions as $condition)
                     <option value="{{ $condition->id }}">
                         {{ $condition->name }} - ${{ number_format($condition->fee, 2) }}
@@ -111,27 +132,58 @@
 <script>
 function checkoutForm() {
     return {
-        promoCode: '',
-        appliedPromo: "{{ session('applied_promo', '') }}",
-        promoMessage: '',
-        discount: 0, // Reset discount to avoid pre-applied reductions
-        shippingConditionId: "{{ session('shipping_condition_id', '') }}",
-        shippingFee: parseFloat({{ session('shipping_fee', 0) }}),
+        // Core variables
         subtotal: parseFloat({{ session('cart_total', 0) }}),
-        finalTotal: 0.00,
+        discount: parseFloat({{ session('discount_amount', 0) }}),
+        shippingFee: 0,
+        finalTotal: 0,
+
+        // Shipping & Address Logic
+        shippingConditionId: "",
         useDifferentShipping: false,
-        shippingAddress: {
-            recipient_name: '',
-            recipient_email: '',
-            recipient_phone: '',
-            address: '',
-            city: '',
-            state: '',
-            country: '',
-            zipcode: ''
+        addingNewAddress: false,
+        selectedShippingAddress: "",
+        shippingAddresses: @json(Auth::user()->profile->shippingAddresses),
+        newAddress: { address: '', city: '', state: '', country: '', zipcode: '' },
+
+        // Promo Code
+        promoCode: "",
+        appliedPromo: "{{ session('applied_promo', '') }}",
+        promoMessage: "",
+
+        // Init function
+        init() {
+            this.updateTotal();
         },
 
+        // Update total price calculation
+        updateTotal() {
+            this.finalTotal = this.subtotal - this.discount + this.shippingFee;
+        },
+
+        // Cancel new address input
+        cancelNewAddress() {
+            this.addingNewAddress = false;
+        },
+
+        // Save new address
+        saveNewAddress() {
+            if (!this.newAddress.address || !this.newAddress.city || !this.newAddress.zipcode) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+            this.shippingAddresses.push({...this.newAddress});
+            this.newAddress = { address: '', city: '', state: '', country: '', zipcode: '' };
+            this.addingNewAddress = false;
+        },
+
+        // Update shipping fee
         updateShippingFee() {
+            if (!this.shippingConditionId) {
+                this.shippingFee = 0;
+                this.updateTotal();
+                return;
+            }
             fetch("{{ route('checkout.updateShipping') }}", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
@@ -143,20 +195,60 @@ function checkoutForm() {
                     this.shippingFee = parseFloat(data.shipping_fee);
                     this.updateTotal();
                 }
-            });
+            })
+            .catch(error => console.error("Error updating shipping:", error));
         },
 
-        updateTotal() {
-            this.finalTotal = (this.subtotal - this.discount + this.shippingFee);
+        // Apply promo code
+        applyPromoCode() {
+            if (!this.promoCode) {
+                this.promoMessage = "Please enter a promo code.";
+                return;
+            }
+            fetch("{{ route('checkout.applyPromo') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
+                body: JSON.stringify({ code: this.promoCode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    this.discount = parseFloat(data.discount);
+                    this.appliedPromo = data.code;
+                    this.promoMessage = `Promo applied successfully! You saved $${this.discount.toFixed(2)} (${((this.discount / this.subtotal) * 100).toFixed(2)}% off)`;
+                } else {
+                    this.discount = 0;
+                    this.promoMessage = "Invalid promo code.";
+                }
+                this.updateTotal();
+            })
+            .catch(error => console.error("Error applying promo:", error));
         },
 
+        // Remove promo code
+        removePromoCode() {
+            fetch("{{ route('checkout.removePromo') }}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" }
+            })
+            .then(() => {
+                this.discount = 0;
+                this.appliedPromo = '';
+                this.promoMessage = '';
+                this.updateTotal();
+            })
+            .catch(error => console.error("Error removing promo:", error));
+        },
+
+        // Proceed to checkout
         proceedToCheckout() {
             fetch("{{ route('checkout.storeSession') }}", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": "{{ csrf_token() }}" },
-                body: JSON.stringify({ final_total: this.finalTotal, shipping_address: this.shippingAddress })
+                body: JSON.stringify({ final_total: this.finalTotal })
             })
-            .then(() => window.location.href = "{{ route('checkout') }}");
+            .then(() => window.location.href = "{{ route('checkout') }}")
+            .catch(error => console.error("Error proceeding to checkout:", error));
         }
     };
 }

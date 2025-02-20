@@ -11,7 +11,8 @@ class Address extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'user_id',
+        'user_profile_id',
+        'type',
         'address',
         'city',
         'state',
@@ -19,8 +20,8 @@ class Address extends Model
         'zipcode',
     ];
 
-    public function user()
+    public function userProfile()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(UserProfile::class, 'user_profile_id');
     }
 }

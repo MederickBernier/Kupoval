@@ -23,6 +23,14 @@ return [
     'status.completed' => 'Terminée',
     'status.canceled' => 'Annulée',
     'status.refunded' => 'Remboursée',
+    'status.processing' => 'En cours',
+
+    //Payment Status
+    'payment_status.pending' => 'En attente',
+    'payment_status.successful' => 'Payée',
+    'payment_status.refunded' => 'Remboursée',
+    'payment_status.failed' => 'Échouée',
+    'payment_status.unknown' => 'Inconnue',
 
     // Création & Modification
     'create_title' => 'Créer une nouvelle commande',
@@ -72,5 +80,8 @@ return [
     'update_order' => 'Mettre à jour la commande',
     'deactivate' => 'Désactiver',
     'warning' => 'Avertissement',
-    'warning_message'=> 'Ce formulaire est principalement un outil de développement. Bien qu\'il soit possible de créer des commandes manuellement ici, ce n\'est pas la méthode recommandée. Certaines erreurs peuvent survenir en raison d\'une implémentation incomplète ou obsolète.'
+    'warning_message' => 'Ce formulaire est principalement un outil de développement. Bien qu\'il soit possible de créer des commandes manuellement ici, ce n\'est pas la méthode recommandée. Certaines erreurs peuvent survenir en raison d\'une implémentation incomplète ou obsolète.',
+    'order_total' => 'Total de la commande',
+    'shipping_condition' => 'Condition de livraison',
+    'id' => 'ID',
 ];

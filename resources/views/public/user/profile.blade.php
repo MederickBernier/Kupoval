@@ -59,22 +59,31 @@
     <!-- 🏡 Adresse de Facturation -->
     <div class="shadow-md p-6 rounded-lg bg-white mb-6">
         <h3 class="text-xl font-semibold mb-4 text-accent flex items-center border-b pb-2">
-            <i class="bi bi-house text-accent text-lg mr-2"></i> {{ __('public/profile.billing_address') }}
+            <i class="bi bi-credit-card text-accent text-lg mr-2"></i> {{ __('public/profile.billing_address') }}
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="flex flex-col">
-                <label class="font-semibold text-gray-800">{{ __('public/profile.address') }}:</label>
-                <livewire:update-field field="address" :value="Auth::user()->profile->address ?? ''" />
+
+        @if(Auth::user()->profile->billingAddress)
+            <livewire:update-address :addressId="Auth::user()->profile->billingAddress->id" type="billing" />
+        @else
+            <p class="text-gray-500 bg-gray-100 p-3 rounded">{{ __('public/profile.no_billing_address') }}</p>
+        @endif
+    </div>
+
+    <!-- 🚚 Adresses de Livraison -->
+    <div class="shadow-md p-6 rounded-lg bg-white mb-6">
+        <h3 class="text-xl font-semibold mb-4 text-accent flex items-center border-b pb-2">
+            <i class="bi bi-truck text-accent text-lg mr-2"></i> {{ __('public/profile.shipping_addresses') }}
+        </h3>
+
+        @if(Auth::user()->profile->shippingAddresses->isEmpty())
+            <p class="text-gray-500 bg-gray-100 p-3 rounded">{{ __('public/profile.no_shipping_addresses') }}</p>
+        @else
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @foreach(Auth::user()->profile->shippingAddresses as $address)
+                    <livewire:update-address :addressId="$address->id" type="shipping" />
+                @endforeach
             </div>
-            <div class="flex flex-col">
-                <label class="font-semibold text-gray-800">{{ __('public/profile.zip_code') }}:</label>
-                <livewire:update-field field="zipcode" :value="Auth::user()->profile->zipcode ?? ''" />
-            </div>
-            <div class="flex flex-col">
-                <label class="font-semibold text-gray-800">{{ __('public/profile.country') }}:</label>
-                <livewire:update-field field="country" :value="Auth::user()->profile->country ?? ''" />
-            </div>
-        </div>
+        @endif
     </div>
 
     <!-- 📦 Historique des Commandes -->
@@ -108,8 +117,7 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-2 text-center">
-                                    {{-- <a href="{{ route('order.details', $order->id) }}" class="text-link hover:underline"> --}}
-                                    <a href="#" class="text-link hover:underline">
+                                    <a href="{{ route('orders.show', $order->id) }}" class="text-link hover:underline">
                                         {{ __('public/profile.view_order') }}
                                     </a>
                                 </td>
@@ -126,6 +134,7 @@
         <h3 class="text-xl font-semibold mb-4 text-accent flex items-center border-b pb-2">
             <i class="bi bi-heart text-accent text-lg mr-2"></i> {{ __('public/profile.wishlist') }}
         </h3>
+
         @if(Auth::user()->wishlist->isEmpty())
             <p class="text-gray-500 bg-gray-100 p-3 rounded">{{ __('public/profile.no_wishlist') }}</p>
         @else
@@ -135,6 +144,9 @@
                         <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="w-full h-32 object-cover rounded">
                         <h4 class="text-lg font-semibold mt-2 text-heading">{{ $item->product->name }}</h4>
                         <p class="text-gray-700 mt-1">{{ number_format($item->product->price, 2) }}$</p>
+                        <button class="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                            {{ __('public/profile.remove_from_wishlist') }}
+                        </button>
                     </div>
                 @endforeach
             </div>

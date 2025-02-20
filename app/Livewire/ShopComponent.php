@@ -30,11 +30,13 @@ class ShopComponent extends Component
     public $filtersVisible = true;
     public $wishlist = [];
     public $cartItems = [];
+    public $onlyWishlisted = false;
 
     protected $listeners = ['refreshShop' => '$refresh'];
 
     public function mount()
     {
+        $this->filtersVisible = false;
         if (Auth::check()) {
             // Load user's wishlist from database
             $this->wishlist = Auth::user()->wishlist()->pluck('artwork_id')->toArray();
@@ -101,7 +103,6 @@ class ShopComponent extends Component
             // ✅ Recalculate and update total in session
             $totalPrice = CartItem::where('cart_id', $cart->id)
                 ->sum(DB::raw('quantity * price'));
-
         } else {
             // ✅ Guest cart in session
             $cart = session()->get('cart', []);
@@ -185,6 +186,10 @@ class ShopComponent extends Component
 
         if ($this->onlyFeatured) {
             $query->where('is_featured', true);
+        }
+
+        if ($this->onlyWishlisted && Auth::check()) {
+            $query->whereIn('id', $this->wishlist);
         }
 
         switch ($this->sortBy) {

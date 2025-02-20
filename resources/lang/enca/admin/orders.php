@@ -23,6 +23,14 @@ return [
     'status.completed' => 'Completed',
     'status.canceled' => 'Canceled',
     'status.refunded' => 'Refunded',
+    'status.processing' => 'Processing',
+
+    //Payment Status
+    'payment_status.pending' => 'Pending',
+    'payment_status.successful' => 'Successful',
+    'payment_status.refunded' => 'Refunded',
+    'payment_status.failed' => 'Failed',
+    'payment_status.unknown' => 'Unknown',
 
     // Create & Edit
     'create_title' => 'Create a New Order',
@@ -72,5 +80,8 @@ return [
     'update_order' => 'Update Order',
     'deactivate' => 'Deactivate',
     'warning' => 'Warning',
-    'warning_message'=> 'This form is primarily a development tool. While it is possible to create orders manually here, it is not the recommended method. Some errors may occur due to incomplete or outdated implementation.'
+    'warning_message' => 'This form is primarily a development tool. While it is possible to create orders manually here, it is not the recommended method. Some errors may occur due to incomplete or outdated implementation.',
+    'order_total' => 'Order Total',
+    'shipping_condition' => 'Shipping Condition',
+    'id' => 'ID',
 ];

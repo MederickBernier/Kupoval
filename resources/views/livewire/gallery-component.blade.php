@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Str @endphp
 <div class="p-6 bg-soft-aqua text-charcoal-gray min-h-screen">
     <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-bold text-navy-blue tracking-wide">{{ __('public/gallery.browse_artworks') }}</h2>
@@ -102,6 +103,7 @@
                     loading="lazy">
                 <h3 class="mt-4 text-lg font-semibold text-navy-blue">{{ $artwork->name }}</h3>
                 <p class="text-gray-600 italic">{{ $artwork->artist->name }}</p>
+                <p class="text-gray-700 text-sm mt-2">{!! Str::limit($artwork->description, 120) !!}</p>
 
                 <div class="mt-4 flex justify-between">
                     <a href="{{ route('artwork.show', $artwork->slug) }}"

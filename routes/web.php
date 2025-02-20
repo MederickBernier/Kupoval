@@ -11,6 +11,8 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\BioController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Webhooks\StripeWebhookController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -62,6 +64,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/user/edit-field/{field}', [UserProfileController::class, 'editField'])->name('user.edit-field');
     Route::post('/user/update-field/{field}', [UserProfileController::class, 'updateField'])->name('user.update-field');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/invoice', [InvoiceController::class, 'generateInvoice'])->name('orders.invoice');
 });
 
 // Lang Switching Route

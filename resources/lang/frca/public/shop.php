@@ -31,4 +31,5 @@ return [
     'only_discounted' => 'Uniquement en promotion',
     'only_featured' => 'Uniquement en vedette',
     'no_artworks_found' => 'Aucune œuvre d\'art trouvée.',
+    'only_wishlisted' => 'Uniquement dans la liste de souhaits',
 ];

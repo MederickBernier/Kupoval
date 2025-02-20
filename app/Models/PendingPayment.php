@@ -10,8 +10,14 @@ class PendingPayment extends Model
     use HasFactory;
 
     protected $fillable = [
+        'order_id',
         'transaction_id',
         'amount',
         'status'
     ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

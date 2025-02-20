@@ -2,20 +2,53 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class UserProfileController extends Controller
 {
-    public function profile()
-    {
-        try {
+    public function profile(){
+        try{
             $user = Auth::user();
+            $profile = $user->profile;
+            $addresses = $profile?->addresses ?? collect();
 
-            return view('public.user.profile', compact('user'));
-        } catch (\Exception $e) {
-            throwError('Failed to load profile page', 500, ['details' => $e->getMessage()]);
+            return view('public.user.profile',[
+                'user'=>$user,
+                'profile'=>$profile,
+                'addresses'=>$addresses
+            ]);
+        }catch(\Exception $e){
+            throwError('Failed to load profile page',500,['details'=>$e->getMessage()]);
+        }
+    }
+
+    public function Address(Request $request, $addressId){
+        try{
+            $user = Auth::user();
+            $address = Address::where('id', $addressId)->whereHas('userProfile', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->first();
+
+            if (!$address) {
+                return response()->json(['error' => 'Address not found'], 404);
+            }
+
+            $validated = $request->validate([
+                'address' => 'required|string|max:255',
+                'city' => 'required|string|max:100',
+                'state' => 'required|string|max:100',
+                'country' => 'required|string|max:100',
+                'zipcode' => 'required|string|max:20',
+            ]);
+
+            $address->update($validated);
+
+            return response()->json(['message' => 'Address updated successfully']);
+        }catch(\Exception $e){
+            throwError('Failed to update address', 500,['details'=>$e->getMessage()]);
         }
     }
 

@@ -18,7 +18,7 @@ class GalleryComponent extends Component
     public $selectedArtists = [];
     public $selectedEvent = null;
     public $sortBy = 'newest';
-    public $filtersVisible = true;
+    public $filtersVisible = false;
 
     protected $listeners = [
         'refreshGallery' => '$refresh',

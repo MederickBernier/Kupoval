@@ -31,4 +31,5 @@ return [
     'only_discounted' => 'Only Discounted',
     'only_featured' => 'Only Featured',
     'no_artworks_found' => 'No artworks found.',
+    'only_wishlisted' => 'Only Wishlisted',
 ];

@@ -9,6 +9,7 @@ return new class extends Migration {
     {
         Schema::create('pending_payments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
             $table->string('transaction_id')->unique();
             $table->decimal('amount', 10, 2);
             $table->string('status')->default('pending');

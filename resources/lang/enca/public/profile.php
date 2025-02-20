@@ -47,4 +47,6 @@ return [
         'enus' => '🇺🇸 English (US)',
         'engb' => '🇬🇧 English (UK)',
     ],
+    'addresses' => 'Addresses',
+    'shipping_addresses' => 'Shipping Addresses',
 ];

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('user_profile_id')->nullable();
+            $table->enum('type', ['billing', 'shipping'])->default('billing');
             $table->string('address', 255);
             $table->string('city', 100);
             $table->string('state', 100);
@@ -21,7 +22,7 @@ return new class extends Migration
             $table->string('zipcode', 20);
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('user_profile_id')->references('id')->on('user_profiles')->onDelete('cascade');
         });
     }
 
