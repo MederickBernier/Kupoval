@@ -6,6 +6,10 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Models\User;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class AccountVerificationMail extends Mailable implements ShouldQueue
 {
@@ -13,23 +17,33 @@ class AccountVerificationMail extends Mailable implements ShouldQueue
 
     public $user;
     public $verificationUrl;
+    public $fullName;
 
-    public function __construct($user, $verificationUrl)
+    public function __construct(User $user)
     {
         $this->user = $user;
-        $this->verificationUrl = $verificationUrl;
+        $this->fullName = trim("{$user->profile->title} {$user->profile->first_name} {$user->profile->last_name}");
     }
 
     public function build()
     {
+        $this->verificationUrl = URL::signedRoute(
+            'verification.verify',
+            ['id' => $this->user->id, 'hash' => sha1($this->user->email)],
+            Carbon::now()->addMinutes(60)
+        );
+
+        Log::info('🔍 Debugging Email Verification:', [
+            'User ID' => $this->user->id,
+            'Email' => $this->user->email,
+            'Verification URL' => $this->verificationUrl
+        ]);
+
         return $this->subject(__('emails.auth.verify_subject'))
-            ->view('emails.auth.verify')
+            ->view('emails.auth.account_verification')
             ->with([
-                'greeting' => __('emails.auth.verify_greeting', ['name' => $this->user->username]),
-                'body' => __('emails.auth.verify_body'),
-                'buttonText' => __('emails.auth.verify_button'),
-                'buttonUrl' => $this->verificationUrl,
-                'footer' => __('emails.auth.verify_footer'),
+                'name' => $this->fullName ?: $this->user->username,
+                'verificationUrl' => $this->verificationUrl,  // Make sure it's correctly passed
             ]);
     }
 }

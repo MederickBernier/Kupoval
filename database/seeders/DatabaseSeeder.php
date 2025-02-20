@@ -15,7 +15,6 @@ class DatabaseSeeder extends Seeder
             SettingsSeeder::class, // Global settings (runs first)
             ShippingConditionsSeeder::class, // Required before orders
             UsersSeeder::class, // Creates base users
-            UserProfileSeeder::class, // Requires users to exist
             AddressSeeder::class, // Requires user profiles to exist
             ArtistSeeder::class, // Creates artists
             CategorySeeder::class, // Creates categories

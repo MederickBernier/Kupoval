@@ -9,7 +9,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\AccountVerification;
+use App\Mail\AccountVerificationMail;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
@@ -26,54 +30,61 @@ class RegisterController extends Controller
      */
     public function register(Request $request)
     {
-        $request->validate([
-            'email' => ['required', 'email', 'unique:users,email'],
-            'username' => [
-                'required',
-                'string',
-                'max:255',
-                'unique:users,username',
-                'regex:/^[a-zA-Z0-9_]+$/' // Only letters, numbers, and underscores
-            ],
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'confirmed',
-                'regex:/^(?=.*[A-Za-z])(?=.*\d)(?=.*[!$%^&*()_+|~=`{}[:;<>?,.@#\]-]).{8,}$/'
-            ],
-        ], [
-            'password.regex' => __('The password must contain at least one letter, one number, and one special character.'),
-            'username.regex' => __('The username may only contain letters, numbers, and underscores.'),
+        Log::info('📩 Registration attempt', ['email' => $request->email]);
+
+        $validator = Validator::make($request->all(), [
+            'username' => 'required|string|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
         ]);
 
+        if ($validator->fails()) {
+            Log::error('❌ Registration validation failed', ['errors' => $validator->errors()->toArray()]);
+            return back()->withInput()->withErrors($validator);
+        }
+
+        DB::beginTransaction();
         try {
-            // Create the user
+            // ✅ Create user
             $user = User::create([
-                'email'    => $request->email,
                 'username' => $request->username,
+                'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
 
-            // Generate email verification URL
-            $verificationUrl = route('verification.verify', [
-                'id' => $user->id,
-                'hash' => sha1($user->email)
+            Log::info("✅ User created: {$user->email} (ID: {$user->id})");
+
+            // ✅ Ensure the user has a profile
+            $user->profile()->create([
+                'first_name' => '', // Placeholder
+                'last_name' => '',
+                'title' => '',
             ]);
 
-            // Send the verification email
-            Mail::to($user->email)->send(new AccountVerification($user, $verificationUrl));
+            Log::info("✅ Profile created for user ID: {$user->id}");
 
-            // Auto-login the user after successful registration
-            Auth::login($user);
+            // ✅ Generate verification URL
+            $verificationUrl = URL::signedRoute(
+                'verification.verify',
+                ['id' => $user->id, 'hash' => sha1($user->email)],
+                Carbon::now()->addMinutes(60)
+            );
 
-            return redirect()->route('user.profile')->with('success', __('Registration successful. Please verify your email address.'));
-        } catch (\Exception $e) {
-            Log::error('Registration failed: ' . $e->getMessage());
+            Log::info("🔗 Verification URL generated: {$verificationUrl}");
 
-            return back()->withErrors([
-                'error' => __('Registration failed. Please try again later.'),
-            ]);
+            // ✅ Send verification email
+            Mail::to($user->email)->send(new AccountVerificationMail($user, $verificationUrl));
+            Log::info("📧 Verification email sent to: {$user->email}");
+
+            DB::commit();
+            Log::info("✅ Registration completed successfully for: {$user->email}");
+
+            // ✅ Redirect the user to their profile after registration
+            return redirect()->route('user.profile')->with('success', __('Registration successful. Please check your email to verify your account.'));
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error("❌ Registration failed: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return back()->withInput()->with('error', __('Registration failed. Please try again.'));
         }
     }
 }

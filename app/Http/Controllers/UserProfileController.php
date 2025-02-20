@@ -6,27 +6,42 @@ use App\Models\Address;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class UserProfileController extends Controller
 {
-    public function profile(){
-        try{
+    public function profile()
+    {
+        try {
             $user = Auth::user();
-            $profile = $user->profile;
-            $addresses = $profile?->addresses ?? collect();
 
-            return view('public.user.profile',[
-                'user'=>$user,
-                'profile'=>$profile,
-                'addresses'=>$addresses
+            // ✅ Ensure the user has a profile (create if missing)
+            if (!$user->profile) {
+                $user->profile()->create([
+                    'first_name' => '',
+                    'last_name' => '',
+                    'title' => '',
+                ]);
+                Log::info("✅ Auto-created missing profile for user ID: {$user->id}");
+            }
+
+            // ✅ Ensure addresses exist to avoid errors
+            $addresses = $user->profile->addresses ?? collect();
+
+            return view('public.user.profile', [
+                'user' => $user,
+                'profile' => $user->profile,
+                'addresses' => $addresses
             ]);
-        }catch(\Exception $e){
-            throwError('Failed to load profile page',500,['details'=>$e->getMessage()]);
+        } catch (\Exception $e) {
+            Log::error('❌ Failed to load profile page', ['error' => $e->getMessage()]);
+            return abort(500, 'An error occurred while loading your profile.');
         }
     }
 
-    public function Address(Request $request, $addressId){
-        try{
+    public function Address(Request $request, $addressId)
+    {
+        try {
             $user = Auth::user();
             $address = Address::where('id', $addressId)->whereHas('userProfile', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
@@ -47,8 +62,9 @@ class UserProfileController extends Controller
             $address->update($validated);
 
             return response()->json(['message' => 'Address updated successfully']);
-        }catch(\Exception $e){
-            throwError('Failed to update address', 500,['details'=>$e->getMessage()]);
+        } catch (\Exception $e) {
+            Log::error('❌ Failed to update address', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Failed to update address'], 500);
         }
     }
 
@@ -70,7 +86,7 @@ class UserProfileController extends Controller
                     'string',
                     'email',
                     'max:255',
-                    Rule::unique('users')->ignore($user->id), // Empêche l'email d'être modifié en un email déjà existant
+                    Rule::unique('users')->ignore($user->id),
                 ],
             ]);
 
@@ -78,7 +94,8 @@ class UserProfileController extends Controller
 
             return redirect()->route('user.profile')->with('success', 'Profile updated successfully');
         } catch (\Exception $e) {
-            throwError('Failed to update profile', 500, ['details' => $e->getMessage()]);
+            Log::error('❌ Failed to update profile', ['error' => $e->getMessage()]);
+            return redirect()->route('user.profile')->with('error', 'Failed to update profile.');
         }
     }
 
@@ -93,7 +110,8 @@ class UserProfileController extends Controller
                 'value' => $profile?->$field ?? ''
             ]);
         } catch (\Exception $e) {
-            throwError('Failed to load field editor', 500, ['details' => $e->getMessage()]);
+            Log::error('❌ Failed to load field editor', ['error' => $e->getMessage()]);
+            return abort(500, 'An error occurred while loading the field editor.');
         }
     }
 
@@ -126,7 +144,8 @@ class UserProfileController extends Controller
                 'value' => $profile->$field
             ]);
         } catch (\Exception $e) {
-            throwError('Failed to update field', 500, ['details' => $e->getMessage()]);
+            Log::error('❌ Failed to update field', ['error' => $e->getMessage()]);
+            return response()->json(['error' => 'Failed to update field'], 500);
         }
     }
 }

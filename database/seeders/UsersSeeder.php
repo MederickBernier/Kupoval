@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 
@@ -13,28 +12,42 @@ class UsersSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
+        $admin = User::create([
             'email' => 'val@kupoval.art',
             'username' => 'val',
             'password' => bcrypt('password'),
             'role' => 'admin',
-        ])->profile()->create([
+        ]);
+
+        $admin->profile()->create([
             'first_name' => 'Valérie',
             'last_name' => 'Labelle',
             'title' => 'Ms',
+            'address' => '123 Rue Principale',
+            'city' => 'Montréal',
+            'zipcode' => 'H2X 3L1',
+            'state' => 'Québec',
+            'country' => 'Canada',
             'phone' => '514-555-1234',
             'language' => 'frca',
         ]);
 
-        User::create([
+        $client = User::create([
             'email' => 'client@kupoval.art',
             'username' => 'client',
             'password' => bcrypt('password'),
             'role' => 'client',
-        ])->profile()->create([
+        ]);
+
+        $client->profile()->create([
             'first_name' => 'Test',
             'last_name' => 'Client',
             'title' => 'Mr',
+            'address' => '456 avenue des Arts',
+            'city' => 'Québec',
+            'zipcode' => 'G1R 5T8',
+            'state' => 'Québec',
+            'country' => 'Canada',
             'phone' => '418-555-5678',
             'language' => 'frca',
         ]);
