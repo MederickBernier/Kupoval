@@ -15,6 +15,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Webhooks\StripeWebhookController;
+use App\Http\Controllers\EmailController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 
 // Pages publiques
@@ -71,7 +72,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Lang Switching Route
 Route::post('/lang-switch', [LanguageController::class, 'switch'])->middleware('auth')->name('lang.switch');
 
-//Checkout routes
+// Checkout routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'createCheckoutSession'])->name('checkout');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
@@ -81,6 +82,16 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/remove-promo', [CheckoutController::class, 'removePromoCode'])->name('checkout.removePromo');
     Route::post('/checkout/update-shipping', [CheckoutController::class, 'updateShipping'])->name('checkout.updateShipping');
     Route::post('/checkout/store-session', [CheckoutController::class, 'storeSession'])->name('checkout.storeSession');
+});
+
+// Email Routes (for testing and manual triggering)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/email/test-verification', [EmailController::class, 'sendVerificationEmail'])->name('email.test.verification');
+    Route::get('/email/test-password-reset', [EmailController::class, 'sendPasswordResetEmail'])->name('email.test.password_reset');
+    Route::get('/email/test-order-confirmation/{order}', [EmailController::class, 'sendOrderConfirmationEmail'])->name('email.test.order_confirmation');
+    Route::get('/email/test-payment-receipt/{payment}', [EmailController::class, 'sendPaymentReceiptEmail'])->name('email.test.payment_receipt');
+    Route::get('/email/test-shipping-notification/{order}', [EmailController::class, 'sendShippingNotificationEmail'])->name('email.test.shipping_notification');
+    Route::get('/email/test-refund-confirmation/{payment}', [EmailController::class, 'sendRefundConfirmationEmail'])->name('email.test.refund_confirmation');
 });
 
 // Charger les routes Admin

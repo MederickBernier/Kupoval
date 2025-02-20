@@ -13,9 +13,11 @@ use App\Models\ShippingCondition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmation;
+use App\Mail\PaymentReceipt;
 
 class CheckoutController extends Controller
 {
@@ -129,7 +131,7 @@ class CheckoutController extends Controller
 
         // Update order status and store final payment
         $order->update(['status' => 'processing']);
-        Payment::create([
+        $payment = Payment::create([
             'order_id' => $order->id,
             'payment_method' => 'stripe',
             'amount' => $order->total,
@@ -141,7 +143,18 @@ class CheckoutController extends Controller
         Cart::where('user_id', Auth::id())->delete();
 
         // Send confirmation email
-        //Mail::to($order->recipient_email)->send(new OrderConfirmationMail($order));
+        try {
+            Mail::to($order->recipient_email)->send(new OrderConfirmation($order));
+        } catch (\Exception $e) {
+            Log::error("❌ Failed to send order confirmation email: " . $e->getMessage());
+        }
+
+        // Send payment receipt email
+        try {
+            Mail::to($order->recipient_email)->send(new PaymentReceipt($order, $payment));
+        } catch (\Exception $e) {
+            Log::error("❌ Failed to send payment receipt email: " . $e->getMessage());
+        }
 
         return redirect()->route('checkout.confirmation')->with('success', 'Payment successful');
     }

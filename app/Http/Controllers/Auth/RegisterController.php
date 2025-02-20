@@ -8,7 +8,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\AccountVerification;
 
 class RegisterController extends Controller
 {
@@ -47,19 +48,21 @@ class RegisterController extends Controller
         ]);
 
         try {
-            // Create user with explicit field selection to avoid mass assignment issues
+            // Create the user
             $user = User::create([
                 'email'    => $request->email,
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
             ]);
 
-            // Attempt to send email verification
-            try {
-                $user->sendEmailVerificationNotification();
-            } catch (\Exception $e) {
-                Log::error('Email verification failed: ' . $e->getMessage());
-            }
+            // Generate email verification URL
+            $verificationUrl = route('verification.verify', [
+                'id' => $user->id,
+                'hash' => sha1($user->email)
+            ]);
+
+            // Send the verification email
+            Mail::to($user->email)->send(new AccountVerification($user, $verificationUrl));
 
             // Auto-login the user after successful registration
             Auth::login($user);
