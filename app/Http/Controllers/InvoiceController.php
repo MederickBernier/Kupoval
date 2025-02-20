@@ -11,7 +11,12 @@ class InvoiceController extends Controller
 {
     public function generateInvoice($orderId)
     {
-        $order = Order::with(['items.artwork', 'billingAddress', 'shippingAddress'])->findOrFail($orderId);
+        $order = Order::with([
+            'user.profile', // Load user profile
+            'items.artwork',
+            'billingAddress',
+            'shippingAddress'
+        ])->findOrFail($orderId);
 
         // Fetch site settings
         $settings = Setting::whereIn('key', [
@@ -34,6 +39,16 @@ class InvoiceController extends Controller
         // Total calculation
         $order->total = $order->subtotal + $order->tax_amount;
 
+        // Retrieve user profile details
+        $userProfile = $order->user->profile ?? null;
+        $clientName = $userProfile
+            ? trim(($userProfile->title ? "{$userProfile->title} " : '') . "{$userProfile->first_name} {$userProfile->last_name}")
+            : $order->recipient_name; // Fallback to recipient_name if no profile exists
+
+        // Client Email and Phone
+        $clientEmail = $order->user->email ?? $order->recipient_email;
+        $clientPhone = $userProfile->phone ?? null;
+
         // Create PDF instance
         $pdf = new TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
         $pdf->SetCreator(config('app.name'));
@@ -43,7 +58,7 @@ class InvoiceController extends Controller
         $pdf->AddPage();
 
         // Render HTML from Blade view
-        $html = view('pdf.invoice', compact('order', 'settings', 'shippingAddress'))->render();
+        $html = view('pdf.invoice', compact('order', 'settings', 'shippingAddress', 'clientName', 'clientEmail', 'clientPhone'))->render();
 
         // Write HTML to PDF
         $pdf->writeHTML($html, true, false, true, false, '');

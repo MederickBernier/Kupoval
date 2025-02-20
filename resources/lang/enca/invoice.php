@@ -14,4 +14,8 @@ return [
     'billing_address' => 'Billing Address',
     'shipping_address' => 'Shipping Address',
     'subtotal' => 'Subtotal',
+    'company_email' => 'Company Email',
+    'company_phone' => 'Company Phone',
+    'client_name' => 'Client Name',
+    'phone' => 'Phone',
 ];
