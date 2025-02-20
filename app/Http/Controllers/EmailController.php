@@ -15,6 +15,7 @@ use App\Mail\PaymentReceiptMail;
 use App\Mail\ShippingNotificationMail;
 use App\Mail\RefundConfirmationMail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
 
 class EmailController extends Controller
 {
@@ -29,7 +30,9 @@ class EmailController extends Controller
             return back()->with('error', __('User not found.'));
         }
 
-        Mail::to($user->email)->send(new AccountVerificationMail($user));
+        $verificationUrl = URL::signedRoute('verification.verify', ['id' => $user->id, 'hash' => sha1($user->email)]);
+        Mail::to($user->email)->send(new AccountVerificationMail($user, $verificationUrl));
+
 
         return back()->with('success', __('Verification email sent.'));
     }
@@ -85,7 +88,9 @@ class EmailController extends Controller
             return back()->with('error', __('Order not found.'));
         }
 
-        Mail::to($order->recipient_email)->send(new ShippingNotificationMail($order));
+        $trackingUrl = route('orders.tracking', ['order' => $order->id]); // Adjust based on your actual tracking system
+        Mail::to($order->recipient_email)->send(new ShippingNotificationMail($order, $trackingUrl));
+
 
         return back()->with('success', __('Shipping notification email sent.'));
     }

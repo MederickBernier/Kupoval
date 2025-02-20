@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\OrderConfirmation;
-use App\Mail\PaymentReceipt;
+use App\Mail\PaymentReceiptMail;
 
 class CheckoutController extends Controller
 {
@@ -144,14 +143,14 @@ class CheckoutController extends Controller
 
         // Send confirmation email
         try {
-            Mail::to($order->recipient_email)->send(new OrderConfirmation($order));
+            Mail::to($order->recipient_email)->send(new OrderConfirmationMail($order));
         } catch (\Exception $e) {
             Log::error("❌ Failed to send order confirmation email: " . $e->getMessage());
         }
 
         // Send payment receipt email
         try {
-            Mail::to($order->recipient_email)->send(new PaymentReceipt($order, $payment));
+            Mail::to($order->recipient_email)->send(new PaymentReceiptMail($order, $payment));
         } catch (\Exception $e) {
             Log::error("❌ Failed to send payment receipt email: " . $e->getMessage());
         }
