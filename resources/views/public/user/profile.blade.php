@@ -137,19 +137,28 @@
             <i class="bi bi-heart text-accent text-lg mr-2"></i> {{ __('public/profile.wishlist') }}
         </h3>
 
-        @if(Auth::user()->wishlist->isEmpty())
-            <p class="text-gray-500 bg-gray-100 p-3 rounded">{{ __('public/profile.no_wishlist') }}</p>
+        @if($wishlist->isEmpty())
+        <p class="text-gray-500 bg-gray-100 p-3 rounded">{{ __('public/profile.no_wishlist') }}</p>
         @else
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach(Auth::user()->wishlist as $item)
-                    <div class="border rounded-lg p-4 shadow-sm flex flex-col items-center bg-gray-50 hover:bg-gray-100">
-                        <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}" class="w-full h-32 object-cover rounded">
-                        <h4 class="text-lg font-semibold mt-2 text-heading">{{ $item->product->name }}</h4>
-                        <p class="text-gray-700 mt-1">{{ number_format($item->product->price, 2) }}$</p>
-                        <button class="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-                            {{ __('public/profile.remove_from_wishlist') }}
-                        </button>
-                    </div>
+                @foreach($wishlist as $item)
+                    @if($item->artwork)
+                        <div class="border rounded-lg p-4 shadow-sm flex flex-col items-center bg-gray-50 hover:bg-gray-100">
+                            <img src="{{ Storage::url($item->artwork->image) }}"
+                                alt="{{ $item->artwork->name }}"
+                                class="w-full h-32 object-cover rounded">
+                            <h4 class="text-lg font-semibold mt-2 text-heading">{{ $item->artwork->name }}</h4>
+                            <p class="text-gray-700 mt-1">{{ number_format($item->artwork->initial_price, 2) }}$</p>
+                            <form action="{{ route('wishlist.remove', $item->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                    class="mt-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                                    {{ __('public/profile.remove_from_wishlist') }}
+                                </button>
+                            </form>
+                        </div>
+                    @endif
                 @endforeach
             </div>
         @endif

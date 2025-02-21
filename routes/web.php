@@ -16,6 +16,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Webhooks\StripeWebhookController;
 use App\Http\Controllers\EmailController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Spatie\Sitemap\SitemapGenerator;
 
@@ -29,6 +30,8 @@ Route::get('/cart', [ShopController::class, 'cart'])->name('shop.cart');
 Route::get('/artwork/{artwork}', [ArtworkController::class, 'show'])->name('artwork.show');
 Route::get('/events', [HomeController::class, 'events'])->name('events');
 Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show');
+Route::delete('/wishlist/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+
 
 // Bio Routes
 Route::get('/bio', [BioController::class, 'index'])->name('bio.index');

@@ -14,17 +14,17 @@
             <div class="absolute top-4 left-4 flex flex-col space-y-1">
                 @if($artwork->is_featured)
                     <span class="bg-teal-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center">
-                        <i class="bi bi-star-fill mr-1"></i> {{ __('Featured') }}
+                        <i class="bi bi-star-fill mr-1"></i> {{ __('public/artwork.featured') }}
                     </span>
                 @endif
                 @if($artwork->is_on_sale)
                     <span class="bg-green-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center">
-                        <i class="bi bi-tag-fill mr-1"></i> {{ __('For Sale') }}
+                        <i class="bi bi-tag-fill mr-1"></i> {{ __('public/artwork.for_sale') }}
                     </span>
                 @endif
                 @if($artwork->is_for_event && $artwork->event)
                     <span class="bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center">
-                        <i class="bi bi-calendar-event-fill mr-1"></i> {{ __('Event Exclusive') }}
+                        <i class="bi bi-calendar-event-fill mr-1"></i> {{ __('public/artwork.event_exclusive') }}
                     </span>
                 @endif
             </div>
@@ -35,19 +35,19 @@
             <h2 class="text-3xl font-bold text-navy-blue">{{ $artwork->name }}</h2>
 
             <div class="bg-teal-50 p-4 rounded-lg">
-                <h3 class="text-xl font-semibold text-teal-600">{{ __('Artwork Details') }}</h3>
+                <h3 class="text-xl font-semibold text-teal-600">{{ __('public/artwork.details') }}</h3>
                 <ul class="text-gray-700 list-disc list-inside mt-2">
-                    <li><strong>{{ __('Dimensions') }}:</strong> {{ $artwork->width }} cm × {{ $artwork->height }} cm</li>
+                    <li><strong>{{ __('public/artwork.dimensions') }}:</strong> {{ $artwork->width }} cm × {{ $artwork->height }} cm</li>
                 </ul>
             </div>
 
             <div class="bg-teal-50 p-4 rounded-lg">
-                <h3 class="text-xl font-semibold text-teal-600">{{ __('Description') }}</h3>
+                <h3 class="text-xl font-semibold text-teal-600">{{ __('public/artwork.description') }}</h3>
                 <p class="text-gray-700">{!! $artwork->description !!}</p>
             </div>
 
             <div class="bg-teal-50 p-4 rounded-lg">
-                <h3 class="text-xl font-semibold text-teal-600">{{ __('Categories') }}</h3>
+                <h3 class="text-xl font-semibold text-teal-600">{{ __('public/artwork.categories') }}</h3>
                 @if($artwork->categories->isNotEmpty())
                     <div class="flex flex-wrap gap-3 mt-4">
                         @foreach($artwork->categories as $category)
@@ -55,21 +55,21 @@
                         @endforeach
                     </div>
                 @else
-                    <p class="text-gray-700 italic">{{ __('No categories available for this artwork.') }}</p>
+                    <p class="text-gray-700 italic">{{ __('public/artwork.no_categories') }}</p>
                 @endif
             </div>
 
             @if($artwork->event)
             <div class="bg-teal-50 p-4 rounded-lg">
-                <h3 class="text-xl font-semibold text-teal-600">{{ __('Event Details') }}</h3>
+                <h3 class="text-xl font-semibold text-teal-600">{{ __('public/artwork.event_details') }}</h3>
                 <p class="text-gray-700">
                     <strong>{{ $artwork->event->name }}</strong> <br>
-                    {{ __('From') }} <span class="font-semibold text-teal-600">{{ $artwork->event->start_date->format('M d, Y') }}</span>
-                    {{ __('to') }} <span class="font-semibold text-teal-600">{{ $artwork->event->end_date->format('M d, Y') }}</span>
+                    {{ __('public/artwork.from') }} <span class="font-semibold text-teal-600">{{ $artwork->event->start_date->format('M d, Y') }}</span>
+                    {{ __('public/artwork.to') }} <span class="font-semibold text-teal-600">{{ $artwork->event->end_date->format('M d, Y') }}</span>
                 </p>
                 @if($artwork->event->location)
                     <p class="mt-2">
-                        <strong>{{ __('Location') }}:</strong> {{ $artwork->event->location }}
+                        <strong>{{ __('public/artwork.location') }}:</strong> {{ $artwork->event->location }}
                     </p>
                 @endif
                 <p class="mt-2 text-sm text-gray-600">
@@ -81,7 +81,7 @@
 
         <!-- Artist Section (Spanning 2 Columns) -->
         <div class="bg-teal-50 p-4 rounded-lg lg:col-span-2">
-            <h3 class="text-xl font-semibold text-teal-600">{{ __('Artist') }}</h3>
+            <h3 class="text-xl font-semibold text-teal-600">{{ __('public/artwork.artist') }}</h3>
             <div class="flex items-center space-x-6 mt-4">
                 <img src="{{ asset($artwork->artist->photo) }}" alt="{{ $artwork->artist->name }}"
                     class="w-24 h-24 object-cover rounded-full border-4 border-deep-emerald shadow-md">
@@ -93,7 +93,7 @@
             <div class="mt-4 flex justify-end">
                 <a href="#"
                 class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition-all duration-200">
-                <i class="bi bi-envelope-fill mr-2"></i> {{ __('Contact the Artist') }}
+                <i class="bi bi-envelope-fill mr-2"></i> {{ __('public/artwork.contact_artist') }}
                 </a>
             </div>
         </div>
@@ -101,21 +101,10 @@
         <!-- Back to Gallery Button -->
         <div class="lg:col-span-2 mt-8 flex justify-center">
             <a href="{{ route('gallery') }}" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-4 rounded-lg shadow-md transition-all duration-200 flex items-center text-lg">
-                <i class="bi bi-arrow-left mr-2"></i>{{ __('Back to Gallery') }}
+                <i class="bi bi-arrow-left mr-2"></i>{{ __('public/artwork.back_to_gallery') }}
             </a>
         </div>
 
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/simplelightbox@2.4.0/dist/simple-lightbox.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var lightbox = new SimpleLightbox('.artwork-lightbox', {
-            overlayOpacity: 0.9,  // Darkens the background further for better focus on the image
-        });
-    });
-</script>
-@endpush

@@ -16,7 +16,7 @@
     <!-- Sliding Cart Panel -->
     <div class="fixed top-0 right-0 h-screen w-96 bg-white shadow-2xl border-l border-gray-300 z-50 transform transition-transform duration-300 ease-in-out {{ $showCart ? 'translate-x-0' : 'translate-x-full' }}">
         <div class="p-4 flex justify-between items-center bg-gray-100 border-b">
-            <h3 class="text-lg font-bold">🛒 Votre panier</h3>
+            <h3 class="text-lg font-bold">🛒 {{ __('public/cart.your_cart') }}</h3>
             <button wire:click="toggleCart" class="text-red-600 hover:text-red-800 text-2xl font-bold">
                 <i class="bi bi-x-circle-fill"></i>
             </button>
@@ -30,7 +30,7 @@
                             <!-- Item Name & Price -->
                             <div class="pr-4">
                                 <span class="block font-semibold text-gray-900">{{ $item['name'] }}</span>
-                                <span class="text-gray-600 text-sm">{{ number_format($item['price'], 2) }} $ / unité</span>
+                                <span class="text-gray-600 text-sm">{{ number_format($item['price'], 2) }} $ / {{ __('public/cart.per_unit') }}</span>
                             </div>
 
                             <!-- Quantity Controls -->
@@ -54,16 +54,16 @@
                 </ul>
 
                 <div class="mt-4 text-right border-t pt-3">
-                    <span class="text-lg font-bold">Total: {{ number_format($totalPrice, 2) }} $</span>
+                    <span class="text-lg font-bold">{{ __('public/cart.total') }}: {{ number_format($totalPrice, 2) }} $</span>
                 </div>
 
                 <!-- ✅ Stripe Checkout Button -->
                 <button x-data @click="window.location.href='{{ route('checkout.confirmation') }}'"
                     class="block w-full mt-4 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg font-semibold text-center">
-                    {{ __('Confirm Order') }}
+                    {{ __('public/cart.confirm_order') }}
                 </button>
             @else
-                <p class="text-gray-500 text-center mt-4">Votre panier est vide.</p>
+                <p class="text-gray-500 text-center mt-4">{{ __('public/cart.empty_cart') }}</p>
             @endif
         </div>
     </div>

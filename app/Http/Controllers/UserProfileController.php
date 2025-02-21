@@ -25,13 +25,17 @@ class UserProfileController extends Controller
                 Log::info("✅ Auto-created missing profile for user ID: {$user->id}");
             }
 
-            // ✅ Ensure addresses exist to avoid errors
+            // ✅ Ensure addresses exist
             $addresses = $user->profile->addresses ?? collect();
+
+            // ✅ Load wishlist with related artworks to prevent null issues
+            $wishlist = $user->wishlist()->with('artwork')->get();
 
             return view('public.user.profile', [
                 'user' => $user,
                 'profile' => $user->profile,
-                'addresses' => $addresses
+                'addresses' => $addresses,
+                'wishlist' => $wishlist
             ]);
         } catch (\Exception $e) {
             Log::error('❌ Failed to load profile page', ['error' => $e->getMessage()]);

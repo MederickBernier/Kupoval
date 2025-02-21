@@ -53,4 +53,5 @@ return [
     'title' => 'Titre',
     'select_title' => 'Sélectionnez un Titre',
     'title_field' => 'Titre',
+    'remove_from_wishlist' => 'Retirer de la Liste de Souhaits',
 ];

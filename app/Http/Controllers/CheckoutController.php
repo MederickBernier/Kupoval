@@ -17,6 +17,7 @@ use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentReceiptMail;
+use Illuminate\Support\Facades\App;
 
 class CheckoutController extends Controller
 {
@@ -96,6 +97,7 @@ class CheckoutController extends Controller
                 'mode' => 'payment',
                 'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => route('checkout.cancel'),
+                'locale' => mapStripeLocale(App::getLocale()),
                 'customer_email' => Auth::user()->email,
                 'metadata' => ['order_id' => (string) $order->id],
             ]);

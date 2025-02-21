@@ -53,4 +53,5 @@ return [
     'title' => 'Title',
     'select_title' => 'Select a Title',
     'title_field' => 'Title',
+    'remove_from_wishlist' => 'Remove from Wishlist',
 ];

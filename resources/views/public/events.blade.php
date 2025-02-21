@@ -1,17 +1,21 @@
 @extends('layouts.public')
+
 @section('content')
+
 <section class="my-8">
-    <h1 class="text-4xl font-title text-heading text-center mb-8">{{ __('Upcoming Events') }}</h1>
+    <h1 class="text-4xl font-title text-heading text-center mb-8">{{ __('public/events.upcoming_events') }}</h1>
 
     @if($events->isEmpty())
-        <p class="text-center text-body">{{ __('No upcoming events at this time.') }}</p>
+        <p class="text-center text-body">{{ __('public/events.no_upcoming') }}</p>
     @else
         <div class="w-full max-w-4xl mx-auto">
             @foreach ($events as $month => $cur_events)
                 <!-- Month Separator -->
                 <div class="flex items-center justify-center my-8">
                     <div class="border-t flex-grow border-gray-300"></div>
-                    <h2 class="px-4 py-2 bg-neutral text-2xl font-bold text-accent rounded-lg shadow-md">{{ $month }}</h2>
+                    <h2 class="px-4 py-2 bg-neutral text-2xl font-bold text-accent rounded-lg shadow-md">
+                        {{ __( 'public/events.months.' . strtolower(\Carbon\Carbon::parse($cur_events->first()->start_date)->translatedFormat('F'))) }}
+                    </h2>
                     <div class="border-t flex-grow border-gray-300"></div>
                 </div>
 
@@ -26,17 +30,17 @@
                                 <p class="text-lg font-bold text-heading">{{ $event->name }}</p>
                                 <p class="text-sm text-body mb-2">{{ $event->description }}</p>
                                 <p class="text-sm text-gray-500">
-                                    <strong>{{ __('Location') }}:</strong> {{ $event->location }}
+                                    <strong>{{ __('public/events.location') }}:</strong> {{ $event->location }}
                                 </p>
                                 <p class="text-sm text-gray-500">
-                                    <strong>{{ __('Date') }}:</strong>
-                                    {{ \Carbon\Carbon::parse($event->start_date)->format('F j, Y') }}
-                                    - {{ \Carbon\Carbon::parse($event->end_date)->format('F j, Y') }}
+                                    <strong>{{ __('public/events.date') }}:</strong>
+                                    {{ \Carbon\Carbon::parse($event->start_date)->translatedFormat('F j, Y') }}
+                                    - {{ \Carbon\Carbon::parse($event->end_date)->translatedFormat('F j, Y') }}
                                 </p>
                                 <!-- View Details Button -->
                                 <a href="{{ route('event.show', ['event' => $event->id]) }}"
                                    class="inline-block mt-4 px-6 py-2 bg-accent text-white font-bold rounded-full hover:bg-cta transition">
-                                    {{ __('View Details') }}
+                                    {{ __('public/events.view_details') }}
                                 </a>
                             </div>
                         </li>

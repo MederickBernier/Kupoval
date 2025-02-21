@@ -125,6 +125,11 @@ class SimpleCart extends Component
 
         // ✅ Recalculate total
         $this->recalculateTotal();
+
+        // ✅ Refresh Livewire component dynamically
+        $this->cartItems = []; // Clear local cart items before reload
+        $this->cartItemCount = 0;
+        $this->dispatch('cartUpdated'); // Dispatch event
     }
 
     public function recalculateTotal()
