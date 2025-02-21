@@ -17,7 +17,7 @@ class SetLocale
 
         if (Auth::check()) {
             $profile = Auth::user()->profile;
-            $locale = $profile ? $profile->language : null;
+            $locale = $profile ? $profile->language : 'frca';
         }
 
         if (!$locale) {
