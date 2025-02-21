@@ -49,4 +49,8 @@ return [
     ],
     'addresses' => 'Adresses',
     'shipping_addresses' => 'Adresses de Livraison',
+    'title_updated' => 'Titre mis à jour avec succès.',
+    'title' => 'Titre',
+    'select_title' => 'Sélectionnez un Titre',
+    'title_field' => 'Titre',
 ];

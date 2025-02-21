@@ -16,10 +16,10 @@
     @else
         <!-- Display Mode -->
         <div class="space-y-1">
-            <p class="text-lg font-semibold text-gray-900">{{ $address }}</p>
-            <p class="text-gray-700">{{ $city }}, {{ $state }}</p>
-            <p class="text-gray-500">{{ $country }}</p>
-            <p class="text-gray-500">{{ $zipcode }}</p>
+            <p class="text-lg font-semibold text-gray-900">{{ $address ?: __('public/profile.no_address') }}</p>
+            <p class="text-gray-700">{{ $city ?: '-' }}, {{ $state ?: '-' }}</p>
+            <p class="text-gray-500">{{ $country ?: '-' }}</p>
+            <p class="text-gray-500">{{ $zipcode ?: '-' }}</p>
         </div>
 
         <!-- Single edit button per card -->

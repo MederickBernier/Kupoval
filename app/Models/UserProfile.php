@@ -39,4 +39,9 @@ class UserProfile extends Model
     {
         return $this->hasMany(Address::class)->where('type', 'shipping');
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'user_profile_id');
+    }
 }

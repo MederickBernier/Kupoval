@@ -49,4 +49,8 @@ return [
     ],
     'addresses' => 'Addresses',
     'shipping_addresses' => 'Shipping Addresses',
+    'title_updated' => 'Title updated successfully.',
+    'title' => 'Title',
+    'select_title' => 'Select a Title',
+    'title_field' => 'Title',
 ];

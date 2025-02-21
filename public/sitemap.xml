@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+    <!-- 🏠 PUBLIC PAGES (Blue) -->
+    <url><loc>http://localhost</loc></url>
+    <url><loc>http://localhost/about</loc></url>
+    <url><loc>http://localhost/contact</loc></url>
+    <url><loc>http://localhost/gallery</loc></url>
+    <url><loc>http://localhost/shop</loc></url>
+    <url><loc>http://localhost/cart</loc></url>
+    <url><loc>http://localhost/artwork/{artwork}</loc></url>
+    <url><loc>http://localhost/events</loc></url>
+    <url><loc>http://localhost/event/{event}</loc></url>
+
+    <!-- 🎨 BIO & ARTIST PAGES (Green) -->
+    <url><loc>http://localhost/bio</loc></url>
+    <url><loc>http://localhost/bio/artist/{artist}</loc></url>
+
+    <!-- 🔑 USER AUTHENTICATION & PROFILE (Red) -->
+    <url><loc>http://localhost/register</loc></url>
+    <url><loc>http://localhost/login</loc></url>
+    <url><loc>http://localhost/user-profile</loc></url>
+    <url><loc>http://localhost/user/edit-field/{field}</loc></url>
+
+    <!-- 📧 EMAIL VERIFICATION (Purple) -->
+    <url><loc>http://localhost/email/verify</loc></url>
+    <url><loc>http://localhost/email/verify/{id}/{hash}</loc></url>
+
+    <!-- 🛒 ORDERS & CHECKOUT (Orange) -->
+    <url><loc>http://localhost/orders/{order}</loc></url>
+    <url><loc>http://localhost/orders/{order}/invoice</loc></url>
+    <url><loc>http://localhost/checkout</loc></url>
+    <url><loc>http://localhost/checkout/success</loc></url>
+    <url><loc>http://localhost/checkout/cancel</loc></url>
+    <url><loc>http://localhost/checkout/confirmation</loc></url>
+
+    <!-- 🛠️ ADMIN DASHBOARD & SETTINGS (Brown) -->
+    <url><loc>http://localhost/admin/dashboard</loc></url>
+    <url><loc>http://localhost/admin/users</loc></url>
+    <url><loc>http://localhost/admin/users/deactivated</loc></url>
+    <url><loc>http://localhost/admin/settings</loc></url>
+
+    <!-- 🎭 ADMIN EVENTS MANAGEMENT (Cyan) -->
+    <url><loc>http://localhost/admin/events</loc></url>
+    <url><loc>http://localhost/admin/events/deactivated</loc></url>
+
+    <!-- 🖼️ ADMIN ARTWORK MANAGEMENT (Olive) -->
+    <url><loc>http://localhost/admin/artworks</loc></url>
+    <url><loc>http://localhost/admin/artworks/create</loc></url>
+    <url><loc>http://localhost/admin/artworks/{artwork}/edit</loc></url>
+    <url><loc>http://localhost/admin/artworks/deactivated</loc></url>
+
+    <!-- 📂 ADMIN CATEGORIES MANAGEMENT (Gray) -->
+    <url><loc>http://localhost/admin/categories</loc></url>
+    <url><loc>http://localhost/admin/categories/create</loc></url>
+    <url><loc>http://localhost/admin/categories/{category}/edit</loc></url>
+    <url><loc>http://localhost/admin/categories/deactivated</loc></url>
+
+    <!-- 👤 ADMIN ARTIST MANAGEMENT (Beige) -->
+    <url><loc>http://localhost/admin/artists</loc></url>
+    <url><loc>http://localhost/admin/artists/create</loc></url>
+    <url><loc>http://localhost/admin/artists/{artist}/edit</loc></url>
+    <url><loc>http://localhost/admin/artists/deactivated</loc></url>
+
+    <!-- 📦 ADMIN ORDER MANAGEMENT (Light Pink) -->
+    <url><loc>http://localhost/admin/orders</loc></url>
+    <url><loc>http://localhost/admin/orders/create</loc></url>
+    <url><loc>http://localhost/admin/orders/{order}</loc></url>
+    <url><loc>http://localhost/admin/orders/{order}/edit</loc></url>
+    <url><loc>http://localhost/admin/orders/deactivated</loc></url>
+
+    <!-- 💰 PROMOTIONS MANAGEMENT (Light Yellow) -->
+    <url><loc>http://localhost/admin</loc></url>
+    <url><loc>http://localhost/admin/create</loc></url>
+    <url><loc>http://localhost/admin/edit/{promotion}</loc></url>
+    <url><loc>http://localhost/admin/trashed</loc></url>
+    <url><loc>http://localhost/admin/{promotion}</loc></url>
+
+</urlset>

@@ -17,6 +17,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\Webhooks\StripeWebhookController;
 use App\Http\Controllers\EmailController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Spatie\Sitemap\SitemapGenerator;
 
 // Pages publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');
