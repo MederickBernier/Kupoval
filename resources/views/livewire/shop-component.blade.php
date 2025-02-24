@@ -11,68 +11,77 @@
 
     @if($filtersVisible)
     <div class="mb-6 p-5 bg-gray-50 shadow-lg rounded-xl border border-deep-emerald transition-all duration-300">
+        <!-- 🔹 Filters Header -->
         <div class="flex items-center space-x-2 mb-4">
             <i class="bi bi-funnel-fill text-teal-600"></i>
             <h3 class="text-xl font-semibold text-navy-blue">{{ __('public/shop.filters') }}</h3>
         </div>
 
-        <!-- Search Section -->
-        <div class="mb-6">
-            <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
-                <i class="bi bi-search text-gray-500 mr-1"></i>{{ __('public/shop.search') }}
-            </h4>
-            <input type="text" wire:model.live="search"
-                   class="border border-deep-emerald rounded-md px-4 py-3 w-full bg-white text-gray-800 focus:ring-teal-500 focus:ring-2 placeholder-gray-500 shadow-sm"
-                   placeholder="{{ __('public/shop.search') }}">
+        <!-- 🔹 First Row: Search + Sorting (Balanced Width) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <!-- 🔍 Search Bar (50% Width) -->
+            <div class="flex flex-col">
+                <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
+                    <i class="bi bi-search text-gray-500 mr-1"></i>{{ __('public/shop.search') }}
+                </h4>
+                <input type="text" wire:model.live="search"
+                       class="border border-deep-emerald rounded-md px-4 py-3 bg-white text-gray-800 focus:ring-teal-500 focus:ring-2 placeholder-gray-500 shadow-sm w-full"
+                       placeholder="{{ __('public/shop.search') }}">
+            </div>
+
+            <!-- 🔽 Sort By Dropdown (50% Width) -->
+            <div class="flex flex-col">
+                <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
+                    <i class="bi bi-sort-down text-blue-500 mr-1"></i>{{ __('public/shop.sort_by') }}
+                </h4>
+                <select wire:model.live="sortBy"
+                        class="border border-deep-emerald rounded-md px-4 py-2 bg-white text-gray-800 focus:ring-teal-500 focus:ring-2 shadow-sm text-sm w-full">
+                    <option value="newest">{{ __('public/shop.newest_first') }}</option>
+                    <option value="oldest">{{ __('public/shop.oldest_first') }}</option>
+                </select>
+            </div>
         </div>
 
-        <!-- Sorting Section -->
-        <div class="mb-6">
-            <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
-                <i class="bi bi-sort-down text-blue-500 mr-1"></i>{{ __('public/shop.sort_by') }}
-            </h4>
-            <select wire:model.live="sortBy"
-                    class="border border-deep-emerald rounded-md px-4 py-2 bg-white text-gray-800 focus:ring-teal-500 focus:ring-2 shadow-sm text-sm w-full">
-                <option value="newest">{{ __('public/shop.newest_first') }}</option>
-                <option value="oldest">{{ __('public/shop.oldest_first') }}</option>
-            </select>
-        </div>
-
-        <!-- Price Section -->
-        <div class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 🔹 Second Row: Price Filters -->
+        <div class="grid grid-cols-2 gap-4 mb-6">
+            <!-- 💰 Min Price -->
             <div class="flex flex-col">
                 <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
                     <i class="bi bi-tag text-green-500 mr-1"></i>{{ __('public/shop.min_price') }}
                 </h4>
                 <input type="number" wire:model.live="priceMin"
-                       min="0" step="10" value=""
+                       min="0" step="10"
                        class="border border-deep-emerald rounded-md px-4 py-2 w-full bg-white text-gray-800 shadow-sm"
                        placeholder="{{ __('public/shop.min_price') }}">
             </div>
+
+            <!-- 💰 Max Price -->
             <div class="flex flex-col">
                 <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
                     <i class="bi bi-tag text-red-500 mr-1"></i>{{ __('public/shop.max_price') }}
                 </h4>
-                <input type="number" wire:model.live="priceMax" min="0" step="10" value=""
+                <input type="number" wire:model.live="priceMax"
+                       min="0" step="10"
                        class="border border-deep-emerald rounded-md px-4 py-2 w-full bg-white text-gray-800 shadow-sm"
                        placeholder="{{ __('public/shop.max_price') }}">
             </div>
         </div>
 
-        <!-- Other Filters -->
-        <div class="mb-6 flex items-center">
-            <input type="checkbox" wire:model.live="onlyFeatured" class="w-5 h-5 accent-teal-600">
-            <label class="ml-2 text-gray-700 font-medium text-sm">{{ __('public/shop.only_featured') }}</label>
-            <input type="checkbox" wire:model.live="onlyWishlisted" class=" ml-5 w-5 h-5 accent-purple-600">
-            <label class="ml-2 text-gray-700 font-medium text-sm">
-                {{ __('public/shop.only_wishlisted') }}
+        <!-- 🔹 Third Row: Checkboxes (Only Featured & Only Wishlisted) -->
+        <div class="mb-6 flex items-center space-x-6">
+            <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox" wire:model.live="onlyFeatured" class="w-5 h-5 accent-teal-600">
+                <span class="text-gray-700 font-medium text-sm">{{ __('public/shop.only_featured') }}</span>
+            </label>
+            <label class="flex items-center space-x-2 cursor-pointer">
+                <input type="checkbox" wire:model.live="onlyWishlisted" class="w-5 h-5 accent-purple-600">
+                <span class="text-gray-700 font-medium text-sm">{{ __('public/shop.only_wishlisted') }}</span>
             </label>
         </div>
 
-
-
-        <!-- Categories & Artists Section -->
+        <!-- 🔹 Fourth Row: Categories & Artists -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- 🏷️ Categories -->
             <div class="border border-deep-emerald rounded-xl p-4 shadow-sm bg-gray-100">
                 <h4 class="text-gray-700 font-medium mb-2 flex items-center text-sm">
                     <i class="bi bi-tags text-emerald-green mr-1"></i>{{ __('public/shop.categories') }}
@@ -87,11 +96,12 @@
                 </div>
             </div>
 
+            <!-- 🎨 Artists -->
             <div class="border border-deep-emerald rounded-xl p-4 shadow-sm bg-gray-100">
                 <h4 class="text-gray-700 font-medium mb-2 flex items-center text-sm">
                     <i class="bi bi-brush text-teal-600 mr-1"></i>{{ __('public/shop.artists') }}
                 </h4>
-                <div class="max-h-32 overflow-y-auto p-2 bg-white rounded-md">
+                <div class="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto p-2 bg-white rounded-md">
                     @foreach($artists as $artist)
                         <label class="flex items-center space-x-2 px-2 py-1 cursor-pointer hover:bg-gray-200 transition">
                             <input type="checkbox" wire:model.live="selectedArtist" value="{{ (int) $artist->id }}" class="w-5 h-5 accent-teal-600">
@@ -102,7 +112,7 @@
             </div>
         </div>
     </div>
-    @endif
+@endif
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         @forelse($artworks as $artwork)

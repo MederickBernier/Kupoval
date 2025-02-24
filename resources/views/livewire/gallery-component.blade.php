@@ -11,50 +11,55 @@
 
     @if($filtersVisible)
     <div class="mb-4 p-4 bg-white shadow-md rounded-lg border border-deep-emerald transition-all duration-300">
-        <div class="flex items-center space-x-2">
+        <!-- 🔹 Filters Header -->
+        <div class="flex items-center space-x-2 mb-4">
             <i class="bi bi-funnel-fill text-teal-600"></i>
             <h3 class="text-xl font-semibold text-navy-blue">{{ __('public/gallery.filters') }}</h3>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
-            <div class="flex flex-col md:col-span-3">
+        <!-- 🔹 First Row: Search + Sorting + Event Filters (Inline) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <!-- 🔍 Search Bar -->
+            <div class="flex flex-col">
                 <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
                     <i class="bi bi-search text-gray-500 mr-1"></i>{{ __('public/gallery.search') }}
                 </h4>
                 <input type="text" wire:model.live="search"
-                       class="border border-deep-emerald rounded-md px-4 py-2 w-full bg-white text-gray-800 focus:ring-emerald-green focus:ring-1 placeholder-gray-500 shadow-sm"
+                       class="border border-deep-emerald rounded-md px-4 py-2 bg-white text-gray-800 focus:ring-emerald-green focus:ring-1 placeholder-gray-500 shadow-sm w-full"
                        placeholder="{{ __('public/gallery.search') }}">
             </div>
 
-            <div class="grid grid-cols-2 gap-3 md:col-span-3">
-                <div class="flex flex-col">
-                    <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
-                        <i class="bi bi-sort-down text-blue-500 mr-1"></i>{{ __('public/gallery.sort_by') }}
-                    </h4>
-                    <select wire:model.live="sortBy"
-                            class="border border-deep-emerald rounded-md px-4 py-2 bg-white text-gray-800 focus:ring-emerald-green focus:ring-1 shadow-sm text-sm w-full">
-                        <option value="newest">{{ __('public/gallery.newest_first') }}</option>
-                        <option value="oldest">{{ __('public/gallery.oldest_first') }}</option>
-                        <option value="featured">{{ __('public/gallery.featured_first') }}</option>
-                    </select>
-                </div>
+            <!-- 🔽 Sort By Dropdown -->
+            <div class="flex flex-col">
+                <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
+                    <i class="bi bi-sort-down text-blue-500 mr-1"></i>{{ __('public/gallery.sort_by') }}
+                </h4>
+                <select wire:model.live="sortBy"
+                        class="border border-deep-emerald rounded-md px-4 py-2 bg-white text-gray-800 focus:ring-emerald-green focus:ring-1 shadow-sm text-sm w-full">
+                    <option value="newest">{{ __('public/gallery.newest_first') }}</option>
+                    <option value="oldest">{{ __('public/gallery.oldest_first') }}</option>
+                    <option value="featured">{{ __('public/gallery.featured_first') }}</option>
+                </select>
+            </div>
 
-                <div class="flex flex-col">
-                    <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
-                        <i class="bi bi-calendar-event text-orange-500 mr-1"></i>{{ __('public/gallery.event') }}
-                    </h4>
-                    <select wire:model.live="selectedEvent"
-                            class="border border-deep-emerald rounded-md px-4 py-2 bg-white text-gray-800 focus:ring-emerald-green focus:ring-1 shadow-sm text-sm w-full">
-                        <option value="">{{ __('public/gallery.all_events') }}</option>
-                        @foreach($events as $event)
-                            <option value="{{ $event->id }}">{{ $event->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            <!-- 📅 Event Filter -->
+            <div class="flex flex-col">
+                <h4 class="text-gray-700 font-medium mb-1 flex items-center text-sm">
+                    <i class="bi bi-calendar-event text-orange-500 mr-1"></i>{{ __('public/gallery.event') }}
+                </h4>
+                <select wire:model.live="selectedEvent"
+                        class="border border-deep-emerald rounded-md px-4 py-2 bg-white text-gray-800 focus:ring-emerald-green focus:ring-1 shadow-sm text-sm w-full">
+                    <option value="">{{ __('public/gallery.all_events') }}</option>
+                    @foreach($events as $event)
+                        <option value="{{ $event->id }}">{{ $event->name }}</option>
+                    @endforeach
+                </select>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+        <!-- 🔹 Second Row: Categories & Artists (Two Columns) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+            <!-- 🏷️ Categories Filter -->
             <div class="border border-deep-emerald rounded-md p-3 shadow-sm bg-gray-100">
                 <h4 class="text-gray-700 font-medium mb-2 flex items-center text-sm">
                     <i class="bi bi-tags text-emerald-green mr-1"></i>{{ __('public/gallery.categories') }}
@@ -69,6 +74,7 @@
                 </div>
             </div>
 
+            <!-- 🎨 Artists Filter -->
             <div class="border border-deep-emerald rounded-md p-3 shadow-sm bg-gray-100">
                 <h4 class="text-gray-700 font-medium mb-2 flex items-center text-sm">
                     <i class="bi bi-brush text-teal-600 mr-1"></i>{{ __('public/gallery.artists') }}
@@ -84,6 +90,7 @@
             </div>
         </div>
 
+        <!-- 🔹 Reset Filters Button -->
         <div class="mt-4 flex justify-end">
             <button wire:click="resetFilters"
                     class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-4 py-2 rounded-md shadow-md border border-orange-700 transition-all duration-200 flex items-center text-sm">
