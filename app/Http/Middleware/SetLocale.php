@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -13,24 +14,30 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next)
     {
-        $locale = null;
+        // 1️⃣ Check if locale is already set in session
+        $locale = Session::get('locale');
 
-        if (Auth::check()) {
-            $profile = Auth::user()->profile;
-            $locale = $profile ? $profile->language : 'frca';
+        // 2️⃣ If not in session, check for an authenticated user
+        if (!$locale && Auth::check() && Auth::user()->profile) {
+            $locale = Auth::user()->profile->language;
         }
 
+        // 3️⃣ If not in DB, check the user's cookie
         if (!$locale) {
             $locale = Cookie::get('locale');
         }
 
+        // 4️⃣ Default to the app's config locale if nothing is found
         if (!$locale) {
-            $locale = config('app.locale');
+            $locale = config('app.locale', 'frca'); // Default fallback to fr_CA
         }
 
+        // 5️⃣ Set the locale globally in Laravel & Carbon
         App::setLocale($locale);
+        Carbon::setLocale($locale);
+
+        // 6️⃣ Store in session for persistency
         Session::put('locale', $locale);
-        \Carbon\Carbon::setLocale(Session::get('locale'));
 
         return $next($request);
     }

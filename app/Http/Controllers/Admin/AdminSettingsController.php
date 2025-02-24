@@ -35,36 +35,38 @@ class AdminSettingsController extends Controller
 
             $validated = $request->validate([
                 'key' => 'required|string|max:255|unique:settings,key',
-                'value' => 'required|string',
+                'value' => 'string|nullable',
             ]);
 
-            $setting = Setting::create($validated);
+            Setting::create($validated);
 
-            return response()->json(['success' => __('Setting created successfully'), 'setting' => $setting], 201);
+            return redirect()->route('admin.settings.index')->with('success', __('Setting created successfully'));
         } catch (\Exception $e) {
             Log::error('Error creating setting: ' . $e->getMessage());
-            return response()->json(['error' => __('Failed to create setting')], 500);
+            return back()->with('error', __('Failed to create setting'));
         }
     }
 
     /**
      * Update an existing setting.
      */
-    public function update(Request $request, Setting $setting)
+    public function update(Request $request, $setting)
     {
         try {
             isAllowed($request->user());
 
             $validated = $request->validate([
-                'value' => 'required|string',
+                'value' => 'string|nullable',
             ]);
 
+            // Find setting manually
+            $setting = Setting::findOrFail($setting);
             $setting->update($validated);
 
-            return response()->json(['success' => __('Setting updated successfully'), 'setting' => $setting], 200);
+            return redirect()->route('admin.settings.index')->with('success', __('Setting updated successfully'));
         } catch (\Exception $e) {
             Log::error('Error updating setting: ' . $e->getMessage());
-            return response()->json(['error' => __('Failed to update setting')], 500);
+            return back()->with('error', __('Failed to update setting'));
         }
     }
 

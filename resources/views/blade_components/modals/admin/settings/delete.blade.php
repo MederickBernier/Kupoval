@@ -1,52 +1,67 @@
 <div x-cloak x-show="openDeleteModal"
-     x-transition.opacity
-     class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50"
+     x-transition
+     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4"
      @keydown.window.escape="openDeleteModal = false"
      @click.away="openDeleteModal = false">
 
-    <div class="bg-white p-6 rounded-lg shadow-lg w-96" x-data="{ confirmationText: '' }">
-        <h2 class="text-lg font-semibold text-red-600 mb-4">{{ __('admin/categories.delete_title') }}</h2>
-        <p>
-            {{ __('admin/categories.delete_confirmation') }}
-            <strong x-text="selectedCategory ? selectedCategory.name : 'Unknown'"></strong>.
-            {{ __('admin/categories.irreversible_action') }}
-        </p>
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md sm:max-w-lg relative">
+        <!-- Close Button -->
+        <button @click="openDeleteModal = false" class="absolute top-2 right-2 text-gray-600 hover:text-gray-800">
+            <i class="bi bi-x-lg"></i>
+        </button>
 
-        <!-- Confirmation Input -->
+        <h2 class="text-xl font-bold text-red-500 mb-4">{{ __('admin/settings.delete_title') }}</h2>
+        <p>{{ __('admin/settings.delete_confirmation') }} <strong x-text="selectedSetting.key"></strong>. {{ __('admin/settings.irreversible_action') }}</p>
+
         <div class="mt-4">
-            <label for="confirmDeleteName" class="font-semibold">{{ __('admin/categories.confirm_name_label') }}</label>
-            <input type="text" id="confirmDeleteName" class="w-full p-2 border rounded mt-1"
-                   placeholder="{{ __('admin/categories.confirm_name_placeholder') }}"
-                   x-model="confirmationText">
-        </div>
-
-        <div class="flex justify-end space-x-2 mt-6">
-            <button @click="openDeleteModal = false" class="px-4 py-2 bg-gray-300 text-gray-700 rounded">
-                {{ __('public/interface.cancel') }}
+            <button type="button" @click="openDeleteModal = false"
+                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400">
+                {{ __('admin/settings.cancel') }}
             </button>
-            <form x-bind:action="selectedCategory && selectedCategory.id ? ('/admin/categories/' + selectedCategory.id) : '#'"
-                  method="POST">
-                @csrf
-                @method('DELETE')
-                <button type="submit"
-                        class="px-4 py-2 bg-red-500 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
-                        :disabled="confirmationText !== (selectedCategory ? selectedCategory.name : '')">
-                    {{ __('admin/categories.delete_button') }}
-                </button>
-            </form>
+            <button @click="confirmDelete()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                {{ __('admin/settings.delete') }}
+            </button>
         </div>
     </div>
 </div>
 
 <script>
 document.addEventListener('alpine:init', () => {
-    Alpine.data('categoryManagement', () => ({
-        selectedCategory: null,
-        openDeleteModal: false,
+    Alpine.data('settingsManager', () => ({
+        openEditModal: false,
+        selectedSetting: { id: '', key: '', value: '' },
 
-        selectCategory(category) {
-            this.selectedCategory = category;
-            this.openDeleteModal = true; // Ensures the modal opens properly
+        async updateSetting() {
+            if (!this.selectedSetting.id) {
+                alert("{{ __('admin/settings.error_no_selection') }}");
+                return;
+            }
+
+            let url = `/admin/settings/${this.selectedSetting.id}`;
+
+            try {
+                let response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ value: this.selectedSetting.value ?? '' }) // Allows empty values
+                });
+
+                let data = await response.json();
+
+                if (response.ok) {
+                    alert(data.success);
+                    this.openEditModal = false;
+                    window.location.reload();
+                } else {
+                    alert(data.error || "{{ __('admin/settings.update_failed') }}");
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert("{{ __('admin/settings.unexpected_error') }}");
+            }
         }
     }));
 });

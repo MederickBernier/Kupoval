@@ -26,7 +26,7 @@ use Spatie\Sitemap\SitemapGenerator;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::post('/contact',[ContactController::class, 'send'])->name('contact.send');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 Route::get('/gallery', [HomeController::class, 'gallery'])->name('gallery');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/cart', [ShopController::class, 'cart'])->name('shop.cart');
@@ -79,7 +79,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Lang Switching Route
-Route::post('/lang-switch', [LanguageController::class, 'switch'])->middleware('auth')->name('lang.switch');
+Route::post('/lang-switch', [LanguageController::class, 'switch'])->name('lang.switch');
+
 
 // Checkout routes
 Route::middleware(['auth'])->group(function () {

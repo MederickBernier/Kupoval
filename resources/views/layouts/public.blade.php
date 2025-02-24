@@ -41,10 +41,7 @@
         <p class="text-sm text-heading">
             {!! __('public/interface.footer_copyright') !!}
         </p>
-        <div class="flex justify-center space-x-6 mt-4">
-            <a href="#" class="text-link hover:underline"><i class="bi bi-facebook"></i></a>
-            <a href="#" class="text-link hover:underline"><i class="bi bi-instagram"></i></a>
-        </div>
+        @include('blade_components.public_footer')
     </footer>
     @stack('scripts')
     <script>

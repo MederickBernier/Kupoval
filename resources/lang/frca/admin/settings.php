@@ -18,4 +18,6 @@ return [
     'delete_title' => 'Confirmer la suppression',
     'delete_confirmation' => 'Vous êtes sur le point de supprimer',
     'irreversible_action' => 'Cette action est irréversible.',
+    'value_placeholder' => 'Entrez la valeur du paramètre',
+    'save_changes' => 'Enregistrer les modifications',
 ];

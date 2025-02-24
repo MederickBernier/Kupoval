@@ -25,18 +25,19 @@ class LanguageController extends Controller
                 return back()->with('error', __('Invalid language selection.'));
             }
 
+            // Get current language from session (default is app locale)
             $currentLang = Session::get('locale', config('app.locale'));
 
             if ($currentLang !== $lang) {
-                // If the user is authenticated, update their preferred language in the profile
-                if (Auth::check() && Auth::user()->profile?->language !== $lang) {
-                    Auth::user()->profile?->update(['language' => $lang]);
-                }
-
-                // Store language preference
+                // Store language preference for guests & users
                 Session::put('locale', $lang);
                 Cookie::queue('locale', $lang, 60 * 24 * 30); // Store for 30 days
                 App::setLocale($lang);
+
+                // If authenticated, update user's profile language
+                if (Auth::check() && Auth::user()->profile?->language !== $lang) {
+                    Auth::user()->profile?->update(['language' => $lang]);
+                }
             }
 
             return back()->with('success', __('Language updated successfully.'));

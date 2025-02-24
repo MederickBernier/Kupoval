@@ -18,4 +18,6 @@ return [
     'delete_title' => 'Confirm Deletion',
     'delete_confirmation' => 'You are about to delete',
     'irreversible_action' => 'This action is irreversible.',
+    'value_placeholder' => 'Enter the value of the setting',
+    'save_changes' => 'Save Changes',
 ];
