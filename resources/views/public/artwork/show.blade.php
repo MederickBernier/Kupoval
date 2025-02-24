@@ -1,7 +1,7 @@
 @extends('layouts.public')
 
 @section('content')
-<div class="p-6 bg-soft-aqua text-charcoal-gray min-h-screen">
+<div x-data="{ openContactModal: false }" class="p-6 bg-soft-aqua text-charcoal-gray min-h-screen">
     <div class="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-8 grid lg:grid-cols-2 gap-8">
 
         <!-- Left Section: Artwork Image -->
@@ -91,9 +91,9 @@
                 </div>
             </div>
             <div class="mt-4 flex justify-end">
-                <a href="#"
-                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition-all duration-200">
-                <i class="bi bi-envelope-fill mr-2"></i> {{ __('public/artwork.contact_artist') }}
+                <a href="{{ route('contact.artist.form', ['artist' => $artwork->artist->slug]) }}"
+                   class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition-all duration-200">
+                    <i class="bi bi-envelope-fill mr-2"></i> {{ __('public/artwork.contact_artist') }}
                 </a>
             </div>
         </div>

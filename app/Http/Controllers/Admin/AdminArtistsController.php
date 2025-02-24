@@ -43,6 +43,12 @@ class AdminArtistsController extends Controller
                 'name' => 'required|string|max:255|unique:artists,name',
                 'bio' => 'nullable|string',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'email' => 'nullable|email|max:255',
+                'website' => 'nullable|url|max:255',
+                'facebook' => 'nullable|url|max:255',
+                'twitter' => 'nullable|url|max:255',
+                'instagram' => 'nullable|url|max:255',
+                'tiktok' => 'nullable|url|max:255',
             ]);
 
             // Generate unique slug
@@ -62,6 +68,12 @@ class AdminArtistsController extends Controller
                 'slug' => $slug,
                 'bio' => $request->bio,
                 'photo' => $photoPath ? 'storage/' . $photoPath : null,
+                'email' => $request->email,
+                'website' => $request->website,
+                'facebook' => $request->facebook,
+                'twitter' => $request->twitter,
+                'instagram' => $request->instagram,
+                'tiktok' => $request->tiktok,
             ]);
 
             return redirect()->route('admin.artists.index')->with('success', __('Artist created successfully.'));
@@ -91,12 +103,21 @@ class AdminArtistsController extends Controller
                 'name' => 'required|string|max:255|unique:artists,name,' . $artist->id,
                 'bio' => 'nullable|string',
                 'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'email' => 'nullable|email|max:255',
+                'website' => 'nullable|url|max:255',
+                'facebook' => 'nullable|url|max:255',
+                'twitter' => 'nullable|url|max:255',
+                'instagram' => 'nullable|url|max:255',
+                'tiktok' => 'nullable|url|max:255',
             ]);
 
-            // Generate unique slug
-            $slug = Str::slug($request->name);
-            if (Artist::where('slug', $slug)->where('id', '!=', $artist->id)->exists()) {
-                $slug .= '-' . (Artist::where('slug', 'LIKE', "{$slug}%")->count() + 1);
+            // Generate unique slug if name is changed
+            if ($artist->name !== $request->name) {
+                $slug = Str::slug($request->name);
+                if (Artist::where('slug', $slug)->where('id', '!=', $artist->id)->exists()) {
+                    $slug .= '-' . (Artist::where('slug', 'LIKE', "{$slug}%")->count() + 1);
+                }
+                $artist->slug = $slug;
             }
 
             // Handle photo update
@@ -113,8 +134,13 @@ class AdminArtistsController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'name' => $request->name,
-                'slug' => $slug,
                 'bio' => $request->bio,
+                'email' => $request->email,
+                'website' => $request->website,
+                'facebook' => $request->facebook,
+                'twitter' => $request->twitter,
+                'instagram' => $request->instagram,
+                'tiktok' => $request->tiktok,
             ]);
 
             return redirect()->route('admin.artists.index')->with('success', __('Artist updated successfully.'));

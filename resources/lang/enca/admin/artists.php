@@ -38,4 +38,9 @@ return [
     'confirm_force_delete' => 'Are you sure you want to permanently delete this artist?',
     'update' => 'Update',
     'list_heading' => 'Artists List',
+    'email' => 'Email',
+    'website' => 'Website',
+    'social_media' => 'Social Medias',
+    'social' => 'Social Medias',
+    'view_website' => 'View Website',
 ];

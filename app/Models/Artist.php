@@ -18,6 +18,13 @@ class Artist extends Model
         'name',
         'bio',
         'photo',
+        'email',
+        'website',
+        'facebook',
+        'instagram',
+        'twitter',
+        'tiktok',
+        'youtube',
         'slug',
     ];
 

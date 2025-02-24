@@ -11,6 +11,7 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\BioController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\ContactArtistController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
@@ -31,6 +32,9 @@ Route::get('/artwork/{artwork}', [ArtworkController::class, 'show'])->name('artw
 Route::get('/events', [HomeController::class, 'events'])->name('events');
 Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show');
 Route::delete('/wishlist/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+Route::get('/contact-artist/{artist}', [ContactArtistController::class, 'form'])->name('contact.artist.form');
+Route::post('/contact-artist', [ContactArtistController::class, 'send'])->name('contact.artist.send');
+
 
 
 // Bio Routes

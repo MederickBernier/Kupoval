@@ -52,7 +52,6 @@
             console.log('🔄 Rechargement forcé après changement de langue');
             location.reload();
         });
-        document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll('.editor').forEach(editor => {
             ClassicEditor
                 .create(editor, {

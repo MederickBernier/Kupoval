@@ -38,4 +38,9 @@ return [
     'confirm_force_delete' => 'Êtes-vous sûr de vouloir supprimer définitivement cet artiste?',
     'update' => 'Mettre à jour',
     'list_heading' => 'Liste des artistes',
+    'email' => 'Courriel',
+    'website' => 'Site Web',
+    'social_media' => 'Réseaux sociaux',
+    'social' => 'Réseaux sociaux',
+    'view_website' => 'Voir le site Web',
 ];

@@ -45,6 +45,55 @@
                       class="editor w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1 h-40">{{ old('bio', $artist->bio) }}</textarea>
         </div>
 
+        <!-- Email -->
+        <div>
+            <label for="email" class="block font-semibold text-gray-700">{{ __('admin/artists.email') }}</label>
+            <input type="email" name="email" id="email"
+                class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1"
+                value="{{ old('email', $artist->email) }}">
+        </div>
+
+        <!-- Website -->
+        <div>
+            <label for="website" class="block font-semibold text-gray-700">{{ __('admin/artists.website') }}</label>
+            <input type="url" name="website" id="website"
+                class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1"
+                value="{{ old('website', $artist->website ?? '') }}"
+                onblur="ensureHttps(this)">
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label for="facebook" class="block font-semibold text-gray-700">Facebook</label>
+                <input type="url" name="facebook" id="facebook"
+                    class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1"
+                    value="{{ old('facebook', $artist->facebook ?? '') }}"
+                    onblur="ensureHttps(this)">
+            </div>
+            <div>
+                <label for="twitter" class="block font-semibold text-gray-700">Twitter</label>
+                <input type="url" name="twitter" id="twitter"
+                    class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1"
+                    value="{{ old('twitter', $artist->twitter ?? '') }}"
+                    onblur="ensureHttps(this)">
+            </div>
+            <div>
+                <label for="instagram" class="block font-semibold text-gray-700">Instagram</label>
+                <input type="url" name="instagram" id="instagram"
+                    class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1"
+                    value="{{ old('instagram', $artist->instagram ?? '') }}"
+                    onblur="ensureHttps(this)">
+            </div>
+            <div>
+                <label for="tiktok" class="block font-semibold text-gray-700">TikTok</label>
+                <input type="url" name="tiktok" id="tiktok"
+                    class="w-full p-3 border rounded-lg focus:ring focus:ring-blue-300 mt-1"
+                    value="{{ old('tiktok', $artist->tiktok ?? '') }}"
+                    onblur="ensureHttps(this)">
+            </div>
+        </div>
+
         <!-- Photo Upload with Preview -->
         <div class="flex items-center space-x-4">
             <div class="w-24 h-24 border rounded-lg overflow-hidden">
@@ -76,6 +125,12 @@ function previewPhoto(event) {
         document.getElementById('photoPreview').src = reader.result;
     };
     reader.readAsDataURL(event.target.files[0]);
+}
+
+function ensureHttps(input) {
+    if (input.value.trim() !== '' && !/^https?:\/\//i.test(input.value)) {
+        input.value = 'https://' + input.value.trim();
+    }
 }
 </script>
 

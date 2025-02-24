@@ -16,7 +16,7 @@
         </div>
 
         <div class="text-center">
-            <a href="{{ route('contact') }}"
+            <a href="{{ route('contact.artist.form', ['artist' => $artist->slug]) }}"
                class="inline-block px-8 py-3 bg-accent text-white font-bold rounded-lg shadow-lg hover:bg-cta transition">
                 {{ __('public/interface.contact_artist') }}
             </a>

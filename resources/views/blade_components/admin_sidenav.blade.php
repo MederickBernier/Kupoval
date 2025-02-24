@@ -40,6 +40,27 @@
                 </a>
             </li>
 
+            <!-- Artists Management (NEW) -->
+            <li x-data="{ openArtists: {{ request()->routeIs('admin.artists.*') ? 'true' : 'false' }} }">
+                <button @click="openArtists = !openArtists"
+                        class="w-full flex items-center px-4 py-2 hover:bg-gray-200">
+                    <i class="bi bi-palette mr-2"></i> {{ __('admin/sidenav.artists') }}
+                    <i class="bi bi-chevron-down ml-auto" x-bind:class="{'rotate-180': openArtists}"></i>
+                </button>
+                <ul x-show="openArtists" class="pl-8 mt-1 space-y-1">
+                    <li><a href="{{ route('admin.artists.index') }}"
+                            class="block px-4 py-2 hover:bg-gray-100
+                                    {{ request()->routeIs('admin.artists.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.list_artists') }}
+                    </a></li>
+                    <li><a href="{{ route('admin.artists.trashed') }}"
+                            class="block px-4 py-2 hover:bg-gray-100
+                                    {{ request()->routeIs('admin.artists.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
+                            {{ __('admin/sidenav.deactivated_artists') }}
+                    </a></li>
+                </ul>
+            </li>
+
             <!-- Orders Management -->
             <li x-data="{ openOrders: {{ request()->routeIs('admin.orders.*') ? 'true' : 'false' }} }">
                 <button @click="openOrders = !openOrders"
