@@ -12,7 +12,7 @@
         <!-- Formulaire de contact -->
         <div class="bg-white shadow-lg rounded-xl p-8 border-t-4 border-accent transform hover:scale-105 transition-transform duration-300">
             <h2 class="text-2xl font-title text-heading mb-4 text-center">{{ __('public/interface.send_us_message') }}</h2>
-            <form action="#" method="POST" class="space-y-6">
+            <form action="{{ route('contact.send') }}" method="POST" class="space-y-6">
                 @csrf
                 <div>
                     <label for="name" class="block text-sm font-bold text-body">{{ __('public/interface.name') }}</label>

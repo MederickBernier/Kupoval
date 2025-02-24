@@ -12,6 +12,7 @@ use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\BioController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ContactArtistController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ShopController;
@@ -25,6 +26,7 @@ use Spatie\Sitemap\SitemapGenerator;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+Route::post('/contact',[ContactController::class, 'send'])->name('contact.send');
 Route::get('/gallery', [HomeController::class, 'gallery'])->name('gallery');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::get('/cart', [ShopController::class, 'cart'])->name('shop.cart');
@@ -34,7 +36,6 @@ Route::get('/event/{event}', [EventController::class, 'show'])->name('event.show
 Route::delete('/wishlist/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 Route::get('/contact-artist/{artist}', [ContactArtistController::class, 'form'])->name('contact.artist.form');
 Route::post('/contact-artist', [ContactArtistController::class, 'send'])->name('contact.artist.send');
-
 
 
 // Bio Routes
