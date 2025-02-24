@@ -29,4 +29,6 @@ return [
     'total' => 'Total',
     'you_saved' => 'You saved',
     'proceed_to_payment' => 'Proceed to Payment',
+    'promo_discount' => 'Promo Discount',
+    'shipping_fee' => 'Shipping Fee',
 ];

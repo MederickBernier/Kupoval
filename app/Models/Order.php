@@ -20,6 +20,9 @@ class Order extends Model
         'shipping_address_id',
         'recipient_name',
         'recipient_email',
+        'promo_code',
+        'promo_percent',
+        'promo_discount',
     ];
 
     public function user()

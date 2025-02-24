@@ -29,4 +29,6 @@ return [
     'total' => 'Total',
     'you_saved' => 'Vous avez économisé',
     'proceed_to_payment' => 'Procéder au paiement',
+    'promo_discount' => 'Réduction de promo',
+    'shipping_fee' => 'Frais de livraison',
 ];

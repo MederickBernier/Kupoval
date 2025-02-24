@@ -18,6 +18,7 @@ use Stripe\Stripe;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\PaymentReceiptMail;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 
 class CheckoutController extends Controller
 {
@@ -33,6 +34,7 @@ class CheckoutController extends Controller
 
         $cartTotal = $cart->items->sum(fn($item) => $item->quantity * $item->price);
         $finalTotal = max($cartTotal - session('discount_amount', 0) + session('shipping_fee', 0), 0);
+        $promo = session('promo', ['code' => '', 'percent' => 0, 'amount' => 0]);
 
         $order = Order::create([
             'user_id' => Auth::id(),
@@ -43,6 +45,9 @@ class CheckoutController extends Controller
             'shipping_address_id' => session('shipping_address_id', null),
             'recipient_name' => Auth::user()->name,
             'recipient_email' => Auth::user()->email,
+            'promo_code' => $promo['code'],
+            'promo_percent' => $promo['percent'],
+            'promo_discount' => $promo['amount'],
         ]);
 
         Log::info("✅ Order Created: Order #{$order->id}");
@@ -77,20 +82,55 @@ class CheckoutController extends Controller
             return redirect()->route('login')->with('error', 'You need to login to proceed to checkout');
         }
 
-        $order = $this->createOrder();
-
         try {
             Stripe::setApiKey(config('services.stripe.secret'));
 
-            $lineItems = OrderItem::where('order_id', $order->id)->get()->map(fn($item) => [
-                'price_data' => [
-                    'currency' => 'cad',
-                    'product_data' => ['name' => $item->artwork->name],
-                    'unit_amount' => max((int) round($item->unit_price * 100), 50),
-                ],
-                'quantity' => $item->quantity,
-            ])->toArray();
+            // 🔹 Begin Database Transaction
+            DB::beginTransaction();
 
+            // 🔹 Create Order inside Transaction
+            $order = $this->createOrder();
+            $finalTotal = $this->calculateFinalTotal(); // Get updated total
+
+            // 🔹 Fetch Promotion Info
+            $promo = session('promo', ['code' => '', 'percent' => 0, 'amount' => 0]);
+            $discountPercent = isset($promo['percent']) ? (float) $promo['percent'] : 0;
+
+            // 🔹 Fetch Cart Items
+            $cartItems = OrderItem::where('order_id', $order->id)->get();
+
+            // 🔹 Build Line Items with Discount Applied
+            $lineItems = [];
+            foreach ($cartItems as $item) {
+                $originalPrice = $item->unit_price;
+                $discountedPrice = $discountPercent > 0 ? $originalPrice * ((100 - $discountPercent) / 100) : $originalPrice;
+
+                Log::info("✅ Item Price Adjusted: Original: {$originalPrice}, Discounted: {$discountedPrice}");
+
+                $lineItems[] = [
+                    'price_data' => [
+                        'currency' => 'cad',
+                        'product_data' => ['name' => $item->artwork->name],
+                        'unit_amount' => max((int) round($discountedPrice * 100), 50),
+                    ],
+                    'quantity' => $item->quantity,
+                ];
+            }
+
+            // 🔹 Add Shipping Fee Line Item (if applicable)
+            $shippingAmount = session('shippingAmount', 0);
+            if ($shippingAmount > 0) {
+                $lineItems[] = [
+                    'price_data' => [
+                        'currency' => 'cad',
+                        'product_data' => ['name' => 'Shipping Fee'],
+                        'unit_amount' => max((int) round($shippingAmount * 100), 50),
+                    ],
+                    'quantity' => 1,
+                ];
+            }
+
+            // 🔹 Create Stripe Checkout Session
             $checkoutSession = Session::create([
                 'payment_method_types' => ['card'],
                 'line_items' => $lineItems,
@@ -102,13 +142,18 @@ class CheckoutController extends Controller
                 'metadata' => ['order_id' => (string) $order->id],
             ]);
 
-            // ✅ Ensure session ID is saved in the order
+            // ✅ Store session ID in order for tracking
             $order->stripe_session_id = $checkoutSession->id;
-            $order->save(); // ✅ Save explicitly
+            $order->save();
 
-            Log::info("✅ Stripe Checkout Session Created: {$checkoutSession->id} for Order #{$order->id}");
+            // 🔹 Commit Transaction (Finalizing DB changes)
+            DB::commit();
+
             return redirect($checkoutSession->url);
         } catch (\Exception $e) {
+            // 🔹 Rollback if any error occurs (prevents duplicate orders)
+            DB::rollBack();
+
             Log::error('❌ Stripe Error:', ['message' => $e->getMessage()]);
             return redirect()->route('checkout.confirmation')->with('error', 'Payment could not be processed.');
         }
@@ -167,16 +212,28 @@ class CheckoutController extends Controller
     {
         $request->validate(['code' => 'required|string']);
 
-        $promoCode = Promotion::where('code', $request->input('code'))
-            ->where('is_active', true)
-            ->first();
+        $promoCode = Promotion::where('code', $request->input('code'))->where('is_active', true)->first();
 
-        if (!$promoCode) {
-            return response()->json(['success' => false, 'message' => 'Invalid or Expired promo code.'], 400);
-        }
+        if (!$promoCode) return response()->json(['success' => false, 'message' => 'Invalid or expired promo code']);
 
-        session(['discount_amount' => $promoCode->discount_amount]);
-        return response()->json(['success' => true, 'message' => 'Promo code applied!']);
+        $subtotal = Cart::where('user_id', Auth::id())->with('items.artwork')->first()->items->sum(fn($item) => $item->quantity * $item->price);
+        $discountAmount = round($subtotal * ($promoCode->discount_percentage / 100), 2);
+
+        session([
+            'promo' => [
+                'code' => $promoCode->code,
+                'percent' => $promoCode->discount_percentage,
+                'amount' => $discountAmount,
+            ],
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Promo code applied!',
+            'discount' => $discountAmount,
+            'final_total' => $this->calculateFinalTotal(),
+            'percent' => $promoCode->discount_percentage
+        ]);
     }
 
     /**
@@ -198,12 +255,19 @@ class CheckoutController extends Controller
     public function updateShipping(Request $request)
     {
         $shippingCondition = ShippingCondition::find($request->shipping_id);
-        if (!$shippingCondition) {
-            return response()->json(['success' => false, 'message' => 'Invalid shipping option.'], 400);
-        }
+        if (!$shippingCondition) return response()->json(['success' => false, 'message' => 'Invalid shipping condition']);
 
-        session(['shipping_condition_id' => $shippingCondition->id]);
-        return response()->json(['success' => true, 'shipping_fee' => $shippingCondition->fee]);
+        session([
+            'shippingAmount' => $shippingCondition->fee,
+            'shipping_condition_id' => $shippingCondition->id,
+            'total' => $this->calculateFinalTotal(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'shipping_fee' => $shippingCondition->fee,
+            'final_total' => $this->calculateFinalTotal()
+        ]);
     }
 
     public function confirmation()
@@ -242,7 +306,47 @@ class CheckoutController extends Controller
             'shippingConditions' => ShippingCondition::all(),
             'billingAddress' => $billingAddress,
             'shippingAddress' => $shippingAddress,
-            'finalTotal' => max(session('cart_total', 0) - session('discount_amount', 0) + session('shipping_fee', 0), 0),
+            'finalTotal' => max(session('subtotal', 0) - session('promo.amount', 0) + session('shippingAmount', 0), 0),
+        ]);
+    }
+
+    private function calculateFinalTotal()
+    {
+        $cart = Cart::where('user_id', Auth::id())->with('items.artwork')->first();
+        if (!$cart) return 0;
+
+        $subtotal = $cart->items->sum(fn($item) => $item->quantity * $item->price);
+        $promo = session('promo', ['code' => '', 'percent' => 0, 'amount' => 0]);
+        $shippingAmount = session('shippingAmount', 0);
+
+        // Calculate promo discount amount
+        $discountAmount = ($promo['percent'] > 0) ? round($subtotal * ($promo['percent'] / 100), 2) : 0;
+
+        $promo['amount'] = $discountAmount;
+
+        $finalTotal = max($subtotal - $discountAmount + $shippingAmount, 0);
+
+        // Store values in session
+        session([
+            'subtotal' => $subtotal,
+            'promo' => $promo,
+            'shippingAmount' => $shippingAmount,
+            'total' => $finalTotal
+        ]);
+
+        return $finalTotal;
+    }
+
+    public function removePromoCode()
+    {
+        session()->forget('promo');
+        session()->forget('discount_amount');
+        session()->forget('applied_promo');
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Promo code removed',
+            'final_total' => $this->calculateFinalTotal()
         ]);
     }
 }

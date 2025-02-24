@@ -123,8 +123,26 @@
                :class="discount > 0 ? 'text-green-600' : 'text-red-600'"></p>
         </div>
 
-        <!-- Total Price -->
-        <h3 class="text-xl font-bold text-gray-800 mt-6">{{ __('public/checkout.total') }}:
+        <h3 class="text-lg font-semibold text-gray-800 mt-4">
+            {{ __('public/checkout.subtotal') }}:
+            <span class="text-green-600 font-bold">$<span x-text="subtotal.toFixed(2)"></span></span>
+        </h3>
+
+        <!-- Promo Discount Row -->
+        <p x-show="discount > 0" class="text-red-600 font-semibold">
+            - {{ __('public/checkout.promo_discount') }} (<span x-text="appliedPromo"></span>) :
+            <span>-$<span x-text="discount.toFixed(2)"></span></span>
+        </p>
+
+        <!-- Shipping Fee -->
+        <p x-show="shippingFee > 0" class="text-gray-800 font-semibold">
+            + {{ __('public/checkout.shipping_fee') }} :
+            <span>$<span x-text="shippingFee.toFixed(2)"></span></span>
+        </p>
+
+        <!-- Final Total -->
+        <h3 class="text-xl font-bold text-gray-800 mt-6">
+            {{ __('public/checkout.total') }}:
             <span class="text-green-600 font-extrabold">$<span x-text="finalTotal.toFixed(2)"></span></span>
         </h3>
         <p x-show="discount > 0" class="text-gray-500 text-sm">{{ __('public/checkout.you_saved') }}: $<span x-text="discount.toFixed(2)"></span></p>
@@ -156,7 +174,8 @@ function checkoutForm() {
 
         // Promo Code
         promoCode: "",
-        appliedPromo: "{{ session('applied_promo', '') }}",
+        appliedPromo: "{{ session('promo.code', '') }}",
+        discount: parseFloat("{{ session('promo.amount', 0) }}"),
         promoMessage: "",
 
         // Init function
@@ -166,7 +185,9 @@ function checkoutForm() {
 
         // Update total price calculation
         updateTotal() {
-            this.finalTotal = this.subtotal - this.discount + this.shippingFee;
+            let discountValue = isNaN(this.discount) ? 0 : this.discount;
+            let shippingValue = isNaN(this.shippingFee) ? 0 : this.shippingFee;
+            this.finalTotal = this.subtotal - discountValue + shippingValue;
         },
 
         // Cancel new address input
@@ -201,7 +222,8 @@ function checkoutForm() {
             .then(data => {
                 if (data.success) {
                     this.shippingFee = parseFloat(data.shipping_fee);
-                    this.updateTotal();
+                    this.finalTotal = parseFloat(data.final_total);
+                    this.shippingConditionId = data.shippingConditionId;
                 }
             })
             .catch(error => console.error("Error updating shipping:", error));
@@ -222,13 +244,13 @@ function checkoutForm() {
             .then(data => {
                 if (data.success) {
                     this.discount = parseFloat(data.discount);
-                    this.appliedPromo = data.code;
-                    this.promoMessage = `Promo applied successfully! You saved $${this.discount.toFixed(2)} (${((this.discount / this.subtotal) * 100).toFixed(2)}% off)`;
+                    this.appliedPromo = this.promoCode;
+                    this.promoMessage = `Promo applied successfully! You saved $${this.discount.toFixed(2)} (${data.percent}% off)`;
+                    this.updateTotal();
                 } else {
                     this.discount = 0;
                     this.promoMessage = "Invalid promo code.";
                 }
-                this.updateTotal();
             })
             .catch(error => console.error("Error applying promo:", error));
         },
