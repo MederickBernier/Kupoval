@@ -19,7 +19,7 @@
         <p><strong>{{ __('public/order.total') }}:</strong> ${{ number_format($order->total, 2) }}</p>
     </div>
 
-    <!-- Items -->
+    <!-- Items Section -->
     <h3 class="text-xl font-semibold mt-6 mb-4">{{ __('public/order.items') }}</h3>
     <table class="w-full border rounded-lg">
         <thead class="bg-gray-200 text-gray-800">
@@ -32,7 +32,12 @@
         <tbody>
             @foreach($order->items as $item)
             <tr class="border-t hover:bg-gray-100">
-                <td class="px-4 py-2">{{ $item->artwork->name }}</td>
+                <td class="px-4 py-2 flex items-center space-x-4">
+                    <img src="{{ Storage::url($item->artwork->image) }}"
+                        alt="{{ $item->artwork->name }}"
+                        class="w-16 h-16 rounded shadow-md object-cover">
+                    <span>{{ $item->artwork->name }}</span>
+                </td>
                 <td class="px-4 py-2 text-center">{{ $item->quantity }}</td>
                 <td class="px-4 py-2 text-right">${{ number_format($item->unit_price, 2) }}</td>
             </tr>

@@ -104,6 +104,7 @@
                             <th class="px-4 py-2 text-left">{{ __('public/profile.order_date') }}</th>
                             <th class="px-4 py-2 text-left">{{ __('public/profile.order_total') }}</th>
                             <th class="px-4 py-2 text-left">{{ __('public/profile.order_status') }}</th>
+                            <th class="px-4 py-2">{{ __('public/profile.order_items') }}</th>
                             <th class="px-4 py-2">{{ __('public/profile.order_action') }}</th>
                         </tr>
                     </thead>
@@ -112,14 +113,22 @@
                             <tr class="border-t hover:bg-gray-100">
                                 <td class="px-4 py-2">{{ $order->id }}</td>
                                 <td class="px-4 py-2">{{ $order->created_at->format('d M Y') }}</td>
-                                <td class="px-4 py-2 font-semibold">{{ number_format($order->total, 2) }}$</td>
+                                <td class="px-4 py-2 font-semibold">${{ number_format($order->total, 2) }}</td>
                                 <td class="px-4 py-2">
                                     <span class="px-2 py-1 text-sm rounded bg-gray-200 text-gray-800">
                                         {{ ucfirst($order->status) }}
                                     </span>
                                 </td>
+                                <td class="px-4 py-2 flex space-x-2">
+                                    @foreach($order->items as $item)
+                                        <img src="{{ Storage::url($item->artwork->image) }}"
+                                            alt="{{ $item->artwork->name }}"
+                                            class="w-12 h-12 rounded shadow-md object-cover">
+                                    @endforeach
+                                </td>
                                 <td class="px-4 py-2 text-center">
-                                    <a href="{{ route('orders.show', $order->id) }}" class="text-link hover:underline">
+                                    <a href="{{ route('orders.show', $order->id) }}"
+                                    class="text-link hover:underline">
                                         {{ __('public/profile.view_order') }}
                                     </a>
                                 </td>
