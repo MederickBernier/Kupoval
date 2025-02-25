@@ -10,10 +10,16 @@ use Illuminate\Support\Facades\Log;
 
 class UserProfileController extends Controller
 {
+    /**
+     * Display user profile.
+     */
     public function profile()
     {
         try {
             $user = Auth::user();
+            if (!$user) {
+                return redirect()->route('login')->with('error', __('auth.not_authenticated'));
+            }
 
             // ✅ Ensure the user has a profile (create if missing)
             if (!$user->profile) {
@@ -25,10 +31,8 @@ class UserProfileController extends Controller
                 Log::info("✅ Auto-created missing profile for user ID: {$user->id}");
             }
 
-            // ✅ Ensure addresses exist
+            // ✅ Load necessary relationships
             $addresses = $user->profile->addresses ?? collect();
-
-            // ✅ Load wishlist with related artworks to prevent null issues
             $wishlist = $user->wishlist()->with('artwork')->get();
 
             return view('public.user.profile', [
@@ -39,19 +43,27 @@ class UserProfileController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('❌ Failed to load profile page', ['error' => $e->getMessage()]);
-            return abort(500, 'An error occurred while loading your profile.');
+            return redirect()->route('home')->with('error', __('An error occurred while loading your profile.'));
         }
     }
 
+    /**
+     * Update an address.
+     */
     public function Address(Request $request, $addressId)
     {
         try {
             $user = Auth::user();
-            $address = Address::where('id', $addressId)->whereHas('userProfile', function ($query) use ($user) {
-                $query->where('user_id', $user->id);
-            })->first();
+            if (!$user) {
+                return response()->json(['error' => 'Unauthorized'], 401);
+            }
+
+            $address = Address::where('id', $addressId)
+                ->whereHas('userProfile', fn($q) => $q->where('user_id', $user->id))
+                ->first();
 
             if (!$address) {
+                Log::warning("⚠️ Address not found for update", ['user_id' => $user->id, 'address_id' => $addressId]);
                 return response()->json(['error' => 'Address not found'], 404);
             }
 
@@ -64,22 +76,27 @@ class UserProfileController extends Controller
             ]);
 
             $address->update($validated);
+            Log::info("✅ Address updated successfully", ['user_id' => $user->id, 'address_id' => $addressId]);
 
             return response()->json(['message' => 'Address updated successfully']);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning("⚠️ Validation error updating address", ['errors' => $e->errors()]);
+            return response()->json(['error' => 'Invalid address input'], 422);
         } catch (\Exception $e) {
             Log::error('❌ Failed to update address', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to update address'], 500);
         }
     }
 
+    /**
+     * Update user profile.
+     */
     public function updateProfile(Request $request)
     {
         try {
             $user = Auth::user();
-            $profile = $user->profile;
-
-            if (!$profile) {
-                return redirect()->route('user.profile')->with('error', 'Profile not found.');
+            if (!$user || !$user->profile) {
+                return redirect()->route('user.profile')->with('error', __('Profile not found.'));
             }
 
             $validated = $request->validate([
@@ -94,38 +111,48 @@ class UserProfileController extends Controller
                 ],
             ]);
 
-            $profile->update($validated);
+            $user->profile->update($validated);
+            Log::info("✅ Profile updated successfully", ['user_id' => $user->id]);
 
-            return redirect()->route('user.profile')->with('success', 'Profile updated successfully');
+            return redirect()->route('user.profile')->with('success', __('Profile updated successfully'));
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning("⚠️ Validation error updating profile", ['errors' => $e->errors()]);
+            return redirect()->route('user.profile')->with('error', __('Invalid profile data'));
         } catch (\Exception $e) {
             Log::error('❌ Failed to update profile', ['error' => $e->getMessage()]);
-            return redirect()->route('user.profile')->with('error', 'Failed to update profile.');
+            return redirect()->route('user.profile')->with('error', __('Failed to update profile.'));
         }
     }
 
+    /**
+     * Load field editor.
+     */
     public function editField($field)
     {
         try {
             $user = Auth::user();
-            $profile = $user->profile;
+            if (!$user) {
+                return redirect()->route('login')->with('error', __('auth.not_authenticated'));
+            }
 
             return view('components.edit-field', [
                 'field' => $field,
-                'value' => $profile?->$field ?? ''
+                'value' => $user->profile?->$field ?? ''
             ]);
         } catch (\Exception $e) {
             Log::error('❌ Failed to load field editor', ['error' => $e->getMessage()]);
-            return abort(500, 'An error occurred while loading the field editor.');
+            return abort(500, __('An error occurred while loading the field editor.'));
         }
     }
 
+    /**
+     * Update a single profile field.
+     */
     public function updateField(Request $request, $field)
     {
         try {
             $user = Auth::user();
-            $profile = $user->profile;
-
-            if (!$profile) {
+            if (!$user || !$user->profile) {
                 return response()->json(['error' => 'Profile not found'], 404);
             }
 
@@ -139,17 +166,20 @@ class UserProfileController extends Controller
                     : ['nullable', 'string', 'max:255']
             ]);
 
-            $profile->$field = $validated[$field] ?? '';
-            $profile->save();
+            $user->profile->update([$field => $validated[$field]]);
+            Log::info("✅ Field updated successfully", ['user_id' => $user->id, 'field' => $field]);
 
             return response()->json([
-                'message' => 'Field updated successfully',
+                'message' => __('Field updated successfully'),
                 'field' => $field,
-                'value' => $profile->$field
+                'value' => $user->profile->$field
             ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::warning("⚠️ Validation error updating field", ['errors' => $e->errors()]);
+            return response()->json(['error' => __('Invalid input')], 422);
         } catch (\Exception $e) {
             Log::error('❌ Failed to update field', ['error' => $e->getMessage()]);
-            return response()->json(['error' => 'Failed to update field'], 500);
+            return response()->json(['error' => __('Failed to update field')], 500);
         }
     }
 }

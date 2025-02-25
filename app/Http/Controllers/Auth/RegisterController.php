@@ -14,6 +14,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
+use Throwable;
+use Exception;
 
 class RegisterController extends Controller
 {
@@ -32,6 +34,7 @@ class RegisterController extends Controller
     {
         Log::info('📩 Registration attempt', ['email' => $request->email]);
 
+        // ✅ Validate Input
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
@@ -39,7 +42,7 @@ class RegisterController extends Controller
         ]);
 
         if ($validator->fails()) {
-            Log::error('❌ Registration validation failed', ['errors' => $validator->errors()->toArray()]);
+            Log::warning('⚠️ Registration validation failed', ['errors' => $validator->errors()->toArray()]);
             return back()->withInput()->withErrors($validator);
         }
 
@@ -56,11 +59,10 @@ class RegisterController extends Controller
 
             // ✅ Ensure the user has a profile
             $user->profile()->create([
-                'first_name' => '', // Placeholder
+                'first_name' => '',
                 'last_name' => '',
                 'title' => '',
             ]);
-
             Log::info("✅ Profile created for user ID: {$user->id}");
 
             // ✅ Generate verification URL
@@ -70,7 +72,7 @@ class RegisterController extends Controller
                 Carbon::now()->addMinutes(60)
             );
 
-            Log::info("🔗 Verification URL generated: {$verificationUrl}");
+            Log::info("🔗 Verification URL generated for {$user->email}");
 
             // ✅ Send verification email
             Mail::to($user->email)->send(new AccountVerificationMail($user, $verificationUrl));
@@ -79,12 +81,20 @@ class RegisterController extends Controller
             DB::commit();
             Log::info("✅ Registration completed successfully for: {$user->email}");
 
-            // ✅ Redirect the user to their profile after registration
+            // ✅ Redirect with success message
             return redirect()->route('user.profile')->with('success', __('Registration successful. Please check your email to verify your account.'));
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             DB::rollBack();
-            Log::error("❌ Registration failed: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
-            return back()->withInput()->with('error', __('Registration failed. Please try again.'));
+
+            if ($e instanceof \Illuminate\Database\QueryException) {
+                Log::error("❌ Database error during registration: " . $e->getMessage());
+                return back()->withInput()->with('error', __('A database error occurred. Please try again.'));
+            } else {
+                Log::error("❌ Unexpected error during registration: " . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+                return back()->withInput()->with('error', __('Registration failed. Please try again.'));
+            }
+        } finally {
+            Log::info("🔍 Registration process finalized for email: {$request->email}");
         }
     }
 }

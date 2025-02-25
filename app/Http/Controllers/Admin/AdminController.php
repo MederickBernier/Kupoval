@@ -9,51 +9,53 @@ use App\Models\Artwork;
 use App\Models\Event;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class AdminController extends Controller
 {
+    /**
+     * Display the admin dashboard with key statistics.
+     */
     public function index(Request $request)
     {
         try {
             // Ensure user has proper authorization
             isAllowed($request->user());
 
-            try {
-                // Fetch general dashboard statistics
-                $totalUsers = User::count();
-                $totalArtworks = Artwork::count();
-                $totalEvents = Event::count();
-                $totalOrders = Order::count();
+            DB::beginTransaction(); // Ensures safe data retrieval
 
-                // Count orders by status
-                $orderStatusCounts = Order::selectRaw('status, COUNT(*) as count')
-                    ->groupBy('status')
-                    ->pluck('count', 'status'); // Returns an associative array like ['pending' => 5, 'completed' => 10]
+            // Fetch general dashboard statistics
+            $stats = DB::table('users')->selectRaw("
+                (SELECT COUNT(*) FROM users) as total_users,
+                (SELECT COUNT(*) FROM artworks) as total_artworks,
+                (SELECT COUNT(*) FROM events) as total_events,
+                (SELECT COUNT(*) FROM orders) as total_orders
+            ")->first();
 
-                return view('admin.dashboard', [
-                    'totalUsers' => $totalUsers,
-                    'totalArtworks' => $totalArtworks,
-                    'totalEvents' => $totalEvents,
-                    'totalOrders' => $totalOrders,
-                    'orderStatusCounts' => $orderStatusCounts,
-                ]);
-            } catch (\Exception $dbException) {
-                // Log database errors separately
-                Log::error('Error fetching admin dashboard stats: ' . $dbException->getMessage());
+            // Fetch orders count by status
+            $orderStatusCounts = Order::selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->pluck('count', 'status'); // Returns ['pending' => 5, 'completed' => 10]
 
-                return response()->json([
-                    'error' => __('Error loading dashboard data. Please try again.'),
-                    'details' => $dbException->getMessage()
-                ], 500);
-            }
-        } catch (\Exception $authException) {
-            // Log unauthorized attempts
-            Log::warning('Unauthorized admin dashboard access attempt by user ID: ' . $request->user()->id);
+            DB::commit();
 
-            return response()->json([
-                'error' => __('Unauthorized access'),
-                'details' => $authException->getMessage()
-            ], 403);
+            return view('admin.dashboard', [
+                'totalUsers' => $stats->total_users,
+                'totalArtworks' => $stats->total_artworks,
+                'totalEvents' => $stats->total_events,
+                'totalOrders' => $stats->total_orders,
+                'orderStatusCounts' => $orderStatusCounts,
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack(); // Rollback if there's a failure
+
+            Log::error("❌ Error loading admin dashboard: " . $e->getMessage(), [
+                'user_id' => $request->user()->id ?? 'guest',
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('admin.dashboard')->with('error', __('Error loading dashboard data.'));
         }
     }
 }

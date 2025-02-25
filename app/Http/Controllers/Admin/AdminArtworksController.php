@@ -10,10 +10,15 @@ use App\Models\Artist;
 use App\Models\Category;
 use App\Models\Event;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Throwable;
 
 class AdminArtworksController extends Controller
 {
+    /**
+     * Display a list of artworks.
+     */
     public function index(Request $request)
     {
         try {
@@ -21,26 +26,34 @@ class AdminArtworksController extends Controller
 
             $artworks = Artwork::latest()->paginate(10);
             return view('admin.artworks.index', compact('artworks'));
-        } catch (\Exception $e) {
-            throwError(__('Error loading artworks list'), 500, ['details' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading artworks list: " . $e->getMessage());
+            return back()->with('error', __('Error loading artworks list.'));
         }
     }
 
+    /**
+     * Show artwork creation form.
+     */
     public function create(Request $request)
     {
         try {
             isAllowed($request->user());
 
-            $artists = Artist::orderBy('name', 'asc')->get();
-            $events = Event::orderBy('start_date', 'asc')->get();
-            $categories = Category::all();
-
-            return view('admin.artworks.create', compact('artists', 'events', 'categories'));
-        } catch (\Exception $e) {
-            throwError(__('Error loading artwork creation page'), 500, ['details' => $e->getMessage()]);
+            return view('admin.artworks.create', [
+                'artists' => Artist::orderBy('name', 'asc')->get(),
+                'events' => Event::orderBy('start_date', 'asc')->get(),
+                'categories' => Category::all(),
+            ]);
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading artwork creation page: " . $e->getMessage());
+            return back()->with('error', __('Error loading artwork creation page.'));
         }
     }
 
+    /**
+     * Store new artwork.
+     */
     public function store(Request $request)
     {
         try {
@@ -62,48 +75,58 @@ class AdminArtworksController extends Controller
                 'image'         => 'nullable|image|max:2048',
             ]);
 
+            DB::beginTransaction();
+
             if ($request->hasFile('image')) {
                 $validated['image'] = $request->file('image')->store('artworks', 'public');
             }
 
-            // Generate slug from name
-            $slug = Str::slug($validated['name'], '-');
-
-            // Ensure the slug is unique by appending a number if necessary
-            $counter = 1;
-            $originalSlug = $slug;
-            while (Artwork::where('slug', $slug)->exists()) {
-                $slug = $originalSlug . '-' . $counter;
-                $counter++;
-            }
-            $validated['slug'] = $slug;
-
-            // Handle Categories
-            $categories = is_array($request->categories) ? array_filter($request->categories, 'is_numeric') : [];
+            // Generate a unique slug
+            $validated['slug'] = $this->generateUniqueSlug($validated['name']);
 
             // Create Artwork
             $artwork = Artwork::create($validated);
 
             // Attach Categories
-            $artwork->categories()->sync($categories);
+            $artwork->categories()->sync($request->categories ?? []);
+
+            DB::commit();
 
             return redirect()->route('admin.artworks.index')->with('success', __('Artwork created successfully.'));
-        } catch (\Exception $e) {
-            Log::error('Error creating artwork', [
-                'error' => $e->getMessage(),
-                'request' => $request->all(),
-            ]);
-
-            return redirect()->back()->withErrors(['error' => 'Failed to create artwork. Check logs.']);
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Log::error("❌ Error creating artwork: " . $e->getMessage());
+            return back()->with('error', __('Error creating artwork.'));
         }
     }
 
-    public function update(Request $request, Artwork $artwork)
+    /**
+     * Show the edit page.
+     */
+    public function edit(Request $request, Artwork $artwork)
     {
         try {
             isAllowed($request->user());
 
-            $request->merge(['categories' => (array) $request->categories]);
+            return view('admin.artworks.edit', [
+                'artwork' => $artwork,
+                'artists' => Artist::orderBy('name', 'asc')->get(),
+                'events' => Event::orderBy('start_date', 'asc')->get(),
+                'categories' => Category::all(),
+            ]);
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading artwork edit page: " . $e->getMessage());
+            return back()->with('error', __('Error loading artwork edit page.'));
+        }
+    }
+
+    /**
+     * Update an artwork.
+     */
+    public function update(Request $request, Artwork $artwork)
+    {
+        try {
+            isAllowed($request->user());
 
             $validated = $request->validate([
                 'artist_id'     => 'required|exists:artists,id',
@@ -116,44 +139,34 @@ class AdminArtworksController extends Controller
                 'is_featured'   => 'boolean',
                 'is_for_event'  => 'boolean',
                 'event_id'      => 'nullable|exists:events,id|required_if:is_for_event,true',
-                'categories'    => 'array',
+                'categories'    => 'sometimes|array',
                 'categories.*'  => 'exists:categories,id',
                 'image'         => 'nullable|image|max:2048',
             ]);
 
-            if ($request->hasFile('image')) {
-                $newImagePath = $request->file('image')->store('artworks', 'public');
+            DB::beginTransaction();
 
-                if ($newImagePath) {
-                    Storage::disk('public')->delete($artwork->image);
-                    $validated['image'] = $newImagePath;
-                }
+            if ($request->hasFile('image')) {
+                Storage::disk('public')->delete($artwork->image);
+                $validated['image'] = $request->file('image')->store('artworks', 'public');
             }
 
             $artwork->update($validated);
             $artwork->categories()->sync($request->categories ?? []);
 
-            return redirect()->route('admin.artworks.index')->with('success', __('Artwork updated successfully'));
-        } catch (\Exception $e) {
-            throwError(__('Error updating artwork'), 500, ['exception' => $e->getMessage()]);
+            DB::commit();
+
+            return redirect()->route('admin.artworks.index')->with('success', __('Artwork updated successfully.'));
+        } catch (Throwable $e) {
+            DB::rollBack();
+            Log::error("❌ Error updating artwork: " . $e->getMessage());
+            return back()->with('error', __('Error updating artwork.'));
         }
     }
 
-    public function edit(Request $request, Artwork $artwork)
-    {
-        try {
-            isAllowed($request->user());
-
-            $artists = Artist::orderBy('name', 'asc')->get();
-            $events = Event::orderBy('start_date', 'asc')->get();
-            $categories = Category::all();
-
-            return view('admin.artworks.edit', compact('artwork', 'artists', 'events', 'categories'));
-        } catch (\Exception $e) {
-            throwError(__('Error loading artwork edit page'), 500, ['details' => $e->getMessage()]);
-        }
-    }
-
+    /**
+     * Soft delete an artwork.
+     */
     public function destroy(Request $request, Artwork $artwork)
     {
         try {
@@ -161,24 +174,33 @@ class AdminArtworksController extends Controller
 
             $artwork->delete();
 
-            return redirect()->route('admin.artworks.index')->with('success', __('Artwork deleted successfully'));
-        } catch (\Exception $e) {
-            throwError(__('Error deleting artwork'), 500, ['details' => $e->getMessage()]);
+            return redirect()->route('admin.artworks.index')->with('success', __('Artwork deleted successfully.'));
+        } catch (Throwable $e) {
+            Log::error("❌ Error deleting artwork: " . $e->getMessage());
+            return back()->with('error', __('Error deleting artwork.'));
         }
     }
 
+    /**
+     * Display trashed artworks.
+     */
     public function trashed(Request $request)
     {
         try {
             isAllowed($request->user());
 
-            $artworks = Artwork::onlyTrashed()->paginate(10);
-            return view('admin.artworks.trashed', compact('artworks'));
-        } catch (\Exception $e) {
-            throwError(__('Error loading trashed artworks list'), 500, ['details' => $e->getMessage()]);
+            return view('admin.artworks.trashed', [
+                'artworks' => Artwork::onlyTrashed()->paginate(10),
+            ]);
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading trashed artworks: " . $e->getMessage());
+            return back()->with('error', __('Error loading trashed artworks.'));
         }
     }
 
+    /**
+     * Restore a soft-deleted artwork.
+     */
     public function restore(Request $request, $id)
     {
         try {
@@ -187,28 +209,46 @@ class AdminArtworksController extends Controller
             $artwork = Artwork::onlyTrashed()->findOrFail($id);
             $artwork->restore();
 
-            return redirect()->route('admin.artworks.index')->with('success', __('Artwork restored successfully'));
-        } catch (\Exception $e) {
-            throwError(__('Error restoring artwork'), 500, ['details' => $e->getMessage()]);
+            return redirect()->route('admin.artworks.index')->with('success', __('Artwork restored successfully.'));
+        } catch (Throwable $e) {
+            Log::error("❌ Error restoring artwork: " . $e->getMessage());
+            return back()->with('error', __('Error restoring artwork.'));
         }
     }
 
+    /**
+     * Permanently delete an artwork.
+     */
     public function forceDelete(Request $request, $id)
     {
         try {
             isAllowed($request->user());
 
             $artwork = Artwork::onlyTrashed()->findOrFail($id);
-
-            if ($artwork->image) {
-                Storage::disk('public')->delete($artwork->image);
-            }
-
+            Storage::disk('public')->delete($artwork->image);
             $artwork->forceDelete();
 
-            return redirect()->route('admin.artworks.trashed')->with('success', __('Artwork permanently removed successfully'));
-        } catch (\Exception $e) {
-            throwError(__('Error permanently deleting artwork'), 500, ['details' => $e->getMessage()]);
+            return redirect()->route('admin.artworks.trashed')->with('success', __('Artwork permanently removed.'));
+        } catch (Throwable $e) {
+            Log::error("❌ Error permanently deleting artwork: " . $e->getMessage());
+            return back()->with('error', __('Error permanently deleting artwork.'));
         }
+    }
+
+    /**
+     * Generate a unique slug for an artwork.
+     */
+    private function generateUniqueSlug($name)
+    {
+        $slug = Str::slug($name, '-');
+        $originalSlug = $slug;
+        $counter = 1;
+
+        while (Artwork::where('slug', $slug)->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 }

@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class AdminOrdersController extends Controller
 {
@@ -22,14 +23,13 @@ class AdminOrdersController extends Controller
 
             $orders = Order::with([
                 'user.profile',
-                'payment' // Fetch the single payment for each order
+                'payment'
             ])->latest()->paginate(10);
 
-            return view('admin.orders.index', [
-                'orders' => $orders,
-            ]);
-        } catch (\Exception $e) {
-            throwError(__('Error loading orders list'), 500, ['details' => $e->getMessage()]);
+            return view('admin.orders.index', compact('orders'));
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading orders list: " . $e->getMessage());
+            return redirect()->route('admin.dashboard')->with('error', __('Error loading orders list.'));
         }
     }
 
@@ -38,7 +38,6 @@ class AdminOrdersController extends Controller
         try {
             isAllowed($request->user());
 
-            // Load all necessary relationships, ensuring addresses exist
             $order->load([
                 'user.profile',
                 'billingAddress',
@@ -47,20 +46,15 @@ class AdminOrdersController extends Controller
                 'items.artwork'
             ]);
 
-            // Check if shipping address exists or falls back to billing
-            $shippingAddress = $order->shippingAddress ?? $order->billingAddress;
-
-            // Ensure shipping conditions are available
-            $shippingConditions = ShippingCondition::all();
-
             return view('admin.orders.show', [
                 'order' => $order,
                 'billingAddress' => $order->billingAddress,
-                'shippingAddress' => $shippingAddress,
-                'shippingConditions' => $shippingConditions,
+                'shippingAddress' => $order->shippingAddress ?? $order->billingAddress,
+                'shippingConditions' => ShippingCondition::all(),
             ]);
-        } catch (\Exception $e) {
-            throwError(__('Error loading order details'), 500, ['details' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading order details (Order ID: {$order->id}): " . $e->getMessage());
+            return redirect()->route('admin.orders.index')->with('error', __('Error loading order details.'));
         }
     }
 
@@ -69,54 +63,23 @@ class AdminOrdersController extends Controller
         try {
             isAllowed($request->user());
 
-            $users = User::with('profile.addresses')->get();
-            $artworks = Artwork::select('id', 'name', 'initial_price as price', 'image')->get();
-            $shippingConditions = ShippingCondition::all();
-
             return view('admin.orders.create', [
-                'users' => $users,
-                'artworks' => $artworks,
-                'shippingConditions' => $shippingConditions,
-            ]);
-        } catch (\Exception $e) {
-            throwError(__('Error loading order creation form'), 500, ['details' => $e->getMessage()]);
-        }
-    }
-
-    public function edit(Request $request, Order $order)
-    {
-        try {
-            isAllowed($request->user());
-
-            // Eager load relationships to prevent N+1 query issues
-            $order->load([
-                'items.artwork',
-                'user.profile.billingAddress',
-                'user.profile.shippingAddresses',
-                'billingAddress',
-                'shippingAddress',
-                'shippingCondition',
-            ]);
-
-            // Ensure profile exists before accessing properties
-            $profile = $order->user->profile ?? null;
-
-            return view('admin.orders.edit', [
-                'order' => $order,
-                'users' => User::with('profile')->get(),
-                'billingAddress' => $profile ? $profile->billingAddress : null,
-                'shippingAddresses' => $profile ? $profile->shippingAddresses : collect(),
+                'users' => User::with('profile.addresses')->get(),
+                'artworks' => Artwork::select('id', 'name', 'initial_price as price', 'image')->get(),
                 'shippingConditions' => ShippingCondition::all(),
             ]);
-        } catch (\Exception $e) {
-            throwError(__('Error loading order for editing'), 500, ['details' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading order creation form: " . $e->getMessage());
+            return redirect()->route('admin.orders.index')->with('error', __('Error loading order creation form.'));
         }
     }
 
     public function store(Request $request)
     {
         try {
-            $validatedData = $request->validate([
+            isAllowed($request->user());
+
+            $validated = $request->validate([
                 'user_id' => 'required|exists:users,id',
                 'billing_address_id' => 'required|exists:addresses,id',
                 'shipping_address_id' => 'nullable|exists:addresses,id',
@@ -131,135 +94,108 @@ class AdminOrdersController extends Controller
             ]);
 
             $order = Order::create([
-                'user_id' => $validatedData['user_id'],
-                'billing_address_id' => $validatedData['billing_address_id'],
-                'shipping_address_id' => $validatedData['shipping_address_id'] ?? null,
-                'total' => $validatedData['total_price'],
-                'stripe_session_id' => 'manual_test_' . uniqid(),
-                'shipping_condition_id' => $validatedData['shipping_condition_id'],
-                'recipient_name' => $validatedData['recipient_name'] ?? 'Unknown Recipient',
-                'recipient_email' => $validatedData['recipient_email'] ?? User::find($validatedData['user_id'])->email,
-                'recipient_phone' => $validatedData['recipient_phone'] ?? null,
+                'user_id' => $validated['user_id'],
+                'billing_address_id' => $validated['billing_address_id'],
+                'shipping_address_id' => $validated['shipping_address_id'] ?? null,
+                'total' => $validated['total_price'],
+                'stripe_session_id' => 'manual_' . uniqid(),
+                'shipping_condition_id' => $validated['shipping_condition_id'],
+                'recipient_name' => $validated['recipient_name'] ?? 'Unknown Recipient',
+                'recipient_email' => $validated['recipient_email'] ?? User::find($validated['user_id'])->email,
+                'recipient_phone' => $validated['recipient_phone'] ?? null,
             ]);
-        } catch (\Exception $e) {
-            return redirect()->route('admin.orders.index')->with('error', 'Error creating order: ' . $e->getMessage());
+
+            return redirect()->route('admin.orders.index')->with('success', __('Order created successfully.'));
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            Log::error("❌ Error creating order: " . $e->getMessage());
+            return back()->with('error', __('Failed to create order.'));
         }
     }
 
-    public function update(Request $request, Order $order)
+    public function edit(Request $request, Order $order)
     {
         try {
             isAllowed($request->user());
-            Log::info("Updating order: {$order->id}");
 
-            Log::info("Incoming Request Data: ", $request->all());
-
-            // Validation
-            try {
-                $validatedData = $request->validate([
-                    'user_id' => 'required|exists:users,id',
-                    'status' => 'required|in:pending,completed,canceled,refunded',
-                    'billing_address' => 'required|string',
-                    'billing_city' => 'required|string',
-                    'billing_state' => 'required|string',
-                    'billing_country' => 'required|string',
-                    'billing_zipcode' => 'required|string',
-                    'shipping_condition_id' => 'required|exists:shipping_conditions,id',
-                    'artworks' => 'required|array|min:1',
-                    'artworks.*' => 'exists:artworks,id',
-                    'quantities' => 'required|array',
-                ]);
-            } catch (ValidationException $e) {
-                Log::error("Validation failed: ", $e->errors());
-                return back()->withErrors($e->errors())->withInput();
-            }
-
-            Log::info("Validation passed for order: {$order->id}");
-
-            // Update Order details
-            $order->update([
-                'user_id' => $validatedData['user_id'],
-                'status' => $validatedData['status'],
-                'shipping_condition_id' => $validatedData['shipping_condition_id'],
+            $order->load([
+                'items.artwork',
+                'user.profile.billingAddress',
+                'user.profile.shippingAddresses',
+                'billingAddress',
+                'shippingAddress',
+                'shippingCondition',
             ]);
 
-            Log::info("Order details updated for order: {$order->id}");
+            return view('admin.orders.edit', [
+                'order' => $order,
+                'users' => User::with('profile')->get(),
+                'billingAddress' => $order->billingAddress,
+                'shippingAddresses' => $order->user->profile->shippingAddresses ?? collect(),
+                'shippingConditions' => ShippingCondition::all(),
+            ]);
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading order for editing (Order ID: {$order->id}): " . $e->getMessage());
+            return redirect()->route('admin.orders.index')->with('error', __('Error loading order for editing.'));
+        }
+    }
 
-            // Update Billing Address
-            $billingAddress = $order->billingAddress ?? new Address();
-            $billingAddress->fill([
-                'user_id' => $validatedData['user_id'],
-                'address' => $validatedData['billing_address'],
-                'city' => $validatedData['billing_city'],
-                'state' => $validatedData['billing_state'],
-                'country' => $validatedData['billing_country'],
-                'zipcode' => $validatedData['billing_zipcode'],
-                'type' => 'billing',
-            ])->save();
+    public function destroy(Request $request, Order $order)
+    {
+        try {
+            isAllowed($request->user());
 
-            $order->billing_address_id = $billingAddress->id;
-            $order->save();
+            $order->delete();
 
-            Log::info("Billing address updated for order: {$order->id}");
+            return back()->with('success', __('Order deleted successfully.'));
+        } catch (Throwable $e) {
+            Log::error("❌ Error deleting order (Order ID: {$order->id}): " . $e->getMessage());
+            return back()->with('error', __('Failed to delete order.'));
+        }
+    }
 
-            // Handle Shipping Address
-            if ($request->has('shipping_address') && $request->input('shipping_address') !== $validatedData['billing_address']) {
-                $shippingAddress = $order->shippingAddress ?? new Address();
-                $shippingAddress->fill([
-                    'user_id' => $validatedData['user_id'],
-                    'address' => $request->input('shipping_address'),
-                    'city' => $request->input('shipping_city'),
-                    'state' => $request->input('shipping_state'),
-                    'country' => $request->input('shipping_country'),
-                    'zipcode' => $request->input('shipping_zipcode'),
-                    'type' => 'shipping',
-                ])->save();
+    public function trashed(Request $request)
+    {
+        try {
+            isAllowed($request->user());
 
-                $order->shipping_address_id = $shippingAddress->id;
-                $order->save();
-                Log::info("Shipping address updated for order: {$order->id}");
-            } elseif (!$request->has('shipping_address')) {
-                $order->shipping_address_id = null;
-                $order->save();
-                Log::info("No shipping address provided, set to null for order: {$order->id}");
-            }
+            $orders = Order::onlyTrashed()->paginate(10);
 
-            // Handle Order Items (Update, Add, Remove)
-            $existingItems = $order->items->keyBy('artwork_id');
-            Log::info("Processing order items for order: {$order->id}");
+            return view('admin.orders.trashed', compact('orders'));
+        } catch (Throwable $e) {
+            Log::error("❌ Error loading trashed orders: " . $e->getMessage());
+            return redirect()->route('admin.orders.index')->with('error', __('Error loading trashed orders.'));
+        }
+    }
 
-            foreach ($validatedData['artworks'] as $artworkId) {
-                if (isset($existingItems[$artworkId])) {
-                    // Update existing order item
-                    $existingItems[$artworkId]->update([
-                        'quantity' => $validatedData['quantities'][$artworkId],
-                    ]);
-                    Log::info("Updated item: Artwork ID {$artworkId} in order: {$order->id}");
-                } else {
-                    // Add new order item
-                    OrderItem::create([
-                        'order_id' => $order->id,
-                        'artwork_id' => $artworkId,
-                        'quantity' => $validatedData['quantities'][$artworkId],
-                        'unit_price' => Artwork::find($artworkId)->initial_price,
-                    ]);
-                    Log::info("Added new item: Artwork ID {$artworkId} to order: {$order->id}");
-                }
-            }
+    public function restore(Request $request, $id)
+    {
+        try {
+            isAllowed($request->user());
 
-            // Remove items that were deleted
-            $removedItems = $existingItems->except(array_keys($validatedData['artworks']));
-            $removedItems->each(function ($item) {
-                Log::info("Removing item: Artwork ID {$item->artwork_id} from order: {$item->order_id}");
-                $item->delete();
-            });
+            $order = Order::onlyTrashed()->findOrFail($id);
+            $order->restore();
 
-            Log::info("Order update completed successfully for order: {$order->id}");
+            return redirect()->route('admin.orders.trashed')->with('success', __('Order restored successfully.'));
+        } catch (Throwable $e) {
+            Log::error("❌ Error restoring order (Order ID: {$id}): " . $e->getMessage());
+            return back()->with('error', __('Error restoring order.'));
+        }
+    }
 
-            return redirect()->route('admin.orders.index')->with('success', __('admin/orders.updated_successfully'));
-        } catch (\Exception $e) {
-            Log::error("Error updating order: {$order->id} - " . $e->getMessage());
-            return back()->withErrors(__('Error updating order') . ': ' . $e->getMessage());
+    public function forceDelete(Request $request, $id)
+    {
+        try {
+            isAllowed($request->user());
+
+            $order = Order::onlyTrashed()->findOrFail($id);
+            $order->forceDelete();
+
+            return redirect()->route('admin.orders.trashed')->with('success', __('Order permanently deleted.'));
+        } catch (Throwable $e) {
+            Log::error("❌ Error permanently deleting order (Order ID: {$id}): " . $e->getMessage());
+            return back()->with('error', __('Error permanently deleting order.'));
         }
     }
 }

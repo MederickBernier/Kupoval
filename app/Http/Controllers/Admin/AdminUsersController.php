@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class AdminUsersController extends Controller
 {
@@ -19,15 +20,15 @@ class AdminUsersController extends Controller
 
             $users = User::with([
                 'profile',
-                'profile.billingAddress',  // ✅ Ensure billingAddress is included
-                'profile.shippingAddresses', // ✅ Ensure shippingAddresses are included
+                'profile.billingAddress',
+                'profile.shippingAddresses',
                 'orders'
             ])->orderBy('id', 'asc')->paginate(10);
 
             return view('admin.users.index', compact('users'));
-        } catch (\Exception $e) {
-            Log::error('Error loading users list: ' . $e->getMessage());
-            return response()->json(['error' => __('Error loading users list')], 500);
+        } catch (Throwable $e) {
+            Log::error('❌ Error loading users list: ' . $e->getMessage());
+            return redirect()->route('admin.dashboard')->with('error', __('Error loading users list.'));
         }
     }
 
@@ -40,15 +41,15 @@ class AdminUsersController extends Controller
             isAllowed($request->user());
 
             if ($user->role === 'admin') {
-                return response()->json(['error' => __('You cannot delete an admin user.')], 403);
+                return back()->with('error', __('You cannot delete an admin user.'));
             }
 
             $user->delete();
 
-            return response()->json(['success' => __('User deleted successfully.')], 200);
-        } catch (\Exception $e) {
-            Log::error('Error deleting user: ' . $e->getMessage());
-            return response()->json(['error' => __('Error deleting user')], 500);
+            return back()->with('success', __('User deleted successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error deleting user: ' . $e->getMessage());
+            return back()->with('error', __('Error deleting user.'));
         }
     }
 
@@ -66,9 +67,9 @@ class AdminUsersController extends Controller
                 ->paginate(10);
 
             return view('admin.users.trashed', compact('users'));
-        } catch (\Exception $e) {
-            Log::error('Error loading trashed users: ' . $e->getMessage());
-            return response()->json(['error' => __('Error loading trashed users list')], 500);
+        } catch (Throwable $e) {
+            Log::error('❌ Error loading trashed users: ' . $e->getMessage());
+            return back()->with('error', __('Error loading trashed users list.'));
         }
     }
 
@@ -83,10 +84,10 @@ class AdminUsersController extends Controller
             $user = User::onlyTrashed()->findOrFail($id);
             $user->restore();
 
-            return response()->json(['success' => __('User restored successfully')], 200);
-        } catch (\Exception $e) {
-            Log::error('Error restoring user: ' . $e->getMessage());
-            return response()->json(['error' => __('Error restoring user')], 500);
+            return back()->with('success', __('User restored successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error restoring user: ' . $e->getMessage());
+            return back()->with('error', __('Error restoring user.'));
         }
     }
 
@@ -101,15 +102,15 @@ class AdminUsersController extends Controller
             $user = User::onlyTrashed()->findOrFail($id);
 
             if ($user->role === 'admin') {
-                return response()->json(['error' => __('You cannot permanently delete an admin.')], 403);
+                return back()->with('error', __('You cannot permanently delete an admin.'));
             }
 
             $user->forceDelete();
 
-            return response()->json(['success' => __('User permanently deleted.')], 200);
-        } catch (\Exception $e) {
-            Log::error('Error permanently deleting user: ' . $e->getMessage());
-            return response()->json(['error' => __('Error permanently deleting user')], 500);
+            return back()->with('success', __('User permanently deleted.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error permanently deleting user: ' . $e->getMessage());
+            return back()->with('error', __('Error permanently deleting user.'));
         }
     }
 }

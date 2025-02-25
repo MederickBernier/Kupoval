@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Auth\Events\Verified;
+use Exception;
 
 class VerificationController extends Controller
 {
@@ -35,11 +37,22 @@ class VerificationController extends Controller
         }
 
         try {
+            $user = Auth::user();
+
+            if ($user->hasVerifiedEmail()) {
+                Log::warning('⚠️ Email is already verified for user ID: ' . $user->id);
+                return redirect()->route('user.profile')->with('warning', __('Your email is already verified.'));
+            }
+
             $request->fulfill();
-            Log::info('✅ Email verification successful.');
+
+            event(new Verified($user)); // Fire verification event
+
+            Log::info('✅ Email verification successful for user ID: ' . $user->id);
             return redirect()->route('user.profile')->with('success', __('Email verified successfully.'));
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('❌ Email verification failed: ' . $e->getMessage());
+
             return redirect()->route('login')->with('error', __('An error occurred during email verification.'));
         }
     }
@@ -49,15 +62,20 @@ class VerificationController extends Controller
      */
     public function send(Request $request)
     {
-        if ($request->user()->hasVerifiedEmail()) {
-            return back()->with('info', __('Your email is already verified.'));
-        }
-
         try {
-            $request->user()->sendEmailVerificationNotification();
-            return back()->with('status', __('Verification email sent successfully.'));
-        } catch (\Exception $e) {
-            Log::error('Failed to send email verification: ' . $e->getMessage());
+            $user = $request->user();
+
+            if ($user->hasVerifiedEmail()) {
+                Log::info("⚠️ Email already verified for user ID: {$user->id}");
+                return back()->with('warning', __('Your email is already verified.'));
+            }
+
+            $user->sendEmailVerificationNotification();
+
+            Log::info("✅ Verification email sent to user ID: {$user->id}");
+            return back()->with('success', __('Verification email sent successfully.'));
+        } catch (Exception $e) {
+            Log::error('❌ Failed to send email verification: ' . $e->getMessage());
             return back()->with('error', __('Failed to send verification email. Please try again later.'));
         }
     }

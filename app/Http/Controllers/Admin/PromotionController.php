@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Promotion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class PromotionController extends Controller
 {
@@ -12,12 +14,13 @@ class PromotionController extends Controller
     {
         try {
             isAllowed($request->user());
+
             $promotions = Promotion::latest()->paginate(10);
-            return view('admin.promotions.index', [
-                'promotions' => $promotions
-            ]);
-        } catch (\Exception $e) {
-            throwError(__('Error loading promotions list'), 500, ['details' => $e->getMessage()]);
+
+            return view('admin.promotions.index', compact('promotions'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error loading promotions list: ' . $e->getMessage());
+            return redirect()->route('admin.dashboard')->with('error', __('Error loading promotions list.'));
         }
     }
 
@@ -26,8 +29,9 @@ class PromotionController extends Controller
         try {
             isAllowed($request->user());
             return view('admin.promotions.create');
-        } catch (\Exception $e) {
-            throwError(__('Error loading promotion creation form'), 500, ['details' => $e->getMessage()]);
+        } catch (Throwable $e) {
+            Log::error('❌ Error loading promotion creation form: ' . $e->getMessage());
+            return back()->with('error', __('Error loading promotion creation form.'));
         }
     }
 
@@ -35,11 +39,10 @@ class PromotionController extends Controller
     {
         try {
             isAllowed($request->user());
-            return view('admin.promotions.edit', [
-                'promotion' => $promotion
-            ]);
-        } catch (\Exception $e) {
-            throwError(__('Error loading promotion edit form'), 500, ['details' => $e->getMessage()]);
+            return view('admin.promotions.edit', compact('promotion'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error loading promotion edit form: ' . $e->getMessage());
+            return back()->with('error', __('Error loading promotion edit form.'));
         }
     }
 
@@ -48,11 +51,10 @@ class PromotionController extends Controller
         try {
             isAllowed($request->user());
 
-            return view('admin.promotions.show', [
-                'promotion' => $promotion
-            ]);
-        } catch (\Exception $e) {
-            throwError(__('Error loading promotion details'), 500, ['details' => $e->getMessage()]);
+            return view('admin.promotions.show', compact('promotion'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error loading promotion details: ' . $e->getMessage());
+            return back()->with('error', __('Error loading promotion details.'));
         }
     }
 
@@ -61,7 +63,7 @@ class PromotionController extends Controller
         try {
             isAllowed($request->user());
 
-            $request->validate([
+            $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'discount_percentage' => 'required|numeric|min:0|max:100',
@@ -70,19 +72,15 @@ class PromotionController extends Controller
                 'code' => 'nullable|string|max:20|unique:promotions,code',
             ]);
 
-            Promotion::create([
+            Promotion::create(array_merge($validated, [
                 'code' => $request->code ?? strtoupper(uniqid('PROMO_')),
-                'name' => $request->name,
-                'description' => $request->description,
-                'discount_percentage' => $request->discount_percentage,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
                 'created_by' => $request->user()->id,
-            ]);
+            ]));
 
-            return redirect()->route('admin.promotions.index')->with('success', 'Promotion created successfully.');
-        } catch (\Exception $e) {
-            throwError(__('Error creating promotion'), 500, ['details' => $e->getMessage()]);
+            return redirect()->route('admin.promotions.index')->with('success', __('Promotion created successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error creating promotion: ' . $e->getMessage());
+            return back()->with('error', __('Error creating promotion.'));
         }
     }
 
@@ -91,7 +89,7 @@ class PromotionController extends Controller
         try {
             isAllowed($request->user());
 
-            $request->validate([
+            $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'discount_percentage' => 'required|numeric|min:0|max:100',
@@ -99,17 +97,12 @@ class PromotionController extends Controller
                 'end_date' => 'required|date|after:start_date',
             ]);
 
-            $promotion->update([
-                'name' => $request->name,
-                'description' => $request->description,
-                'discount_percentage' => $request->discount_percentage,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
-            ]);
+            $promotion->update($validated);
 
-            return redirect()->route('admin.promotions.index')->with('success', __('Promotion updated successfully'));
-        } catch (\Exception $e) {
-            throwError(__('Error updating promotion'), 500, ['details' => $e->getMessage()]);
+            return redirect()->route('admin.promotions.index')->with('success', __('Promotion updated successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error updating promotion: ' . $e->getMessage());
+            return back()->with('error', __('Error updating promotion.'));
         }
     }
 
@@ -119,9 +112,11 @@ class PromotionController extends Controller
             isAllowed($request->user());
 
             $promotion->delete();
-            return redirect()->route('admin.promotions.index')->with('success', __('Promotion deleted successfully'));
-        } catch (\Exception $e) {
-            throwError(__('Error deleting promotion'), 500, ['details' => $e->getMessage()]);
+
+            return redirect()->route('admin.promotions.index')->with('success', __('Promotion deleted successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error deleting promotion: ' . $e->getMessage());
+            return back()->with('error', __('Error deleting promotion.'));
         }
     }
 
@@ -132,11 +127,10 @@ class PromotionController extends Controller
 
             $promotions = Promotion::onlyTrashed()->paginate(10);
 
-            return view('admin.promotions.trashed', [
-                'promotions' => $promotions
-            ]);
-        } catch (\Exception $e) {
-            throwError(__('Error loading trashed promotions list'), 500, ['details' => $e->getMessage()]);
+            return view('admin.promotions.trashed', compact('promotions'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error loading trashed promotions list: ' . $e->getMessage());
+            return back()->with('error', __('Error loading trashed promotions list.'));
         }
     }
 
@@ -148,9 +142,10 @@ class PromotionController extends Controller
             $promotion = Promotion::onlyTrashed()->findOrFail($id);
             $promotion->restore();
 
-            return redirect()->route('admin.promotions.trashed')->with('success', __('Promotion restored successfully'));
-        } catch (\Exception $e) {
-            throwError(__('Error restoring promotion'), 500, ['details' => $e->getMessage()]);
+            return redirect()->route('admin.promotions.trashed')->with('success', __('Promotion restored successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error restoring promotion: ' . $e->getMessage());
+            return back()->with('error', __('Error restoring promotion.'));
         }
     }
 
@@ -162,9 +157,10 @@ class PromotionController extends Controller
             $promotion = Promotion::onlyTrashed()->findOrFail($id);
             $promotion->forceDelete();
 
-            return redirect()->route('admin.promotions.trashed')->with('success', __('Promotion deleted permanently'));
-        } catch (\Exception $e) {
-            throwError(__('Error deleting promotion permanently'), 500, ['details' => $e->getMessage()]);
+            return redirect()->route('admin.promotions.trashed')->with('success', __('Promotion deleted permanently.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error deleting promotion permanently: ' . $e->getMessage());
+            return back()->with('error', __('Error deleting promotion permanently.'));
         }
     }
 }

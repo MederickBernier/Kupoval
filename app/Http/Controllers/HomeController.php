@@ -9,7 +9,10 @@ use App\Models\Setting;
 use App\Models\StaticPage;
 use App\Models\Artist;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Log;
+use Exception;
 
 class HomeController extends Controller
 {
@@ -19,37 +22,29 @@ class HomeController extends Controller
     public function index()
     {
         try {
-            // Get featured artworks first (priority)
-            $featuredArtworks = Artwork::where('is_featured', true)
-                ->latest()
-                ->take(6)
-                ->get();
+            Log::info("🔹 Loading homepage data");
 
-            // If there aren't enough featured artworks, fetch more from non-featured ones
+            // ✅ Get featured artworks
+            $featuredArtworks = Artwork::where('is_featured', true)->latest()->take(6)->get();
+
+            // ✅ Fill missing slots with non-featured artworks
             $remainingSlots = 6 - $featuredArtworks->count();
+            $recentArtworks = ($remainingSlots > 0)
+                ? $featuredArtworks->merge(Artwork::where('is_featured', false)->latest()->take($remainingSlots)->get())
+                : $featuredArtworks;
 
-            if ($remainingSlots > 0) {
-                $nonFeaturedArtworks = Artwork::where('is_featured', false)
-                    ->latest()
-                    ->take($remainingSlots)
-                    ->get();
+            // ✅ Get upcoming events
+            $events = Event::where('start_date', '>=', now())->orderBy('start_date')->take(3)->get();
 
-                // Merge both collections
-                $recentArtworks = $featuredArtworks->merge($nonFeaturedArtworks);
-            } else {
-                $recentArtworks = $featuredArtworks;
-            }
-
-            // Get upcoming events
-            $events = Event::where('start_date', '>=', now())
-                ->orderBy('start_date')
-                ->take(3)
-                ->get();
+            Log::info("✅ Homepage data loaded successfully");
 
             return view('public.home', compact('recentArtworks', 'events'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load home page: ' . $e->getMessage());
-            return redirect()->route('home')->with('error', __('Failed to load home page.'));
+        } catch (QueryException $e) {
+            Log::error("❌ Database error on homepage: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('Database error while loading the homepage.'));
+        } catch (Exception $e) {
+            Log::error("❌ Failed to load homepage: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('An unexpected error occurred while loading the homepage.'));
         }
     }
 
@@ -59,17 +54,25 @@ class HomeController extends Controller
     public function about()
     {
         try {
+            Log::info("🔹 Loading About page");
+
             $page = StaticPage::where('slug', 'about')->first();
             $artist = Artist::first();
 
             if (!$page) {
-                return redirect()->route('home')->with('error', __('About page not found.'));
+                Log::warning("⚠️ About page content is missing");
+                return redirect()->route('home')->with('error', __('About page content not found.'));
             }
 
+            Log::info("✅ About page loaded successfully");
+
             return view('public.about', compact('page', 'artist'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load about page: ' . $e->getMessage());
-            return redirect()->route('home')->with('error', __('Failed to load about page.'));
+        } catch (QueryException $e) {
+            Log::error("❌ Database error on About page: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('Database error while loading the About page.'));
+        } catch (Exception $e) {
+            Log::error("❌ Failed to load About page: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('An unexpected error occurred while loading the About page.'));
         }
     }
 
@@ -79,13 +82,20 @@ class HomeController extends Controller
     public function contact()
     {
         try {
+            Log::info("🔹 Loading Contact page");
+
             $settings = Setting::whereIn('key', ['site_address', 'site_phone', 'site_email'])
                 ->pluck('value', 'key');
 
+            Log::info("✅ Contact page loaded successfully");
+
             return view('public.contact', compact('settings'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load contact page: ' . $e->getMessage());
-            return redirect()->route('home')->with('error', __('Failed to load contact page.'));
+        } catch (QueryException $e) {
+            Log::error("❌ Database error on Contact page: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('Database error while loading the Contact page.'));
+        } catch (Exception $e) {
+            Log::error("❌ Failed to load Contact page: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('An unexpected error occurred while loading the Contact page.'));
         }
     }
 
@@ -95,10 +105,12 @@ class HomeController extends Controller
     public function gallery()
     {
         try {
+            Log::info("🔹 Loading Gallery page");
+
             return view('public.gallery');
-        } catch (\Exception $e) {
-            Log::error('Failed to load gallery page: ' . $e->getMessage());
-            return redirect()->route('home')->with('error', __('Failed to load gallery page.'));
+        } catch (Exception $e) {
+            Log::error("❌ Failed to load Gallery page: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('An error occurred while loading the Gallery page.'));
         }
     }
 
@@ -108,15 +120,22 @@ class HomeController extends Controller
     public function events()
     {
         try {
+            Log::info("🔹 Loading Events page");
+
             $events = Event::where('start_date', '>=', now())
                 ->orderBy('start_date')
                 ->get()
                 ->groupBy(fn($event) => Carbon::parse($event->start_date)->format('F Y'));
 
+            Log::info("✅ Events page loaded successfully");
+
             return view('public.events', compact('events'));
-        } catch (\Exception $e) {
-            Log::error('Failed to load events page: ' . $e->getMessage());
-            return redirect()->route('home')->with('error', __('Failed to load events page.'));
+        } catch (QueryException $e) {
+            Log::error("❌ Database error on Events page: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('Database error while loading the Events page.'));
+        } catch (Exception $e) {
+            Log::error("❌ Failed to load Events page: " . $e->getMessage());
+            return redirect()->route('home')->with('error', __('An unexpected error occurred while loading the Events page.'));
         }
     }
 }

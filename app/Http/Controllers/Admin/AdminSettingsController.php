@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class AdminSettingsController extends Controller
 {
@@ -19,9 +20,9 @@ class AdminSettingsController extends Controller
 
             $settings = Setting::orderBy('key', 'asc')->paginate(10);
             return view('admin.settings.index', compact('settings'));
-        } catch (\Exception $e) {
-            Log::error('Error loading settings list: ' . $e->getMessage());
-            return response()->json(['error' => __('Error loading settings list')], 500);
+        } catch (Throwable $e) {
+            Log::error('❌ Error loading settings list: ' . $e->getMessage());
+            return redirect()->route('admin.dashboard')->with('error', __('Error loading settings list.'));
         }
     }
 
@@ -40,17 +41,17 @@ class AdminSettingsController extends Controller
 
             Setting::create($validated);
 
-            return redirect()->route('admin.settings.index')->with('success', __('Setting created successfully'));
-        } catch (\Exception $e) {
-            Log::error('Error creating setting: ' . $e->getMessage());
-            return back()->with('error', __('Failed to create setting'));
+            return redirect()->route('admin.settings.index')->with('success', __('Setting created successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error creating setting: ' . $e->getMessage());
+            return back()->with('error', __('Failed to create setting.'));
         }
     }
 
     /**
      * Update an existing setting.
      */
-    public function update(Request $request, $setting)
+    public function update(Request $request, $id)
     {
         try {
             isAllowed($request->user());
@@ -59,14 +60,13 @@ class AdminSettingsController extends Controller
                 'value' => 'string|nullable',
             ]);
 
-            // Find setting manually
-            $setting = Setting::findOrFail($setting);
+            $setting = Setting::findOrFail($id);
             $setting->update($validated);
 
-            return redirect()->route('admin.settings.index')->with('success', __('Setting updated successfully'));
-        } catch (\Exception $e) {
-            Log::error('Error updating setting: ' . $e->getMessage());
-            return back()->with('error', __('Failed to update setting'));
+            return redirect()->route('admin.settings.index')->with('success', __('Setting updated successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error updating setting: ' . $e->getMessage());
+            return back()->with('error', __('Failed to update setting.'));
         }
     }
 
@@ -80,10 +80,10 @@ class AdminSettingsController extends Controller
 
             $setting->delete();
 
-            return response()->json(['success' => __('Setting deleted successfully')], 200);
-        } catch (\Exception $e) {
-            Log::error('Error deleting setting: ' . $e->getMessage());
-            return response()->json(['error' => __('Failed to delete setting')], 500);
+            return back()->with('success', __('Setting deleted successfully.'));
+        } catch (Throwable $e) {
+            Log::error('❌ Error deleting setting: ' . $e->getMessage());
+            return back()->with('error', __('Failed to delete setting.'));
         }
     }
 }

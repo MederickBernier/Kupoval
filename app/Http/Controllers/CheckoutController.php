@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\OrderConfirmationMail;
+use App\Mail\PaymentReceiptMail;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -16,9 +17,10 @@ use Illuminate\Support\Facades\Log;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\PaymentReceiptMail;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
 {
@@ -27,50 +29,54 @@ class CheckoutController extends Controller
      */
     private function createOrder()
     {
-        $cart = Cart::where('user_id', Auth::id())->with('items.artwork')->first();
-        if (!$cart) {
-            return redirect()->route('shop')->with('error', 'Your cart is empty');
-        }
+        try {
+            $cart = Cart::where('user_id', Auth::id())->with('items.artwork')->first();
 
-        $cartTotal = $cart->items->sum(fn($item) => $item->quantity * $item->price);
-        $finalTotal = max($cartTotal - session('discount_amount', 0) + session('shipping_fee', 0), 0);
-        $promo = session('promo', ['code' => '', 'percent' => 0, 'amount' => 0]);
+            if (!$cart) {
+                return redirect()->route('shop')->with('error', __('Your cart is empty.'));
+            }
 
-        $order = Order::create([
-            'user_id' => Auth::id(),
-            'shipping_condition_id' => session('shipping_condition_id', null),
-            'status' => 'pending',
-            'total' => $finalTotal,
-            'billing_address_id' => Auth::user()->profile->billingAddress->id ?? null,
-            'shipping_address_id' => session('shipping_address_id', null),
-            'recipient_name' => Auth::user()->name,
-            'recipient_email' => Auth::user()->email,
-            'promo_code' => $promo['code'],
-            'promo_percent' => $promo['percent'],
-            'promo_discount' => $promo['amount'],
-        ]);
+            $cartTotal = $cart->items->sum(fn($item) => $item->quantity * $item->price);
+            $finalTotal = max($cartTotal - session('discount_amount', 0) + session('shipping_fee', 0), 0);
+            $promo = session('promo', ['code' => '', 'percent' => 0, 'amount' => 0]);
 
-        Log::info("✅ Order Created: Order #{$order->id}");
-
-        // ✅ Store Order Items Before Creating Stripe Checkout
-        foreach ($cart->items as $item) {
-            OrderItem::create([
-                'order_id' => $order->id,
-                'artwork_id' => $item->artwork_id,
-                'quantity' => $item->quantity,
-                'unit_price' => $item->price,
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'shipping_condition_id' => session('shipping_condition_id', null),
+                'status' => 'pending',
+                'total' => $finalTotal,
+                'billing_address_id' => Auth::user()->profile->billingAddress->id ?? null,
+                'shipping_address_id' => session('shipping_address_id', null),
+                'recipient_name' => Auth::user()->name,
+                'recipient_email' => Auth::user()->email,
+                'promo_code' => $promo['code'],
+                'promo_percent' => $promo['percent'],
+                'promo_discount' => $promo['amount'],
             ]);
+
+            Log::info("✅ Order Created: Order #{$order->id}");
+
+            foreach ($cart->items as $item) {
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'artwork_id' => $item->artwork_id,
+                    'quantity' => $item->quantity,
+                    'unit_price' => $item->price,
+                ]);
+            }
+
+            PendingPayment::create([
+                'order_id' => $order->id,
+                'transaction_id' => 'pending',
+                'amount' => $order->total,
+                'status' => 'pending',
+            ]);
+
+            return $order;
+        } catch (\Exception $e) {
+            Log::error("❌ Failed to create order: " . $e->getMessage());
+            return redirect()->route('shop')->with('error', __('Failed to create order.'));
         }
-
-        // ✅ Store a Pending Payment record (for tracking until Stripe confirms)
-        PendingPayment::create([
-            'order_id' => $order->id,
-            'transaction_id' => 'pending', // Will be updated after Stripe checkout
-            'amount' => $order->total,
-            'status' => 'pending',
-        ]);
-
-        return $order;
     }
 
     /**
@@ -79,58 +85,29 @@ class CheckoutController extends Controller
     public function createCheckoutSession()
     {
         if (!Auth::check()) {
-            return redirect()->route('login')->with('error', 'You need to login to proceed to checkout');
+            return redirect()->route('login')->with('error', __('You need to log in to proceed to checkout.'));
         }
 
         try {
             Stripe::setApiKey(config('services.stripe.secret'));
 
-            // 🔹 Begin Database Transaction
             DB::beginTransaction();
-
-            // 🔹 Create Order inside Transaction
             $order = $this->createOrder();
-            $finalTotal = $this->calculateFinalTotal(); // Get updated total
-
-            // 🔹 Fetch Promotion Info
-            $promo = session('promo', ['code' => '', 'percent' => 0, 'amount' => 0]);
-            $discountPercent = isset($promo['percent']) ? (float) $promo['percent'] : 0;
-
-            // 🔹 Fetch Cart Items
+            $finalTotal = $this->calculateFinalTotal();
             $cartItems = OrderItem::where('order_id', $order->id)->get();
 
-            // 🔹 Build Line Items with Discount Applied
             $lineItems = [];
             foreach ($cartItems as $item) {
-                $originalPrice = $item->unit_price;
-                $discountedPrice = $discountPercent > 0 ? $originalPrice * ((100 - $discountPercent) / 100) : $originalPrice;
-
-                Log::info("✅ Item Price Adjusted: Original: {$originalPrice}, Discounted: {$discountedPrice}");
-
                 $lineItems[] = [
                     'price_data' => [
                         'currency' => 'cad',
                         'product_data' => ['name' => $item->artwork->name],
-                        'unit_amount' => max((int) round($discountedPrice * 100), 50),
+                        'unit_amount' => max((int) round($item->unit_price * 100), 50),
                     ],
                     'quantity' => $item->quantity,
                 ];
             }
 
-            // 🔹 Add Shipping Fee Line Item (if applicable)
-            $shippingAmount = session('shippingAmount', 0);
-            if ($shippingAmount > 0) {
-                $lineItems[] = [
-                    'price_data' => [
-                        'currency' => 'cad',
-                        'product_data' => ['name' => 'Shipping Fee'],
-                        'unit_amount' => max((int) round($shippingAmount * 100), 50),
-                    ],
-                    'quantity' => 1,
-                ];
-            }
-
-            // 🔹 Create Stripe Checkout Session
             $checkoutSession = Session::create([
                 'payment_method_types' => ['card'],
                 'line_items' => $lineItems,
@@ -142,20 +119,15 @@ class CheckoutController extends Controller
                 'metadata' => ['order_id' => (string) $order->id],
             ]);
 
-            // ✅ Store session ID in order for tracking
             $order->stripe_session_id = $checkoutSession->id;
             $order->save();
 
-            // 🔹 Commit Transaction (Finalizing DB changes)
             DB::commit();
-
             return redirect($checkoutSession->url);
         } catch (\Exception $e) {
-            // 🔹 Rollback if any error occurs (prevents duplicate orders)
             DB::rollBack();
-
-            Log::error('❌ Stripe Error:', ['message' => $e->getMessage()]);
-            return redirect()->route('checkout.confirmation')->with('error', 'Payment could not be processed.');
+            Log::error("❌ Stripe Error: " . $e->getMessage());
+            return redirect()->route('checkout.confirmation')->with('error', __('Payment could not be processed.'));
         }
     }
 
@@ -164,45 +136,40 @@ class CheckoutController extends Controller
      */
     public function success(Request $request)
     {
-        $sessionId = $request->query('session_id');
-        if (!$sessionId) {
-            return redirect()->route('shop.index')->with('error', 'Payment failed');
-        }
-
-        $order = Order::where('stripe_session_id', $sessionId)->first();
-        if (!$order) {
-            Log::error("❌ No order found for session ID: {$sessionId}");
-            return redirect()->route('shop.index')->with('error', 'Order not found.');
-        }
-
-        // Update order status and store final payment
-        $order->update(['status' => 'processing']);
-        $payment = Payment::create([
-            'order_id' => $order->id,
-            'payment_method' => 'stripe',
-            'amount' => $order->total,
-            'status' => 'successful',
-            'transaction_id' => $sessionId,
-        ]);
-
-        // Remove cart
-        Cart::where('user_id', Auth::id())->delete();
-
-        // Send confirmation email
         try {
-            Mail::to($order->recipient_email)->send(new OrderConfirmationMail($order));
-        } catch (\Exception $e) {
-            Log::error("❌ Failed to send order confirmation email: " . $e->getMessage());
-        }
+            $sessionId = $request->query('session_id');
 
-        // Send payment receipt email
-        try {
-            Mail::to($order->recipient_email)->send(new PaymentReceiptMail($order, $payment));
-        } catch (\Exception $e) {
-            Log::error("❌ Failed to send payment receipt email: " . $e->getMessage());
-        }
+            if (!$sessionId) {
+                return redirect()->route('shop.index')->with('error', __('Payment failed.'));
+            }
 
-        return redirect()->route('checkout.confirmation')->with('success', 'Payment successful');
+            $order = Order::where('stripe_session_id', $sessionId)->firstOrFail();
+            $order->update(['status' => 'processing']);
+
+            $payment = Payment::create([
+                'order_id' => $order->id,
+                'payment_method' => 'stripe',
+                'amount' => $order->total,
+                'status' => 'successful',
+                'transaction_id' => $sessionId,
+            ]);
+
+            Cart::where('user_id', Auth::id())->delete();
+
+            try {
+                Mail::to($order->recipient_email)->send(new OrderConfirmationMail($order));
+                Mail::to($order->recipient_email)->send(new PaymentReceiptMail($order, $payment));
+            } catch (\Exception $e) {
+                Log::error("❌ Failed to send email: " . $e->getMessage());
+            }
+
+            return redirect()->route('checkout.confirmation')->with('success', __('Payment successful.'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('shop.index')->with('error', __('Order not found.'));
+        } catch (\Exception $e) {
+            Log::error("❌ Payment success handling failed: " . $e->getMessage());
+            return redirect()->route('shop.index')->with('error', __('An error occurred while processing your payment.'));
+        }
     }
 
     /**
@@ -210,30 +177,32 @@ class CheckoutController extends Controller
      */
     public function applyPromoCode(Request $request)
     {
-        $request->validate(['code' => 'required|string']);
+        try {
+            $request->validate(['code' => 'required|string']);
 
-        $promoCode = Promotion::where('code', $request->input('code'))->where('is_active', true)->first();
+            $promoCode = Promotion::where('code', $request->input('code'))->where('is_active', true)->firstOrFail();
 
-        if (!$promoCode) return response()->json(['success' => false, 'message' => 'Invalid or expired promo code']);
+            session([
+                'promo' => [
+                    'code' => $promoCode->code,
+                    'percent' => $promoCode->discount_percentage,
+                    'amount' => round(Cart::where('user_id', Auth::id())->first()->items->sum(fn($item) => $item->quantity * $item->price) * ($promoCode->discount_percentage / 100), 2),
+                ],
+            ]);
 
-        $subtotal = Cart::where('user_id', Auth::id())->with('items.artwork')->first()->items->sum(fn($item) => $item->quantity * $item->price);
-        $discountAmount = round($subtotal * ($promoCode->discount_percentage / 100), 2);
-
-        session([
-            'promo' => [
-                'code' => $promoCode->code,
-                'percent' => $promoCode->discount_percentage,
-                'amount' => $discountAmount,
-            ],
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Promo code applied!',
-            'discount' => $discountAmount,
-            'final_total' => $this->calculateFinalTotal(),
-            'percent' => $promoCode->discount_percentage
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => __('Promo code applied!'),
+                'final_total' => $this->calculateFinalTotal(),
+            ]);
+        } catch (ValidationException $e) {
+            return response()->json(['success' => false, 'message' => __('Invalid promo code format.')], 422);
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['success' => false, 'message' => __('Invalid or expired promo code.')]);
+        } catch (\Exception $e) {
+            Log::error("❌ Failed to apply promo code: " . $e->getMessage());
+            return response()->json(['success' => false, 'message' => __('An error occurred while applying the promo code.')]);
+        }
     }
 
     /**
