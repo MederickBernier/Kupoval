@@ -19,16 +19,14 @@
 </head>
 <body class="bg-gray-100 font-sans antialiased" x-data="{ open: false }">
 
+    <x-toast-notification /> <!-- Include Toast Component -->
+
     <div class="flex h-screen">
-        <!-- Sidebar -->
         @include('blade_components.admin_sidenav')
 
-        <!-- Contenu principal -->
         <main class="flex-1 overflow-y-auto transition-all duration-300" :class="open ? 'ml-64' : 'ml-0 md:ml-64'">
-            <!-- Header -->
             <header class="bg-white shadow p-4 flex justify-between items-center">
                 <div class="flex items-center space-x-4">
-                    <!-- Bouton Hamburger (visible uniquement sur mobile/tablette) -->
                     <button @click="open = !open" class="p-2 rounded bg-gray-200 hover:bg-gray-300 md:hidden">
                         <i class="bi bi-list text-2xl"></i>
                     </button>
@@ -41,7 +39,6 @@
                 </div>
             </header>
 
-            <!-- Content -->
             <div class="p-6">
                 @yield('content')
             </div>
@@ -49,24 +46,20 @@
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        document.querySelectorAll('.editor').forEach(editor => {
-            ClassicEditor
-                .create(editor, {
-                    toolbar: [
-                        'bold', 'italic', 'link', '|',
-                        'bulletedList', 'numberedList', '|',
-                        'blockQuote', 'undo', 'redo'
-                    ],
-                    language: 'fr',
-                    height: 400
-                })
-                .then(editorInstance => {
-                    editorInstance.ui.view.editable.element.style.minHeight = "250px";
-                })
-                .catch(error => console.error("CKEditor Error:", error));
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(session('success'))
+                window.Alpine.store('toastHandler').addToast("{{ session('success') }}", "success");
+            @endif
+
+            @if(session('error'))
+                window.Alpine.store('toastHandler').addToast("{{ session('error') }}", "error");
+            @endif
+
+            @if(session('warning'))
+                window.Alpine.store('toastHandler').addToast("{{ session('warning') }}", "warning");
+            @endif
         });
-    });
     </script>
+
 </body>
 </html>

@@ -1,35 +1,37 @@
-@if (session('toast') || session('toasts'))
-    <div class="fixed bottom-5 right-5 z-50 flex flex-col space-y-2 w-80">
-        @if (session('toast'))
-            <div x-data="{ show: true }"
-                 x-init="setTimeout(() => show = false, 4000)"
-                 x-show="show"
-                 x-transition.duration.500ms
-                 class="px-4 py-3 rounded-lg shadow-lg text-white flex items-center justify-between
-                    {{ session('toast')['type'] === 'success' ? 'bg-green-500' : '' }}
-                    {{ session('toast')['type'] === 'error' ? 'bg-red-500' : '' }}
-                    {{ session('toast')['type'] === 'warning' ? 'bg-yellow-500' : '' }}"
-            >
-                <span>{{ session('toast')['message'] }}</span>
-                <button @click="show = false" class="ml-4 text-white font-bold">&times;</button>
-            </div>
-        @endif
+<div x-data="toastHandler()" class="fixed top-5 right-5 space-y-4 z-50">
+    <template x-for="toast in toasts" :key="toast.id">
+        <div x-show="toast.visible" x-transition
+             class="flex items-center px-4 py-3 rounded-lg shadow-lg text-white"
+             :class="{
+                 'bg-green-500': toast.type === 'success',
+                 'bg-red-500': toast.type === 'error',
+                 'bg-yellow-500': toast.type === 'warning'
+             }">
 
-        @if (session('toasts'))
-            @foreach (session('toasts') as $toast)
-                <div x-data="{ show: true }"
-                     x-init="setTimeout(() => show = false, 4000)"
-                     x-show="show"
-                     x-transition.duration.500ms
-                     class="px-4 py-3 rounded-lg shadow-lg text-white flex items-center justify-between
-                        {{ $toast['type'] === 'success' ? 'bg-green-500' : '' }}
-                        {{ $toast['type'] === 'error' ? 'bg-red-500' : '' }}
-                        {{ $toast['type'] === 'warning' ? 'bg-yellow-500' : '' }}"
-                >
-                    <span>{{ $toast['message'] }}</span>
-                    <button @click="show = false" class="ml-4 text-white font-bold">&times;</button>
-                </div>
-            @endforeach
-        @endif
-    </div>
-@endif
+            <i class="mr-3 text-lg"
+               :class="{
+                   'bi bi-check-circle': toast.type === 'success',
+                   'bi bi-x-circle': toast.type === 'error',
+                   'bi bi-exclamation-circle': toast.type === 'warning'
+               }"></i>
+
+            <span x-text="toast.message"></span>
+        </div>
+    </template>
+</div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('toastHandler', () => ({
+        toasts: [],
+        addToast(message, type = 'success') {
+            let id = Date.now();
+            this.toasts.push({ id, message, type, visible: true });
+
+            setTimeout(() => {
+                this.toasts = this.toasts.filter(toast => toast.id !== id);
+            }, 4000);
+        }
+    }));
+});
+</script>

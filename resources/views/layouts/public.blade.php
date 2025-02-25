@@ -30,6 +30,9 @@
     @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
 <body class="bg-page text-body font-body min-h-screen flex flex-col">
+
+    <x-toast-notification /> <!-- Include Toast Component -->
+
     <header>
         @include('blade_components.public_navbar')
     </header>
@@ -43,30 +46,26 @@
         </p>
         @include('blade_components.public_footer')
     </footer>
-    @stack('scripts')
+
     <script>
         window.addEventListener('reload-page', function () {
             console.log('🔄 Rechargement forcé après changement de langue');
             location.reload();
         });
-        document.querySelectorAll('.editor').forEach(editor => {
-            ClassicEditor
-                .create(editor, {
-                    toolbar: [
-                        'bold', 'italic', 'link', '|',
-                        'bulletedList', 'numberedList', '|',
-                        'blockQuote', 'undo', 'redo'
-                    ],
-                    language: 'fr',
-                    height: 400
-                })
-                .then(editorInstance => {
-                    editorInstance.ui.view.editable.element.style.minHeight = "250px";
-                })
-                .catch(error => console.error("CKEditor Error:", error));
+
+        document.addEventListener('DOMContentLoaded', function() {
+            @if(session('success'))
+                window.Alpine.store('toastHandler').addToast("{{ session('success') }}", "success");
+            @endif
+
+            @if(session('error'))
+                window.Alpine.store('toastHandler').addToast("{{ session('error') }}", "error");
+            @endif
+
+            @if(session('warning'))
+                window.Alpine.store('toastHandler').addToast("{{ session('warning') }}", "warning");
+            @endif
         });
-    });
     </script>
-    @livewireScripts
 </body>
 </html>
