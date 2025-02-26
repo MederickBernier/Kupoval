@@ -17,13 +17,15 @@ class OrderConfirmationMail extends Mailable implements ShouldQueue
     public $shippingAddress;
     public $billingAddress;
     public $fullName;
+    public $lang;
 
     public function __construct(Order $order)
     {
         $this->order = $order;
         $this->user = $order->user;
+        $this->lang = app()->getLocale(); // Get the application locale
 
-        // If no shipping address, use the billing address from the user's profile
+        // Use shipping address if provided, otherwise fallback to billing
         $this->shippingAddress = $order->shippingAddress ?? $order->user->profile->billingAddress;
         $this->billingAddress = $order->user->profile->billingAddress;
 
@@ -38,8 +40,8 @@ class OrderConfirmationMail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->subject(__('emails/order_confirmation.subject', ['order_id' => $this->order->id]))
-            ->view('emails.orders.confirmation')
+        return $this->subject($this->getSubject())
+            ->view("emails.{$this->lang}.orders.confirmation")
             ->with([
                 'order' => $this->order,
                 'user' => $this->user,
@@ -47,5 +49,13 @@ class OrderConfirmationMail extends Mailable implements ShouldQueue
                 'shippingAddress' => $this->shippingAddress,
                 'billingAddress' => $this->billingAddress,
             ]);
+    }
+
+    private function getSubject()
+    {
+        return match ($this->lang) {
+            'frca' => "Confirmation de commande # {$this->order->id}",
+            default => "Order Confirmation # {$this->order->id}"
+        };
     }
 }

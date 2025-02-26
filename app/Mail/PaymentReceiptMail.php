@@ -16,23 +16,31 @@ class PaymentReceiptMail extends Mailable implements ShouldQueue
     public $order;
     public $payment;
     public $shippingAddress;
+    public $lang;
 
-    public function __construct(Order $order, Payment $payment)
-    {
+    public function __construct(Order $order, Payment $payment){
         $this->order = $order;
         $this->payment = $payment;
+        $this->lang = app()->getLocale(); // Get the app locale for language detection
 
+        // Use shipping address if provided, otherwise fallback to billing
         $this->shippingAddress = $order->shippingAddress ?? $order->billingAddress;
     }
 
-    public function build()
-    {
-        return $this->subject(__('emails.payment_receipt.subject', ['order_id' => $this->order->id]))
-            ->view('emails.orders.receipt')
-            ->with([
-                'order' => $this->order,
-                'payment' => $this->payment,
-                'shippingAddress' => $this->shippingAddress,
-            ]);
+    public function build(){
+        return $this->subject($this->getSubject())
+        ->view("emails.{$this->lang}.orders.receipt")
+        ->with([
+            'order' => $this->order,
+            'payment' => $this->payment,
+            'shippingAddress' => $this->shippingAddress,
+        ]);
+    }
+
+    private function getSubject(){
+        return match($this->lang){
+            'frca' => "Reçu de paiement pour la commande #{$this->order->id}",
+            default => "Payment receipt for order #{$this->order->id}",
+        };
     }
 }

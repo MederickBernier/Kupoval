@@ -1,41 +1,41 @@
 @extends('emails.layout')
 
 @section('content')
-    <p>{{ __('invoice.thank_you') }}, {{ $order->recipient_name }}!</p>
+    <p>Merci, {{ $order->recipient_name }} !</p>
 
-    <p>{{ __('emails.payment_receipt.message') }}</p>
+    <p>Votre paiement a été traité avec succès. Voici les détails de votre transaction :</p>
 
     <table class="info-table">
         <tr>
-            <td><strong>{{ __('invoice.title', ['order' => $order->id]) }}</strong></td>
+            <td><strong>Facture #</strong></td>
             <td>{{ $order->id }}</td>
         </tr>
         <tr>
-            <td><strong>{{ __('invoice.payment_method') }}</strong></td>
+            <td><strong>Méthode de paiement</strong></td>
             <td>{{ ucfirst($payment->payment_method) }}</td>
         </tr>
         <tr>
-            <td><strong>{{ __('invoice.payment_status') }}</strong></td>
+            <td><strong>Statut du paiement</strong></td>
             <td>{{ ucfirst($payment->status) }}</td>
         </tr>
         <tr>
-            <td><strong>{{ __('invoice.total_amount') }}</strong></td>
+            <td><strong>Montant total</strong></td>
             <td>${{ number_format($payment->amount, 2) }}</td>
         </tr>
         <tr>
-            <td><strong>{{ __('invoice.date') }}</strong></td>
+            <td><strong>Date</strong></td>
             <td>{{ $payment->created_at->format('Y-m-d H:i') }}</td>
         </tr>
     </table>
 
-    <h2>{{ __('invoice.billing_address') }}</h2>
+    <h2>Adresse de facturation</h2>
     <p>
         {{ $order->billingAddress->address }}<br>
         {{ $order->billingAddress->city }}, {{ $order->billingAddress->state }} {{ $order->billingAddress->zipcode }}<br>
         {{ $order->billingAddress->country }}
     </p>
 
-    <h2>{{ __('invoice.shipping_address') }}</h2>
+    <h2>Adresse de livraison</h2>
     @if(isset($shippingAddress) && !empty($shippingAddress->address))
         <p>
             {{ $shippingAddress->address }}<br>
@@ -43,10 +43,10 @@
             {{ $shippingAddress->country }}
         </p>
     @else
-        <p>{{ __('emails.order_confirmation.no_address') }}</p>
+        <p>Aucune adresse de livraison fournie.</p>
     @endif
 
-    <p>{{ __('emails.payment_receipt.footer') }}</p>
+    <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
 
-    <p><strong>{{ __('invoice.thank_you') }}</strong></p>
+    <p><strong>Merci pour votre achat !</strong></p>
 @endsection

@@ -9,11 +9,11 @@
 
     <h2>New Contact Message</h2>
 
-    <p><strong>Name:</strong> {{ $data['name'] }}</p>
-    <p><strong>Email:</strong> {{ $data['email'] }}</p>
+    <p><strong>Name:</strong> {{ $name }}</p>
+    <p><strong>Email:</strong> {{ $email }}</p>
     <p><strong>Message:</strong></p>
     <blockquote style="border-left: 4px solid #007bff; padding-left: 10px; color: #555;">
-        {{ nl2br(e($data['message'])) }}
+        {!! nl2br(e($messageContent)) !!}
     </blockquote>
 
     <p>Reply to this email to respond.</p>

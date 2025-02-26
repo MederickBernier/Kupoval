@@ -14,14 +14,31 @@ class ContactAdminMail extends Mailable
     use Queueable, SerializesModels;
 
     public $data;
+    public $lang;
 
-    public function __construct($data){
+    public function __construct($data)
+    {
         $this->data = $data;
+        $this->lang = app()->getLocale();
     }
 
-    public function build(){
-        return $this->subject('New Contact Message from ' . $this->data['name'])
+    public function build()
+    {
+        return $this->subject($this->getSubject())
             ->replyTo($this->data['email'])
-            ->view('emails.contact_admin');
+            ->view("emails.{$this->lang}.contact.contact_admin")
+            ->with([
+                'name' => $this->data['name'],
+                'email' => $this->data['email'],
+                'messageContent' => $this->data['message'],
+            ]);
+    }
+
+    private function getSubject()
+    {
+        return match ($this->lang) {
+            'frca' => 'Nouveau message de contact de ' . $this->data['name'],
+            default => 'New contact message from ' . $this->data['name'],
+        };
     }
 }

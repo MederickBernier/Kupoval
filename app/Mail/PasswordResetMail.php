@@ -13,23 +13,30 @@ class PasswordResetMail extends Mailable implements ShouldQueue
 
     public $user;
     public $resetUrl;
+    public $lang;
 
     public function __construct($user, $resetUrl)
     {
         $this->user = $user;
         $this->resetUrl = $resetUrl;
+        $this->lang = app()->getLocale();
     }
 
     public function build()
     {
-        return $this->subject(__('emails.auth.reset_subject'))
-            ->view('emails.auth.password_reset')
+        return $this->subject($this->getSubject())
+            ->view("emails.{$this->lang}.auth.password_reset") // Load the email template based on locale
             ->with([
-                'greeting' => __('emails.auth.reset_greeting', ['name' => $this->user->username]),
-                'body' => __('emails.auth.reset_body'),
-                'buttonText' => __('emails.auth.reset_button'),
-                'buttonUrl' => $this->resetUrl,
-                'footer' => __('emails.auth.reset_footer'),
+                'name' => $this->user->username,
+                'resetUrl' => $this->resetUrl,
             ]);
+    }
+
+    private function getSubject()
+    {
+        return match ($this->lang) {
+            'frca' => 'Réinitialisation de votre mot de passe - ' . config('app.name'),
+            default => 'Password Reset Request - ' . config('app.name')
+        };
     }
 }
