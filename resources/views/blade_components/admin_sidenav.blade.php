@@ -74,11 +74,11 @@
                                   {{ request()->routeIs('admin.orders.index') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
                             {{ __('admin/sidenav.list_orders') }}
                     </a></li>
-                    <li><a href="{{ route('admin.orders.trashed') }}"
+                    {{-- <li><a href="{{ route('admin.orders.trashed') }}"
                            class="block px-4 py-2 hover:bg-gray-100
                                   {{ request()->routeIs('admin.orders.trashed') ? 'bg-gray-300 font-semibold' : 'text-gray-600' }}">
                             {{ __('admin/sidenav.deactivated_orders') }}
-                    </a></li>
+                    </a></li> --}}
                 </ul>
             </li>
 

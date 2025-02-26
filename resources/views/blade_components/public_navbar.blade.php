@@ -90,10 +90,10 @@
     <div x-show="open" @click.away="open = false" class="md:hidden bg-navbar text-white absolute inset-x-0 top-0 mt-16 shadow-md z-50">
         <div class="flex flex-col space-y-4 py-4 px-6">
             <a href="{{ route('home') }}" class="hover:text-navbar-hover">{{ __('public/interface.home') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.gallery') }}</a>
+            <a href="{{ route('gallery') }}" class="hover:text-navbar-hover">{{ __('public/interface.gallery') }}</a>
             <a href="{{ route('events') }}" class="hover:text-navbar-hover">{{ __('public/interface.events') }}</a>
             <a href="{{ route('bio.index') }}" class="hover:text-navbar-hover">{{ __('public/interface.bio') }}</a>
-            <a href="#" class="hover:text-navbar-hover">{{ __('public/interface.shop') }}</a>
+            <a href="{{ route('shop.index') }}" class="hover:text-navbar-hover">{{ __('public/interface.shop') }}</a>
             <a href="{{ route('about') }}" class="hover:text-navbar-hover">{{ __('public/interface.about') }}</a>
             <a href="{{ route('contact') }}" class="hover:text-navbar-hover">{{ __('public/interface.contact') }}</a>
 

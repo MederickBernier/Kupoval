@@ -9,4 +9,6 @@ return [
     'orders_overview' => 'Orders Overview',
     'total_orders' => 'Total Orders',
     'order_status_chart' => 'Order Status Chart',
+    'pie' => 'Pie Chart',
+    'bar' => 'Bar Chart',
 ];

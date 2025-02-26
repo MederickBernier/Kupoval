@@ -9,4 +9,6 @@ return [
     'orders_overview' => 'Aperçu des commandes',
     'total_orders' => 'Total des commandes',
     'order_status_chart' => 'Graphique de l\'état des commandes',
+    'pie' => 'Diagramme circulaire',
+    'bar' => 'Diagramme à bandes',
 ];
