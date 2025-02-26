@@ -56,4 +56,5 @@ return [
     'edit_password' => 'Modifier le mot de passe',
     'cancel' => 'Annuler',
     'view_profile' => 'Voir le profil de l\'artiste',
+    'about_missing' => 'Le contenu de la page À propos est manquant',
 ];

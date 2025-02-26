@@ -57,26 +57,18 @@ class HomeController extends Controller
             Log::info("🔹 Loading About page");
 
             $locale = app()->getLocale(); // Get current language (e.g., 'enca', 'frca')
-
             $page = StaticPage::where('slug', 'about')->first();
             $artist = Artist::first();
 
-            if (!$page) {
-                Log::warning("⚠️ About page content is missing");
-                return redirect()->route('home')->with('error', __('public/interface.about_missing'));
-            }
-
-            // Extract translated values from JSON
-            $page->title = json_decode($page->title, true)[$locale] ?? json_decode($page->title, true)['enca'];
-            $page->content = json_decode($page->content, true)[$locale] ?? json_decode($page->content, true)['enca'];
-            $page->meta_description = json_decode($page->meta_description, true)[$locale] ?? json_decode($page->meta_description, true)['enca'];
+            // Use helper to extract content dynamically
+            $pageData = extractStaticContent($page, $locale);
 
             Log::info("✅ About page loaded successfully");
 
-            return view('public.about', compact('page', 'artist'));
-        } catch (QueryException $e) {
-            Log::error("❌ Database error on About page: " . $e->getMessage());
-            return redirect()->route('home')->with('error', __('public/interface.db_error_about'));
+            return view('public.about', [
+                'page' => (object) $pageData,
+                'artist' => $artist,
+            ]);
         } catch (\Exception $e) {
             Log::error("❌ Failed to load About page: " . $e->getMessage());
             return redirect()->route('home')->with('error', __('public/interface.unexpected_error_about'));
