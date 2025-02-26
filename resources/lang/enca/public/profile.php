@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'title' => 'User Profile',
+    'profile_title' => 'User Profile',
     'personal_info' => 'Personal Information',
     'first_name' => 'First Name',
     'last_name' => 'Last Name',
@@ -55,4 +55,12 @@ return [
     'title_field' => 'Title',
     'remove_from_wishlist' => 'Remove from Wishlist',
     'order_items' => 'Order Items',
+
+    'edit_password' => 'Edit Password',
+    'change_password' => 'Change Password',
+    'current_password' => 'Current Password',
+    'new_password' => 'New Password',
+    'confirm_new_password' => 'Confirm New Password',
+    'cancel' => 'Cancel',
+    'save' => 'Save',
 ];

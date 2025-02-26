@@ -15,6 +15,7 @@
         </div>
 
         <!-- Section de l'Artiste -->
+        @if($artist)
         <div class="my-16 bg-neutral p-8 rounded-lg shadow-lg">
             <h2 class="text-2xl font-title text-heading mb-4 text-center">{{ __('public/interface.meet_the_artist') }}</h2>
             <div class="flex flex-col md:flex-row items-center">
@@ -24,15 +25,16 @@
                     class="w-40 h-40 rounded-full object-cover mx-auto mb-6 md:mb-0 md:mr-8 shadow-lg"
                 />
                 <p class="text-lg text-gray-700">
-                    {{ $artist->bio }}
+                    {!! $artist->bio !!}
                 </p>
             </div>
         </div>
+        @endif
 
         <!-- Appel à l'Action -->
         <div class="text-center mt-12">
             <a
-                href="#"
+                href="{{ route('gallery') }}"
                 class="inline-block px-8 py-3 bg-accent text-white font-bold rounded-lg shadow-lg hover:bg-cta transition">
                 {{ __('public/interface.explore_gallery') }}
             </a>

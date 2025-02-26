@@ -32,5 +32,29 @@ class SettingsSeeder extends Seeder
             'key' => 'site_email',
             'value' => 'contact@kupoval.art',
         ]);
+        Setting::create([
+            'key' => 'social_facebook',
+            'value' => 'https://www.facebook.com'
+        ]);
+        Setting::create([
+            'key' => 'social_twitter',
+            'value' => 'https://www.twitter.com'
+        ]);
+        Setting::create([
+            'key' => 'social_instagram',
+            'value' => 'https://www.instagram.com'
+        ]);
+        Setting::create([
+            'key' => 'social_linkedin',
+            'value' => ''
+        ]);
+        Setting::create([
+            'key' => 'social_youtube',
+            'value' => ''
+        ]);
+        Setting::create([
+            'key' => 'social_tiktok',
+            'value' => ''
+        ]);
     }
 }

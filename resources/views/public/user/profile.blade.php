@@ -1,11 +1,11 @@
 @extends('layouts.public')
 
-@section('title', __('public/profile.title'))
+@section('title', __('public/profile.profile_title'))
 
 @section('content')
 <div class="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
     <h2 class="text-3xl font-semibold mb-6 text-heading border-b border-accent pb-2 flex items-center">
-        <i class="bi bi-person-circle text-heading text-xl mr-2"></i> {{ __('public/profile.title') }}
+        <i class="bi bi-person-circle text-heading text-xl mr-2"></i> {{ __('public/profile.profile_title') }}
     </h2>
 
     <!-- 📌 Informations Personnelles -->

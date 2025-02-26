@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('static_pages', function (Blueprint $table) {
             $table->id();
             $table->string('slug', 255)->unique()->comment('URL identifier');
-            $table->string('title', 255);
+            $table->text('title');
             $table->text('content');
-            $table->string('meta_description', 255)->nullable();
+            $table->text('meta_description')->nullable();
             $table->timestamps();
         });
     }

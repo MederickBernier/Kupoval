@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'title' => 'Profil Utilisateur',
+    'profile_title' => 'Profil Utilisateur',
     'personal_info' => 'Informations Personnelles',
     'first_name' => 'Prénom',
     'last_name' => 'Nom',
-    'email' => 'Email',
+    'email' => 'Courriel',
     'username' => 'Nom d\'utilisateur',
     'password' => 'Mot de passe',
 
@@ -32,14 +32,14 @@ return [
     'remove_product' => 'Retirer',
 
     'select_country' => 'Sélectionnez un pays',
-    'select_state' => 'Sélectionnez un état/province',
+    'select_state' => 'Sélectionnez une province',
     'select_city' => 'Sélectionnez une ville',
     'add_city' => 'Ajoutez une nouvelle ville si elle n\'est pas listée',
     'enter_city' => 'Entrez le nom de la ville',
     'add_city_button' => 'Ajouter la ville',
 
     'select_language' => 'Sélectionner la langue',
-    'language_preference' => 'Préférence de langue',
+    'language_preference' => 'Préférence linguistique',
     'languages' => [
         'frca' => '🇨🇦 Français (Canada)',
         'fren' => '🌍 Français (International)',
@@ -51,8 +51,16 @@ return [
     'shipping_addresses' => 'Adresses de Livraison',
     'title_updated' => 'Titre mis à jour avec succès.',
     'title' => 'Titre',
-    'select_title' => 'Sélectionnez un Titre',
+    'select_title' => 'Sélectionnez un titre',
     'title_field' => 'Titre',
     'remove_from_wishlist' => 'Retirer de la Liste de Souhaits',
     'order_items' => 'Articles de la Commande',
+
+    'edit_password' => 'Modifier le mot de passe',
+    'change_password' => 'Changer le mot de passe',
+    'current_password' => 'Mot de passe actuel',
+    'new_password' => 'Nouveau mot de passe',
+    'confirm_new_password' => 'Confirmer le nouveau mot de passe',
+    'cancel' => 'Annuler',
+    'save' => 'Enregistrer',
 ];

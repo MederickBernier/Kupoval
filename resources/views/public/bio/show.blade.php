@@ -11,7 +11,7 @@
             <img src="{{ asset($artist->photo) }}" alt="{{ $artist->first_name . ' ' . $artist->last_name }}"
                  class="w-48 h-48 rounded-full object-cover mx-auto mb-6 md:mb-0 md:mr-8 shadow-lg">
             <div class="prose prose-lg text-body">
-                {!! nl2br(e($artist->bio)) !!}
+                {!! nl2br($artist->bio) !!}
             </div>
         </div>
 
