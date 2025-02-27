@@ -139,20 +139,29 @@ class AdminArtworksController extends Controller
                 'is_featured'   => 'boolean',
                 'is_for_event'  => 'boolean',
                 'event_id'      => 'nullable|exists:events,id|required_if:is_for_event,true',
-                'categories'    => 'sometimes|array',
+                'categories'    => 'nullable|array',
                 'categories.*'  => 'exists:categories,id',
                 'image'         => 'nullable|image|max:2048',
             ]);
 
             DB::beginTransaction();
 
+            // Handle image upload
             if ($request->hasFile('image')) {
-                Storage::disk('public')->delete($artwork->image);
+                if ($artwork->image) {
+                    Storage::disk('public')->delete($artwork->image);
+                }
                 $validated['image'] = $request->file('image')->store('artworks', 'public');
             }
 
+            // Ensure 'categories' is always an array
+            $categories = $request->input('categories', []);
+
+            // Update artwork
             $artwork->update($validated);
-            $artwork->categories()->sync($request->categories ?? []);
+
+            // Sync categories
+            $artwork->categories()->sync($categories);
 
             DB::commit();
 
