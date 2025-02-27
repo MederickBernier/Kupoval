@@ -114,6 +114,73 @@ class AdminOrdersController extends Controller
         }
     }
 
+    public function update(Request $request, Order $order)
+    {
+        try {
+            isAllowed($request->user());
+
+            $validated = $request->validate([
+                'user_id' => 'required|exists:users,id',
+                'billing_address_id' => 'required|exists:addresses,id',
+                'shipping_address_id' => 'nullable|exists:addresses,id',
+                'shipping_condition_id' => 'required|exists:shipping_conditions,id',
+                'total_price' => 'required|numeric|min:0',
+                'status' => 'nullable|string',
+                'recipient_name' => 'nullable|string',
+                'recipient_email' => 'nullable|email',
+                'recipient_phone' => 'nullable|string',
+            ]);
+
+            $order->update([
+                'user_id' => $validated['user_id'],
+                'billing_address_id' => $validated['billing_address_id'],
+                'shipping_address_id' => $validated['shipping_address_id'] ?? null,
+                'shipping_condition_id' => $validated['shipping_condition_id'],
+                'total' => $validated['total_price'],
+                'status' => $validated['status'] ?? $order->status,
+                'recipient_name' => $validated['recipient_name'] ?? $order->recipient_name,
+                'recipient_email' => $validated['recipient_email'] ?? $order->recipient_email,
+                'recipient_phone' => $validated['recipient_phone'] ?? $order->recipient_phone,
+            ]);
+
+            // Handle order items if requested
+            if ($request->has('artworks') && $request->has('quantities')) {
+                // Remove existing items
+                $order->items()->delete();
+
+                // Add new items
+                $artworks = $request->input('artworks');
+                $quantities = $request->input('quantities');
+
+                foreach ($artworks as $key => $artworkId) {
+                    if (isset($quantities[$key]) && $quantities[$key] > 0) {
+                        $artwork = Artwork::findOrFail($artworkId);
+                        OrderItem::create([
+                            'order_id' => $order->id,
+                            'artwork_id' => $artworkId,
+                            'quantity' => $quantities[$key],
+                            'price' => $artwork->initial_price,
+                            'total' => $artwork->initial_price * $quantities[$key],
+                        ]);
+                    }
+                }
+
+                // Recalculate order total if needed
+                if ($request->has('recalculate_total') && $request->input('recalculate_total')) {
+                    $newTotal = $order->items->sum('total');
+                    $order->update(['total' => $newTotal]);
+                }
+            }
+
+            return redirect()->route('admin.orders.show', $order)->with('success', __('Order updated successfully.'));
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (Throwable $e) {
+            Log::error("❌ Error updating order (Order ID: {$order->id}): " . $e->getMessage());
+            return back()->with('error', __('Failed to update order.'));
+        }
+    }
+
     public function edit(Request $request, Order $order)
     {
         try {

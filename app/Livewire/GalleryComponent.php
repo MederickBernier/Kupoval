@@ -84,7 +84,7 @@ class GalleryComponent extends Component
                 $query->orderBy('created_at', 'asc');
                 break;
             case 'featured':
-                $query->orderBy('featured', 'desc');
+                $query->orderBy('is_featured', 'desc');
                 break;
             default:
                 $query->orderBy('created_at', 'desc');

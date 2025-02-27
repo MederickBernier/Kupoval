@@ -51,5 +51,26 @@ class UsersSeeder extends Seeder
             'phone' => '418-555-5678',
             'language' => 'frca',
         ]);
+
+        // New artist user
+        $artist = User::create([
+            'email' => 'artist@kupoval.art',
+            'username' => 'artist',
+            'password' => bcrypt('password'),
+            'role' => 'admin', // Changed from 'artist' to 'admin' since 'artist' is not an allowed role
+        ]);
+
+        $artist->profile()->create([
+            'first_name' => 'Sophie',
+            'last_name' => 'Moreau',
+            'title' => 'Ms',
+            'address' => '789 Boulevard des Beaux-Arts',
+            'city' => 'Montréal',
+            'zipcode' => 'H3B 2Y5',
+            'state' => 'Québec',
+            'country' => 'Canada',
+            'phone' => '514-555-9012',
+            'language' => 'frca',
+        ]);
     }
 }
