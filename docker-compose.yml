@@ -62,6 +62,9 @@ services:
             PGADMIN_DEFAULT_PASSWORD: QXyVvtM7wmALCR8DapTr
         ports:
             - '5050:80'
+        volumes:
+            - 'sail-pgadmin:/var/lib/pgadmin'
+            - './docker/pgadmin/servers.json:/pgadmin4/servers.json'
         depends_on:
             - pgsql
         networks:
@@ -108,4 +111,6 @@ volumes:
     sail-pgsql:
         driver: local
     sail-redis:
+        driver: local
+    sail-pgadmin:
         driver: local

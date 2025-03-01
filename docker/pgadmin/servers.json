@@ -1,0 +1,14 @@
+{
+    "Servers": {
+        "1": {
+            "Name": "Kupoval DB",
+            "Group": "Servers",
+            "Host": "pgsql",
+            "Port": 5432,
+            "MaintenanceDB": "kupoval_db",
+            "Username": "kupoval_user",
+            "Password": "VxFpsv32Kyhu4btwgHJf",
+            "SSLMode": "prefer"
+        }
+    }
+}

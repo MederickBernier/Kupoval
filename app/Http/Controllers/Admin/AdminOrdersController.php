@@ -117,66 +117,189 @@ class AdminOrdersController extends Controller
     public function update(Request $request, Order $order)
     {
         try {
+            Log::info("🔄 Starting order update process for Order ID: {$order->id}");
+            Log::info("📝 Request data: " . json_encode($request->all()));
+
             isAllowed($request->user());
+            Log::info("✅ Authorization check passed for user: {$request->user()->id}");
 
-            $validated = $request->validate([
-                'user_id' => 'required|exists:users,id',
-                'billing_address_id' => 'required|exists:addresses,id',
-                'shipping_address_id' => 'nullable|exists:addresses,id',
-                'shipping_condition_id' => 'required|exists:shipping_conditions,id',
-                'total_price' => 'required|numeric|min:0',
-                'status' => 'nullable|string',
-                'recipient_name' => 'nullable|string',
-                'recipient_email' => 'nullable|email',
-                'recipient_phone' => 'nullable|string',
-            ]);
-
-            $order->update([
-                'user_id' => $validated['user_id'],
-                'billing_address_id' => $validated['billing_address_id'],
-                'shipping_address_id' => $validated['shipping_address_id'] ?? null,
-                'shipping_condition_id' => $validated['shipping_condition_id'],
-                'total' => $validated['total_price'],
-                'status' => $validated['status'] ?? $order->status,
-                'recipient_name' => $validated['recipient_name'] ?? $order->recipient_name,
-                'recipient_email' => $validated['recipient_email'] ?? $order->recipient_email,
-                'recipient_phone' => $validated['recipient_phone'] ?? $order->recipient_phone,
-            ]);
-
-            // Handle order items if requested
-            if ($request->has('artworks') && $request->has('quantities')) {
-                // Remove existing items
-                $order->items()->delete();
-
-                // Add new items
-                $artworks = $request->input('artworks');
-                $quantities = $request->input('quantities');
-
-                foreach ($artworks as $key => $artworkId) {
-                    if (isset($quantities[$key]) && $quantities[$key] > 0) {
-                        $artwork = Artwork::findOrFail($artworkId);
-                        OrderItem::create([
-                            'order_id' => $order->id,
-                            'artwork_id' => $artworkId,
-                            'quantity' => $quantities[$key],
-                            'price' => $artwork->initial_price,
-                            'total' => $artwork->initial_price * $quantities[$key],
-                        ]);
-                    }
-                }
-
-                // Recalculate order total if needed
-                if ($request->has('recalculate_total') && $request->input('recalculate_total')) {
-                    $newTotal = $order->items->sum('total');
-                    $order->update(['total' => $newTotal]);
+            // Get user profile ID from the user
+            $userProfileId = null;
+            if ($request->has('user_id')) {
+                $user = User::find($request->input('user_id'));
+                if ($user && $user->profile) {
+                    $userProfileId = $user->profile->id;
+                    Log::info("✅ Found user profile ID: {$userProfileId} for user: {$user->id}");
+                } else {
+                    Log::warning("⚠️ Could not find user profile for user ID: {$request->input('user_id')}");
                 }
             }
 
+            // First, update or create the billing address if it exists in the request
+            if ($request->has('billing_address')) {
+                Log::info("🔄 Processing billing address");
+
+                // Fetch the current billing address or create a new one
+                if ($order->billing_address_id) {
+                    $billingAddress = Address::find($order->billing_address_id);
+                    if ($billingAddress) {
+                        $billingAddress->update([
+                            'address' => $request->input('billing_address'),
+                            'city' => $request->input('billing_city'),
+                            'state' => $request->input('billing_state'),
+                            'country' => $request->input('billing_country'),
+                            'zipcode' => $request->input('billing_zipcode'),
+                            // Only update user_profile_id if we have it and it's not already set
+                            'user_profile_id' => $userProfileId ?? $billingAddress->user_profile_id,
+                        ]);
+                        Log::info("✅ Updated existing billing address ID: {$billingAddress->id}");
+                    }
+                } else {
+                    // Create a new address
+                    $billingAddress = Address::create([
+                        'address' => $request->input('billing_address'),
+                        'city' => $request->input('billing_city'),
+                        'state' => $request->input('billing_state'),
+                        'country' => $request->input('billing_country'),
+                        'zipcode' => $request->input('billing_zipcode'),
+                        'type' => 'billing',
+                        'user_profile_id' => $userProfileId,
+                    ]);
+                    Log::info("✅ Created new billing address ID: {$billingAddress->id}");
+                }
+
+                $billingAddressId = $billingAddress->id;
+            } else {
+                $billingAddressId = $order->billing_address_id;
+            }
+
+            // Process shipping addresses if they exist
+            $shippingAddressId = null;
+            if ($request->has('shipping_addresses') && is_array($request->input('shipping_addresses')) && !empty($request->input('shipping_addresses'))) {
+                Log::info("🔄 Processing shipping address");
+                $shippingAddressData = $request->input('shipping_addresses')[0]; // Get first shipping address
+
+                // Fetch the current shipping address or create a new one
+                if ($order->shipping_address_id) {
+                    $shippingAddress = Address::find($order->shipping_address_id);
+                    if ($shippingAddress) {
+                        $shippingAddress->update([
+                            'address' => $shippingAddressData['address'] ?? null,
+                            'city' => $shippingAddressData['city'] ?? null,
+                            'state' => $shippingAddressData['state'] ?? null,
+                            'country' => $shippingAddressData['country'] ?? null,
+                            'zipcode' => $shippingAddressData['zipcode'] ?? null,
+                            // Only update user_profile_id if we have it and it's not already set
+                            'user_profile_id' => $userProfileId ?? $shippingAddress->user_profile_id,
+                        ]);
+                        Log::info("✅ Updated existing shipping address ID: {$shippingAddress->id}");
+                    }
+                } else {
+                    // Create a new address
+                    $shippingAddress = Address::create([
+                        'address' => $shippingAddressData['address'] ?? null,
+                        'city' => $shippingAddressData['city'] ?? null,
+                        'state' => $shippingAddressData['state'] ?? null,
+                        'country' => $shippingAddressData['country'] ?? null,
+                        'zipcode' => $shippingAddressData['zipcode'] ?? null,
+                        'type' => 'shipping',
+                        'user_profile_id' => $userProfileId,
+                    ]);
+                    Log::info("✅ Created new shipping address ID: {$shippingAddress->id}");
+                }
+
+                $shippingAddressId = $shippingAddress->id;
+            } else {
+                $shippingAddressId = $order->shipping_address_id;
+            }
+
+            // Update the order with simple fields first
+            Log::info("🔄 Updating order basic information");
+            $updateData = [
+                'user_id' => $request->input('user_id'),
+                'billing_address_id' => $billingAddressId,
+                'shipping_address_id' => $shippingAddressId,
+                'shipping_condition_id' => $request->input('shipping_condition_id'),
+                'status' => $request->input('status'),
+            ];
+
+            // Log update data
+            Log::info("📊 Order update data: " . json_encode($updateData));
+
+            // Perform update
+            $order->fill($updateData);
+            $updateResult = $order->save();
+
+            if ($updateResult) {
+                Log::info("✅ Order basic info updated successfully");
+            } else {
+                Log::warning("⚠️ Order basic info update failed");
+            }
+
+            // Process order items if they exist
+            if ($request->has('artworks') && $request->has('quantities')) {
+                Log::info("🔄 Processing order items");
+
+                // Track for deletion
+                $keepArtworkIds = [];
+                $totalAmount = 0;
+
+                // Process each artwork
+                $artworkIds = $request->input('artworks');
+                $quantities = $request->input('quantities');
+
+                foreach ($artworkIds as $artworkId) {
+                    // Skip if no quantity or zero quantity
+                    if (!isset($quantities[$artworkId]) || intval($quantities[$artworkId]) <= 0) {
+                        Log::info("⏭️ Skipping Artwork ID: {$artworkId} due to missing or zero quantity");
+                        continue;
+                    }
+
+                    $quantity = intval($quantities[$artworkId]);
+                    $keepArtworkIds[] = $artworkId;
+
+                    try {
+                        $artwork = Artwork::findOrFail($artworkId);
+                        $price = $artwork->initial_price;
+                        $itemTotal = $price * $quantity;
+                        $totalAmount += $itemTotal;
+
+                        // Find existing item or create new
+                        $item = OrderItem::updateOrCreate(
+                            [
+                                'order_id' => $order->id,
+                                'artwork_id' => $artworkId
+                            ],
+                            [
+                                'quantity' => $quantity,
+                                'price' => $price,
+                                'total' => $itemTotal
+                            ]
+                        );
+
+                        Log::info("✅ Updated/created order item for Artwork ID: {$artworkId}, Quantity: {$quantity}, Price: {$price}");
+                    } catch (\Exception $e) {
+                        Log::error("❌ Failed to process item for Artwork ID: {$artworkId} - " . $e->getMessage());
+                    }
+                }
+
+                // Remove items not in the keep list
+                if (!empty($keepArtworkIds)) {
+                    $deletedCount = $order->items()->whereNotIn('artwork_id', $keepArtworkIds)->delete();
+                    Log::info("🗑️ Deleted {$deletedCount} items not present in updated list");
+                }
+
+                // Update order total
+                $order->total = $totalAmount;
+                $order->save();
+                Log::info("💰 Updated order total: {$totalAmount}");
+            }
+
+            Log::info("✅ Order update process completed successfully for Order ID: {$order->id}");
             return redirect()->route('admin.orders.show', $order)->with('success', __('Order updated successfully.'));
-        } catch (ValidationException $e) {
-            return back()->withErrors($e->errors())->withInput();
         } catch (Throwable $e) {
             Log::error("❌ Error updating order (Order ID: {$order->id}): " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
             return back()->with('error', __('Failed to update order.'));
         }
     }

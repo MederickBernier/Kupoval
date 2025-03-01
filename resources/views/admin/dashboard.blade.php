@@ -19,7 +19,7 @@
         gap: 1.5rem;
     }
     .chart-container {
-        max-height: 300px;
+        height: 300px;
         position: relative;
     }
     @media (max-width: 768px) {
@@ -94,7 +94,16 @@
             </div>
 
             <div class="space-y-4">
-                @foreach(['pending' => 'yellow', 'completed' => 'green', 'canceled' => 'red', 'refunded' => 'blue'] as $status => $color)
+                @php
+                    $statusColors = [
+                        'pending' => 'yellow',
+                        'completed' => 'green',
+                        'canceled' => 'red',
+                        'refunded' => 'blue'
+                    ];
+                @endphp
+
+                @foreach($statusColors as $status => $color)
                     @php
                         $count = $orderStatusCounts[$status] ?? 0;
                         $percentage = $totalOrders > 0 ? ($count / $totalOrders) * 100 : 0;
@@ -136,94 +145,117 @@
                 </div>
             </div>
             <div class="chart-container">
-                <canvas id="orderStatusChart"></canvas>
+                <canvas x-ref="orderStatusChart"></canvas>
             </div>
         </div>
     </div>
 </div>
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
     function dashboard() {
         return {
             chartType: 'pie',
             chart: null,
+            chartData: {
+                labels: [
+                    "{{ __('admin/orders.status.pending') }}",
+                    "{{ __('admin/orders.status.completed') }}",
+                    "{{ __('admin/orders.status.canceled') }}",
+                    "{{ __('admin/orders.status.refunded') }}"
+                ],
+                datasets: [{
+                    data: [
+                        {{ $orderStatusCounts['pending'] ?? 0 }},
+                        {{ $orderStatusCounts['completed'] ?? 0 }},
+                        {{ $orderStatusCounts['canceled'] ?? 0 }},
+                        {{ $orderStatusCounts['refunded'] ?? 0 }}
+                    ],
+                    backgroundColor: ["#facc15", "#22c55e", "#ef4444", "#3b82f6"],
+                    borderColor: ["#ffffff", "#ffffff", "#ffffff", "#ffffff"],
+                    borderWidth: 2
+                }]
+            },
 
             init() {
-                this.initChart();
+                this.$nextTick(() => {
+                    this.initChart();
+                });
             },
 
             initChart() {
-                const ctx = document.getElementById('orderStatusChart').getContext('2d');
+                const ctx = this.$refs.orderStatusChart.getContext('2d');
 
-                this.chart = new Chart(ctx, {
-                    type: this.chartType,
-                    data: {
-                        labels: [
-                            "{{ __('admin/orders.status.pending') }}",
-                            "{{ __('admin/orders.status.completed') }}",
-                            "{{ __('admin/orders.status.canceled') }}",
-                            "{{ __('admin/orders.status.refunded') }}"
-                        ],
-                        datasets: [{
-                            data: [
-                                {{ $orderStatusCounts['pending'] ?? 0 }},
-                                {{ $orderStatusCounts['completed'] ?? 0 }},
-                                {{ $orderStatusCounts['canceled'] ?? 0 }},
-                                {{ $orderStatusCounts['refunded'] ?? 0 }}
-                            ],
-                            backgroundColor: ["#facc15", "#22c55e", "#ef4444", "#3b82f6"],
-                            borderColor: ["#ffffff", "#ffffff", "#ffffff", "#ffffff"],
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    padding: 20,
-                                    boxWidth: 12,
-                                    font: {
-                                        size: 12
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const label = context.label || '';
-                                        const value = context.formattedValue;
-                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                        const percentage = Math.round((context.raw / total) * 100);
-                                        return `${label}: ${value} (${percentage}%)`;
-                                    }
+                // If chart already exists, destroy it
+                if (this.chart) {
+                    this.chart.destroy();
+                }
+
+                // Configure options based on chart type
+                const options = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                boxWidth: 12,
+                                font: {
+                                    size: 12
                                 }
                             }
                         },
-                        scales: {
-                            x: {
-                                display: this.chartType === 'bar'
-                            },
-                            y: {
-                                display: this.chartType === 'bar',
-                                beginAtZero: true
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.formattedValue;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? Math.round((context.raw / total) * 100) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
                             }
                         }
                     }
+                };
+
+                // Add scales for bar chart
+                if (this.chartType === 'bar') {
+                    options.scales = {
+                        x: {
+                            display: true
+                        },
+                        y: {
+                            display: true,
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0 // Only show whole numbers
+                            }
+                        }
+                    };
+                } else {
+                    options.scales = {
+                        x: {
+                            display: false
+                        },
+                        y: {
+                            display: false
+                        }
+                    };
+                }
+
+                // Create new chart
+                this.chart = new Chart(ctx, {
+                    type: this.chartType,
+                    data: this.chartData,
+                    options: options
                 });
             },
 
             setChartType(type) {
                 this.chartType = type;
-
-                if (this.chart) {
-                    this.chart.destroy();
-                }
-
                 this.initChart();
             }
         };
