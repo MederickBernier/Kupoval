@@ -16,6 +16,12 @@ use Throwable;
 
 class AdminOrdersController extends Controller
 {
+    /**
+     * Display a listing of the orders.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function index(Request $request)
     {
         try {
@@ -33,6 +39,13 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Display the specified order details.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Order $order
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function show(Request $request, Order $order)
     {
         try {
@@ -58,6 +71,12 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Display the form for creating a new order.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function create(Request $request)
     {
         try {
@@ -74,6 +93,15 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Store a newly created order in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
+     */
     public function store(Request $request)
     {
         try {
@@ -114,6 +142,15 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Update the specified order in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Order  $order
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Throwable
+     */
     public function update(Request $request, Order $order)
     {
         try {
@@ -123,7 +160,6 @@ class AdminOrdersController extends Controller
             isAllowed($request->user());
             Log::info("✅ Authorization check passed for user: {$request->user()->id}");
 
-            // Get user profile ID from the user
             $userProfileId = null;
             if ($request->has('user_id')) {
                 $user = User::find($request->input('user_id'));
@@ -135,11 +171,9 @@ class AdminOrdersController extends Controller
                 }
             }
 
-            // First, update or create the billing address if it exists in the request
             if ($request->has('billing_address')) {
                 Log::info("🔄 Processing billing address");
 
-                // Fetch the current billing address or create a new one
                 if ($order->billing_address_id) {
                     $billingAddress = Address::find($order->billing_address_id);
                     if ($billingAddress) {
@@ -149,13 +183,11 @@ class AdminOrdersController extends Controller
                             'state' => $request->input('billing_state'),
                             'country' => $request->input('billing_country'),
                             'zipcode' => $request->input('billing_zipcode'),
-                            // Only update user_profile_id if we have it and it's not already set
                             'user_profile_id' => $userProfileId ?? $billingAddress->user_profile_id,
                         ]);
                         Log::info("✅ Updated existing billing address ID: {$billingAddress->id}");
                     }
                 } else {
-                    // Create a new address
                     $billingAddress = Address::create([
                         'address' => $request->input('billing_address'),
                         'city' => $request->input('billing_city'),
@@ -173,13 +205,11 @@ class AdminOrdersController extends Controller
                 $billingAddressId = $order->billing_address_id;
             }
 
-            // Process shipping addresses if they exist
             $shippingAddressId = null;
             if ($request->has('shipping_addresses') && is_array($request->input('shipping_addresses')) && !empty($request->input('shipping_addresses'))) {
                 Log::info("🔄 Processing shipping address");
-                $shippingAddressData = $request->input('shipping_addresses')[0]; // Get first shipping address
+                $shippingAddressData = $request->input('shipping_addresses')[0];
 
-                // Fetch the current shipping address or create a new one
                 if ($order->shipping_address_id) {
                     $shippingAddress = Address::find($order->shipping_address_id);
                     if ($shippingAddress) {
@@ -189,13 +219,11 @@ class AdminOrdersController extends Controller
                             'state' => $shippingAddressData['state'] ?? null,
                             'country' => $shippingAddressData['country'] ?? null,
                             'zipcode' => $shippingAddressData['zipcode'] ?? null,
-                            // Only update user_profile_id if we have it and it's not already set
                             'user_profile_id' => $userProfileId ?? $shippingAddress->user_profile_id,
                         ]);
                         Log::info("✅ Updated existing shipping address ID: {$shippingAddress->id}");
                     }
                 } else {
-                    // Create a new address
                     $shippingAddress = Address::create([
                         'address' => $shippingAddressData['address'] ?? null,
                         'city' => $shippingAddressData['city'] ?? null,
@@ -213,7 +241,6 @@ class AdminOrdersController extends Controller
                 $shippingAddressId = $order->shipping_address_id;
             }
 
-            // Update the order with simple fields first
             Log::info("🔄 Updating order basic information");
             $updateData = [
                 'user_id' => $request->input('user_id'),
@@ -223,10 +250,8 @@ class AdminOrdersController extends Controller
                 'status' => $request->input('status'),
             ];
 
-            // Log update data
             Log::info("📊 Order update data: " . json_encode($updateData));
 
-            // Perform update
             $order->fill($updateData);
             $updateResult = $order->save();
 
@@ -236,20 +261,16 @@ class AdminOrdersController extends Controller
                 Log::warning("⚠️ Order basic info update failed");
             }
 
-            // Process order items if they exist
             if ($request->has('artworks') && $request->has('quantities')) {
                 Log::info("🔄 Processing order items");
 
-                // Track for deletion
                 $keepArtworkIds = [];
                 $totalAmount = 0;
 
-                // Process each artwork
                 $artworkIds = $request->input('artworks');
                 $quantities = $request->input('quantities');
 
                 foreach ($artworkIds as $artworkId) {
-                    // Skip if no quantity or zero quantity
                     if (!isset($quantities[$artworkId]) || intval($quantities[$artworkId]) <= 0) {
                         Log::info("⏭️ Skipping Artwork ID: {$artworkId} due to missing or zero quantity");
                         continue;
@@ -264,7 +285,6 @@ class AdminOrdersController extends Controller
                         $itemTotal = $price * $quantity;
                         $totalAmount += $itemTotal;
 
-                        // Find existing item or create new
                         $item = OrderItem::updateOrCreate(
                             [
                                 'order_id' => $order->id,
@@ -283,13 +303,11 @@ class AdminOrdersController extends Controller
                     }
                 }
 
-                // Remove items not in the keep list
                 if (!empty($keepArtworkIds)) {
                     $deletedCount = $order->items()->whereNotIn('artwork_id', $keepArtworkIds)->delete();
                     Log::info("🗑️ Deleted {$deletedCount} items not present in updated list");
                 }
 
-                // Update order total
                 $order->total = $totalAmount;
                 $order->save();
                 Log::info("💰 Updated order total: {$totalAmount}");
@@ -304,6 +322,13 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Edit the specified order.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @param \App\Models\Order $order The order instance to be edited.
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse The view for editing the order or a redirect response on error.
+     */
     public function edit(Request $request, Order $order)
     {
         try {
@@ -331,6 +356,13 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Remove the specified order from storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Order $order
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy(Request $request, Order $order)
     {
         try {
@@ -345,6 +377,12 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the trashed orders.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function trashed(Request $request)
     {
         try {
@@ -359,6 +397,15 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Restore a soft-deleted order.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @param int $id The ID of the order to restore.
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the order is not found.
+     * @throws \Throwable If any other error occurs during the restore process.
+     */
     public function restore(Request $request, $id)
     {
         try {
@@ -374,6 +421,15 @@ class AdminOrdersController extends Controller
         }
     }
 
+    /**
+     * Permanently delete a trashed order.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @param int $id The ID of the order to be permanently deleted.
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the order is not found.
+     * @throws \Throwable If any error occurs during the deletion process.
+     */
     public function forceDelete(Request $request, $id)
     {
         try {

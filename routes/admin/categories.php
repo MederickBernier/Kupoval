@@ -3,6 +3,27 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminCategoriesController;
 
+/**
+ * Admin Categories Routes
+ *
+ * This file contains the routes for managing categories in the admin panel.
+ *
+ * Routes:
+ * - GET /categories: Display a listing of the categories.
+ * - GET /categories/create: Show the form for creating a new category.
+ * - POST /categories: Store a newly created category in storage.
+ * - GET /categories/{category}/edit: Show the form for editing the specified category.
+ * - PUT /categories/{category}: Update the specified category in storage.
+ * - DELETE /categories/{category}: Remove the specified category from storage.
+ * - GET /categories/deactivated: Display a listing of the deactivated categories.
+ * - POST /categories/restore/{category}: Restore the specified deactivated category.
+ * - DELETE /categories/force-delete/{category}: Permanently delete the specified category from storage.
+ *
+ * Controller: AdminCategoriesController
+ *
+ * @package Kupoval
+ * @subpackage Routes
+ */
 Route::get('/categories', [AdminCategoriesController::class, 'index'])->name('admin.categories.index');
 Route::get('/categories/create', [AdminCategoriesController::class, 'create'])->name('admin.categories.create');
 Route::post('/categories', [AdminCategoriesController::class, 'store'])->name('admin.categories.store');

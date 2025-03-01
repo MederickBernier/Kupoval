@@ -17,7 +17,9 @@ class LoginController extends Controller
     private const ALLOWED_LANGUAGES = ['enca', 'frca'];
 
     /**
-     * Show the login form.
+     * Display the login form.
+     *
+     * @return \Illuminate\View\View
      */
     public function showLoginForm()
     {
@@ -25,11 +27,16 @@ class LoginController extends Controller
     }
 
     /**
-     * Handle user login.
+     * Handle a login request to the application.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function login(Request $request)
     {
-        // ✅ Validate Input
         $request->validate([
             'email'    => 'required|email',
             'password' => 'required|string',
@@ -40,17 +47,14 @@ class LoginController extends Controller
                 $user = Auth::user();
                 $request->session()->regenerate();
 
-                // ✅ Ensure user has a profile before accessing language
                 $lang = optional($user->profile)->language ?? config('app.locale');
 
-                // ✅ Verify language is allowed
                 if (!in_array($lang, self::ALLOWED_LANGUAGES)) {
                     $lang = config('app.locale');
                 }
 
-                // ✅ Set session and cookie for localization
                 Session::put('locale', $lang);
-                Cookie::queue('locale', $lang, 60 * 24 * 30); // 30 days
+                Cookie::queue('locale', $lang, 60 * 24 * 30);
 
                 Log::info("✅ User logged in successfully: {$user->email}");
 
@@ -58,7 +62,6 @@ class LoginController extends Controller
                     ->with('success', __('Login successful.'));
             }
 
-            // 🚨 Log failed attempts for security
             Log::warning("⚠️ Failed login attempt for email: {$request->email}");
 
             return back()->withInput()->withErrors([
@@ -76,7 +79,15 @@ class LoginController extends Controller
     }
 
     /**
-     * Handle user logout.
+     * Log the user out of the application.
+     *
+     * This method handles the user logout process. It logs out the authenticated user,
+     * invalidates the session, regenerates the CSRF token, and redirects the user to the home page
+     * with a success message. If an error occurs during the logout process, it logs the error and
+     * returns the user back with an error message.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request instance.
+     * @return \Illuminate\Http\RedirectResponse The response after logout.
      */
     public function logout(Request $request)
     {

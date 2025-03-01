@@ -20,7 +20,56 @@ use App\Http\Controllers\Webhooks\StripeWebhookController;
 use App\Http\Controllers\EmailController;
 use App\Http\Controllers\WishlistController;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
-use Spatie\Sitemap\SitemapGenerator;
+
+/**
+ * Web Routes
+ *
+ * This file contains all the web routes for the application.
+ *
+ * Public Pages:
+ * - Home: Displays the homepage.
+ * - About: Displays the about page.
+ * - Contact: Displays the contact page and handles contact form submissions.
+ * - Gallery: Displays the gallery page.
+ * - Shop: Displays the shop index and cart pages.
+ * - Artwork: Displays individual artwork details.
+ * - Events: Displays the events page and individual event details.
+ * - Wishlist: Handles wishlist item removal.
+ * - Contact Artist: Displays the contact artist form and handles submissions.
+ *
+ * Bio Routes:
+ * - Bio: Displays the bio index and individual artist bio pages.
+ *
+ * Authentication (Guest Only):
+ * - Register: Displays the registration form and handles registration.
+ * - Login: Displays the login form and handles login.
+ * - Logout: Handles user logout (requires authentication).
+ *
+ * Stripe Webhook:
+ * - Handles Stripe webhook events (without CSRF verification).
+ *
+ * Email Verification (Authenticated Users):
+ * - Displays email verification notice.
+ * - Handles email verification.
+ * - Sends email verification notifications.
+ *
+ * User Profile (Authenticated and Verified Users):
+ * - Displays and updates user profile.
+ * - Edits and updates specific user profile fields.
+ * - Displays individual order details and generates order invoices.
+ *
+ * Language Switching:
+ * - Handles language switching.
+ *
+ * Checkout (Authenticated Users):
+ * - Handles checkout process, including session creation, success, cancellation, confirmation, promo code application/removal, and shipping updates.
+ *
+ * Email Routes (Authenticated and Verified Users):
+ * - Sends test emails for verification, password reset, order confirmation, payment receipt, shipping notification, and refund confirmation.
+ *
+ * Admin Routes (Authenticated and Verified Users):
+ * - Loads admin routes for dashboard, users, settings, events, artworks, categories, artists, orders, and promotions.
+ */
 
 // Pages publiques
 Route::get('/', [HomeController::class, 'index'])->name('home');

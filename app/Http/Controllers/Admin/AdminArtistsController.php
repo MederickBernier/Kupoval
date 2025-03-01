@@ -13,7 +13,10 @@ use Throwable;
 class AdminArtistsController extends Controller
 {
     /**
-     * Display the list of artists.
+     * Display a listing of the artists.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request)
     {
@@ -29,7 +32,10 @@ class AdminArtistsController extends Controller
     }
 
     /**
-     * Show artist creation form.
+     * Display the artist creation page.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function create(Request $request)
     {
@@ -43,7 +49,13 @@ class AdminArtistsController extends Controller
     }
 
     /**
-     * Store a new artist.
+     * Store a newly created artist in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function store(Request $request)
     {
@@ -69,7 +81,11 @@ class AdminArtistsController extends Controller
     }
 
     /**
-     * Show artist edit page.
+     * Display the form for editing the specified artist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Artist $artist
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(Request $request, Artist $artist)
     {
@@ -83,7 +99,13 @@ class AdminArtistsController extends Controller
     }
 
     /**
-     * Update an artist.
+     * Update the specified artist in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Artist  $artist
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function update(Request $request, Artist $artist)
     {
@@ -113,7 +135,13 @@ class AdminArtistsController extends Controller
     }
 
     /**
-     * Soft delete an artist.
+     * Remove the specified artist from storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Artist $artist
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Throwable
      */
     public function destroy(Request $request, Artist $artist)
     {
@@ -134,7 +162,10 @@ class AdminArtistsController extends Controller
     }
 
     /**
-     * Display trashed artists.
+     * Display a listing of the trashed artists.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function trashed(Request $request)
     {
@@ -151,6 +182,10 @@ class AdminArtistsController extends Controller
 
     /**
      * Restore a soft-deleted artist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function restore(Request $request, $id)
     {
@@ -174,6 +209,10 @@ class AdminArtistsController extends Controller
 
     /**
      * Permanently delete an artist.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function forceDelete(Request $request, $id)
     {
@@ -200,7 +239,10 @@ class AdminArtistsController extends Controller
     }
 
     /**
-     * Validation rules.
+     * Get the validation rules for the artist form.
+     *
+     * @param int|null $id The ID of the artist being validated (optional).
+     * @return array The validation rules.
      */
     private function validationRules($id = null)
     {
@@ -220,7 +262,16 @@ class AdminArtistsController extends Controller
     }
 
     /**
-     * Generate a unique slug.
+     * Generate a unique slug for an artist based on their name.
+     *
+     * This method creates a URL-friendly slug from the given name and ensures
+     * its uniqueness by appending a counter if necessary. If an ID is provided,
+     * it will exclude that ID from the uniqueness check, which is useful for
+     * updating existing records.
+     *
+     * @param string $name The name to generate the slug from.
+     * @param int|null $id The ID to exclude from the uniqueness check (optional).
+     * @return string The unique slug.
      */
     private function generateUniqueSlug($name, $id = null)
     {

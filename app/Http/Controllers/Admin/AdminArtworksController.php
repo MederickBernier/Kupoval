@@ -17,7 +17,10 @@ use Throwable;
 class AdminArtworksController extends Controller
 {
     /**
-     * Display a list of artworks.
+     * Display a listing of the artworks.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request)
     {
@@ -33,7 +36,10 @@ class AdminArtworksController extends Controller
     }
 
     /**
-     * Show artwork creation form.
+     * Display the form for creating a new artwork.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function create(Request $request)
     {
@@ -52,7 +58,13 @@ class AdminArtworksController extends Controller
     }
 
     /**
-     * Store new artwork.
+     * Store a newly created artwork in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function store(Request $request)
     {
@@ -81,13 +93,10 @@ class AdminArtworksController extends Controller
                 $validated['image'] = $request->file('image')->store('artworks', 'public');
             }
 
-            // Generate a unique slug
             $validated['slug'] = $this->generateUniqueSlug($validated['name']);
 
-            // Create Artwork
             $artwork = Artwork::create($validated);
 
-            // Attach Categories
             $artwork->categories()->sync($request->categories ?? []);
 
             DB::commit();
@@ -101,7 +110,11 @@ class AdminArtworksController extends Controller
     }
 
     /**
-     * Show the edit page.
+     * Display the form for editing the specified artwork.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Artwork $artwork
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(Request $request, Artwork $artwork)
     {
@@ -121,7 +134,11 @@ class AdminArtworksController extends Controller
     }
 
     /**
-     * Update an artwork.
+     * Update the specified artwork in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Artwork  $artwork
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, Artwork $artwork)
     {
@@ -146,7 +163,6 @@ class AdminArtworksController extends Controller
 
             DB::beginTransaction();
 
-            // Handle image upload
             if ($request->hasFile('image')) {
                 if ($artwork->image) {
                     Storage::disk('public')->delete($artwork->image);
@@ -154,13 +170,10 @@ class AdminArtworksController extends Controller
                 $validated['image'] = $request->file('image')->store('artworks', 'public');
             }
 
-            // Ensure 'categories' is always an array
             $categories = $request->input('categories', []);
 
-            // Update artwork
             $artwork->update($validated);
 
-            // Sync categories
             $artwork->categories()->sync($categories);
 
             DB::commit();
@@ -174,7 +187,11 @@ class AdminArtworksController extends Controller
     }
 
     /**
-     * Soft delete an artwork.
+     * Remove the specified artwork from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Artwork  $artwork
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, Artwork $artwork)
     {
@@ -191,7 +208,10 @@ class AdminArtworksController extends Controller
     }
 
     /**
-     * Display trashed artworks.
+     * Display a listing of the trashed artworks.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function trashed(Request $request)
     {
@@ -209,6 +229,12 @@ class AdminArtworksController extends Controller
 
     /**
      * Restore a soft-deleted artwork.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @param int $id The ID of the artwork to restore.
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the artwork is not found.
+     * @throws \Throwable If any other error occurs during the restoration process.
      */
     public function restore(Request $request, $id)
     {
@@ -226,7 +252,11 @@ class AdminArtworksController extends Controller
     }
 
     /**
-     * Permanently delete an artwork.
+     * Permanently delete the specified artwork from storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function forceDelete(Request $request, $id)
     {
@@ -245,7 +275,14 @@ class AdminArtworksController extends Controller
     }
 
     /**
-     * Generate a unique slug for an artwork.
+     * Generate a unique slug for an artwork based on its name.
+     *
+     * This method takes a name, converts it to a slug, and ensures the slug is unique
+     * by appending a counter if necessary. It checks the database for existing slugs
+     * and increments the counter until a unique slug is found.
+     *
+     * @param string $name The name of the artwork to generate a slug for.
+     * @return string The unique slug generated for the artwork.
      */
     private function generateUniqueSlug($name)
     {

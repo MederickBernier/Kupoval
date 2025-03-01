@@ -15,35 +15,39 @@ class LanguageController extends Controller
     private const ALLOWED_LANGUAGES = ['enca', 'frca'];
 
     /**
-     * Handle language switch request.
+     * Switches the application's language based on user input.
+     *
+     * This method handles the language switching functionality. It retrieves the desired language
+     * from the request, validates it against the allowed languages, and updates the session, cookie,
+     * and application locale accordingly. If the user is authenticated, it also updates the user's
+     * profile with the new language preference.
+     *
+     * @param \Illuminate\Http\Request $request The incoming HTTP request containing the language selection.
+     * @return \Illuminate\Http\RedirectResponse A redirect response back to the previous page with a status message.
      */
     public function switch(Request $request)
     {
         try {
             $lang = $request->input('languageSwitcher') ?? $request->input('lang');
 
-            // 🔹 Validate Language Selection
             if (!in_array($lang, self::ALLOWED_LANGUAGES)) {
-                Log::warning("⚠️ Invalid language selection attempted: {$lang}");
+                Log::warning("Invalid language selection attempted: {$lang}");
                 return back()->with('error', __('Invalid language selection.'));
             }
 
-            // 🔹 Get current language from session (default to app locale)
             $currentLang = Session::get('locale', config('app.locale'));
 
             if ($currentLang !== $lang) {
-                // 🔹 Store language preference for guests & users
                 Session::put('locale', $lang);
-                Cookie::queue('locale', $lang, 60 * 24 * 30); // Store for 30 days
+                Cookie::queue('locale', $lang, 60 * 24 * 30);
                 App::setLocale($lang);
 
-                // 🔹 If authenticated, update user's profile language
                 if (Auth::check() && Auth::user()->profile?->language !== $lang) {
                     try {
                         Auth::user()->profile?->update(['language' => $lang]);
-                        Log::info("✅ User language updated: User ID: " . Auth::id() . " | Language: {$lang}");
+                        Log::info("User language updated: User ID: " . Auth::id() . " | Language: {$lang}");
                     } catch (QueryException $dbException) {
-                        Log::error("❌ Database error updating language: " . $dbException->getMessage());
+                        Log::error("Database error updating language: " . $dbException->getMessage());
                         return back()->with('warning', __('Language switched, but failed to update profile.'));
                     }
                 }
@@ -51,7 +55,7 @@ class LanguageController extends Controller
 
             return back()->with('success', __('Language updated successfully.'));
         } catch (\Throwable $e) {
-            Log::error("❌ Failed to switch language: " . $e->getMessage());
+            Log::error("Failed to switch language: " . $e->getMessage());
             return back()->with('error', __('Failed to switch language.'));
         }
     }

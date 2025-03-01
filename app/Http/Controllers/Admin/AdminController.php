@@ -15,17 +15,18 @@ use Throwable;
 class AdminController extends Controller
 {
     /**
-     * Display the admin dashboard with key statistics.
+     * Display the admin dashboard with various statistics.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request)
     {
         try {
-            // Ensure user has proper authorization
             isAllowed($request->user());
 
-            DB::beginTransaction(); // Ensures safe data retrieval
+            DB::beginTransaction();
 
-            // Fetch general dashboard statistics
             $stats = DB::table('users')->selectRaw("
                 (SELECT COUNT(*) FROM users) as total_users,
                 (SELECT COUNT(*) FROM artworks) as total_artworks,
@@ -33,10 +34,9 @@ class AdminController extends Controller
                 (SELECT COUNT(*) FROM orders) as total_orders
             ")->first();
 
-            // Fetch orders count by status
             $orderStatusCounts = Order::selectRaw('status, COUNT(*) as count')
                 ->groupBy('status')
-                ->pluck('count', 'status'); // Returns ['pending' => 5, 'completed' => 10]
+                ->pluck('count', 'status');
 
             DB::commit();
 
@@ -48,7 +48,7 @@ class AdminController extends Controller
                 'orderStatusCounts' => $orderStatusCounts,
             ]);
         } catch (Throwable $e) {
-            DB::rollBack(); // Rollback if there's a failure
+            DB::rollBack();
 
             Log::error("❌ Error loading admin dashboard: " . $e->getMessage(), [
                 'user_id' => $request->user()->id ?? 'guest',

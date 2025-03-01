@@ -24,7 +24,10 @@ use Exception;
 class EmailController extends Controller
 {
     /**
-     * Send account verification email.
+     * Send account verification email to the authenticated user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendVerificationEmail(Request $request)
     {
@@ -47,7 +50,10 @@ class EmailController extends Controller
     }
 
     /**
-     * Send password reset email.
+     * Send password reset email to the user.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendPasswordResetEmail(Request $request)
     {
@@ -70,7 +76,10 @@ class EmailController extends Controller
     }
 
     /**
-     * Send order confirmation email.
+     * Send order confirmation email to the recipient of the order.
+     *
+     * @param Order $order
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendOrderConfirmationEmail(Order $order)
     {
@@ -91,7 +100,10 @@ class EmailController extends Controller
     }
 
     /**
-     * Send payment receipt email.
+     * Send payment receipt email to the recipient of the order.
+     *
+     * @param Payment $payment
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendPaymentReceiptEmail(Payment $payment)
     {
@@ -101,8 +113,7 @@ class EmailController extends Controller
                 return back()->with('error', __('Payment or order not found.'));
             }
 
-            $order = $payment->order; // ✅ Retrieve the related order
-
+            $order = $payment->order;
             Mail::to($order->recipient_email)->send(new PaymentReceiptMail($order, $payment));
 
             Log::info("✅ Payment receipt email sent for Payment ID: {$payment->id}, Order ID: {$order->id}");
@@ -114,7 +125,10 @@ class EmailController extends Controller
     }
 
     /**
-     * Send shipping notification email.
+     * Send shipping notification email to the recipient of the order.
+     *
+     * @param Order $order
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendShippingNotificationEmail(Order $order)
     {
@@ -136,7 +150,10 @@ class EmailController extends Controller
     }
 
     /**
-     * Send refund confirmation email.
+     * Send refund confirmation email to the recipient of the order.
+     *
+     * @param Payment $payment
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function sendRefundConfirmationEmail(Payment $payment)
     {

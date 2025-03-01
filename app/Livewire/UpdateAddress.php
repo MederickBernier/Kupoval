@@ -6,9 +6,28 @@ use App\Models\Address;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
+/**
+ * Class UpdateAddress
+ *
+ * This Livewire component handles the updating and creation of user addresses.
+ *
+ * @property string $type The type of address (e.g., home, work).
+ * @property int|null $addressId The ID of the address being edited, or null if creating a new address.
+ * @property string $address The address line.
+ * @property string $city The city of the address.
+ * @property string $state The state of the address.
+ * @property string $country The country of the address.
+ * @property string $zipcode The zipcode of the address.
+ * @property bool $isEditing Flag to indicate if the form is in editing mode.
+ *
+ * @method void mount(string $type, int|null $addressId = null) Initializes the component with the given address type and optional address ID.
+ * @method void edit() Sets the component to editing mode.
+ * @method void save() Saves the address to the database, either creating a new address or updating an existing one.
+ * @method \Illuminate\View\View render() Renders the Livewire component view.
+ */
 class UpdateAddress extends Component
 {
-    public $type; // 'billing' or 'shipping'
+    public $type;
     public $addressId;
     public $address = '';
     public $city = '';
@@ -22,7 +41,6 @@ class UpdateAddress extends Component
         $this->type = $type;
         $this->addressId = $addressId;
 
-        // Load address if it exists
         if ($addressId) {
             $address = Address::where('id', $addressId)
                 ->where('type', $type)
@@ -39,7 +57,6 @@ class UpdateAddress extends Component
                 $this->zipcode = $address->zipcode;
             }
         } else {
-            // If no address exists, go straight into edit mode
             $this->isEditing = true;
         }
     }
@@ -59,7 +76,6 @@ class UpdateAddress extends Component
         }
 
         if ($this->addressId) {
-            // Update existing address
             Address::where('id', $this->addressId)
                 ->where('type', $this->type)
                 ->where('user_profile_id', $userProfile->id)
@@ -71,7 +87,6 @@ class UpdateAddress extends Component
                     'zipcode' => $this->zipcode,
                 ]);
         } else {
-            // Create a new address if it doesn't exist
             $address = Address::create([
                 'user_profile_id' => $userProfile->id,
                 'type' => $this->type,

@@ -10,7 +10,14 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class BioController extends Controller
 {
     /**
-     * Display the list of artists.
+     * Display a listing of the artists.
+     *
+     * This method retrieves all artists ordered by name in ascending order.
+     * If no artists are found, it redirects to the home page with a warning message.
+     * If only one artist is found, it redirects to the bio show page for that artist.
+     * Otherwise, it returns the bio index view with the list of artists.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function index()
     {
@@ -35,7 +42,12 @@ class BioController extends Controller
     }
 
     /**
-     * Display a specific artist's biography.
+     * Display the specified artist's biography.
+     *
+     * @param \App\Models\Artist $artist The artist whose biography is to be displayed.
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the artist is not found.
+     * @throws \Exception If an error occurs while loading the artist page.
      */
     public function show(Artist $artist)
     {

@@ -13,17 +13,16 @@ class EventController extends Controller
 {
     /**
      * Display event details.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
         try {
             Log::info("🔹 Fetching event details for ID: {$id}");
-
-            // ✅ Fetch the event, ensuring it exists
             $event = Event::findOrFail($id);
-
             Log::info("✅ Event found: {$event->title} (ID: {$event->id})");
-
             return view('public.event.show', compact('event'));
         } catch (ModelNotFoundException $e) {
             Log::warning("⚠️ Event not found (ID: {$id})");

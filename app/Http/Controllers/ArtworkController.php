@@ -11,6 +11,12 @@ class ArtworkController extends Controller
 {
     /**
      * Display the specified artwork.
+     *
+     * @param  \App\Models\Artwork  $artwork
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function show(Artwork $artwork)
     {

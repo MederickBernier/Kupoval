@@ -13,6 +13,9 @@ class ContactArtistController extends Controller
 {
     /**
      * Display the contact form for an artist.
+     *
+     * @param Artist $artist The artist model instance.
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function form(Artist $artist)
     {
@@ -31,11 +34,13 @@ class ContactArtistController extends Controller
 
     /**
      * Handle contact form submission and send an email to the artist.
+     *
+     * @param Request $request The HTTP request instance.
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function send(Request $request)
     {
         try {
-            // ✅ Validate input
             $validated = $request->validate([
                 'artist_id' => 'required|exists:artists,id',
                 'name' => 'required|string|max:255',
@@ -44,7 +49,6 @@ class ContactArtistController extends Controller
                 'message' => 'required|string|min:10',
             ]);
 
-            // ✅ Retrieve artist
             $artist = Artist::findOrFail($validated['artist_id']);
 
             if (!$artist->email) {
@@ -52,14 +56,12 @@ class ContactArtistController extends Controller
                 return redirect()->back()->with('warning', __('public/contact.artist_not_found'));
             }
 
-            // ✅ Send email
             Mail::to($artist->email)->send(new ContactArtistMail($validated));
 
             Log::info("✅ Contact email successfully sent to artist ID {$artist->id} ({$artist->email})");
 
             return redirect()->back()->with('success', __('public/contact.success_message'));
         } catch (ValidationException $e) {
-            // ✅ Handle validation errors
             return back()->withErrors($e->validator)->withInput();
         } catch (\Exception $e) {
             Log::error("❌ Failed to send contact email to artist: " . $e->getMessage());

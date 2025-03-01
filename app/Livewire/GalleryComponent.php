@@ -9,6 +9,28 @@ use App\Models\Category;
 use App\Models\Artist;
 use App\Models\Event;
 
+/**
+ * Class GalleryComponent
+ *
+ * This Livewire component handles the gallery functionality, including searching, filtering, and sorting artworks.
+ *
+ * Properties:
+ * @property string $search The search term for filtering artworks.
+ * @property array $selectedCategories The selected categories for filtering artworks.
+ * @property array $selectedArtists The selected artists for filtering artworks.
+ * @property int|null $selectedEvent The selected event for filtering artworks.
+ * @property string $sortBy The sorting option for artworks (newest, oldest, featured).
+ * @property bool $filtersVisible Indicates whether the filters are visible.
+ *
+ * Listeners:
+ * @property array $listeners The event listeners for the component.
+ *
+ * Methods:
+ * @method void updating($property) Resets the pagination when a property is updated.
+ * @method void resetFilters() Resets all filters to their default values and refreshes the gallery.
+ * @method void toggleFilters() Toggles the visibility of the filters.
+ * @method \Illuminate\View\View render() Renders the gallery component with filtered and sorted artworks.
+ */
 class GalleryComponent extends Component
 {
     use WithPagination;
@@ -31,10 +53,7 @@ class GalleryComponent extends Component
 
     public function resetFilters()
     {
-        // Reset all filters
         $this->reset(['search', 'selectedCategories', 'selectedArtists', 'selectedEvent', 'sortBy']);
-
-        // Force Livewire to update the UI properly
         $this->dispatch('$refresh');
     }
 
@@ -47,13 +66,11 @@ class GalleryComponent extends Component
     {
         $query = Artwork::query();
 
-        // Ensure selectedCategories and selectedArtists are arrays
         $this->selectedCategories = is_array($this->selectedCategories) ? $this->selectedCategories : [];
         $this->selectedArtists = is_array($this->selectedArtists) ? $this->selectedArtists : [];
 
-        // 🔹 Case-Insensitive Search Filter
         if (!empty($this->search)) {
-            $searchTerm = strtolower($this->search); // Convert input to lowercase
+            $searchTerm = strtolower($this->search);
             $query->where(function ($q) use ($searchTerm) {
                 $q->whereRaw('LOWER(name) LIKE ?', ["%{$searchTerm}%"])
                     ->orWhereRaw('LOWER(description) LIKE ?', ["%{$searchTerm}%"])
@@ -61,24 +78,20 @@ class GalleryComponent extends Component
             });
         }
 
-        // 🔹 Category Filter
         $filteredCategories = array_filter($this->selectedCategories, fn($id) => is_numeric($id));
         if (!empty($filteredCategories)) {
             $query->whereHas('categories', fn($q) => $q->whereIn('categories.id', $filteredCategories));
         }
 
-        // 🔹 Artist Filter
         $filteredArtists = array_filter($this->selectedArtists, fn($id) => is_numeric($id));
         if (!empty($filteredArtists)) {
             $query->whereIn('artist_id', $filteredArtists);
         }
 
-        // 🔹 Event Filter
         if (!empty($this->selectedEvent) && is_numeric($this->selectedEvent)) {
             $query->where('event_id', $this->selectedEvent);
         }
 
-        // 🔹 Sorting Logic
         switch ($this->sortBy) {
             case 'oldest':
                 $query->orderBy('created_at', 'asc');

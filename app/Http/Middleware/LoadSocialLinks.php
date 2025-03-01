@@ -7,6 +7,16 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Middleware to load social links into the session if they are not already present.
+ *
+ * This middleware checks if the session has the 'social_links' key. If not, it retrieves
+ * the social media links from the settings table and stores them in the session.
+ *
+ * @param  \Illuminate\Http\Request  $request  The incoming HTTP request.
+ * @param  \Closure  $next  The next middleware to call.
+ * @return \Symfony\Component\HttpFoundation\Response  The HTTP response.
+ */
 class LoadSocialLinks
 {
     /**

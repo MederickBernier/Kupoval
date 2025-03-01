@@ -15,6 +15,38 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Session;
 
+/**
+ * Class ShopComponent
+ *
+ * This Livewire component handles the shop functionality, including filtering, sorting, 
+ * adding items to the cart, and managing the wishlist.
+ *
+ * Properties:
+ * @property string $search The search term for filtering artworks.
+ * @property array $selectedCategories The selected categories for filtering artworks.
+ * @property int|null $selectedEvent The selected event for filtering artworks.
+ * @property int|null $selectedArtist The selected artist for filtering artworks.
+ * @property int $priceMax The maximum price for filtering artworks.
+ * @property bool $onlyDiscounted Whether to filter only discounted artworks.
+ * @property bool $onlyFeatured Whether to filter only featured artworks.
+ * @property string $sortBy The sorting criteria for artworks.
+ * @property bool $filtersVisible Whether the filters are visible.
+ * @property array $wishlist The list of wishlisted artwork IDs.
+ * @property array $cartItems The list of items in the cart.
+ * @property bool $onlyWishlisted Whether to filter only wishlisted artworks.
+ *
+ * Listeners:
+ * @property array $listeners The event listeners for the component.
+ *
+ * Methods:
+ * @method void mount() Initializes the component and sets the wishlist.
+ * @method void updating() Resets the pagination when any property is updated.
+ * @method void resetFilters() Resets all filters to their default values.
+ * @method void toggleFilters() Toggles the visibility of the filters.
+ * @method void addToCart(int $id) Adds an artwork to the cart.
+ * @method void toggleWishlist(int $artworkId) Toggles the wishlist status of an artwork.
+ * @method \Illuminate\View\View render() Renders the component view with filtered and sorted artworks.
+ */
 class ShopComponent extends Component
 {
     use WithPagination;
@@ -38,10 +70,8 @@ class ShopComponent extends Component
     {
         $this->filtersVisible = false;
         if (Auth::check()) {
-            // Load user's wishlist from database
             $this->wishlist = Auth::user()->wishlist()->pluck('artwork_id')->toArray();
         } else {
-            // Load wishlist from session for guests
             $this->wishlist = Session::get('wishlist', []);
         }
     }
@@ -82,16 +112,13 @@ class ShopComponent extends Component
         if (Auth::check()) {
             $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
-            // ✅ Get the existing cart item, if it exists
             $cartItem = CartItem::where('cart_id', $cart->id)
                 ->where('artwork_id', $id)
                 ->first();
 
             if ($cartItem) {
-                // ✅ If item already exists, increment quantity
                 $cartItem->increment('quantity');
             } else {
-                // ✅ If new, create it with quantity = 1
                 CartItem::create([
                     'cart_id' => $cart->id,
                     'artwork_id' => $id,
@@ -100,11 +127,9 @@ class ShopComponent extends Component
                 ]);
             }
 
-            // ✅ Recalculate and update total in session
             $totalPrice = CartItem::where('cart_id', $cart->id)
                 ->sum(DB::raw('quantity * price'));
         } else {
-            // ✅ Guest cart in session
             $cart = session()->get('cart', []);
             if (isset($cart[$id])) {
                 $cart[$id]['quantity']++;
@@ -118,35 +143,28 @@ class ShopComponent extends Component
             }
             session()->put('cart', $cart);
 
-            // ✅ Recalculate total for session cart
             $totalPrice = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
         }
 
-        // ✅ Store updated total in session
         session()->put('cart_total', $totalPrice);
 
-        // ✅ Ensure UI refresh
         $this->dispatch('cartUpdated')->to(SimpleCart::class);
     }
 
     public function toggleWishlist($artworkId)
     {
         if (Auth::check()) {
-            // User is logged in, handle wishlist in database
             $user = Auth::user();
             $existingWishlistItem = $user->wishlist()->where('artwork_id', $artworkId)->first();
 
             if ($existingWishlistItem) {
-                // Remove from database wishlist
                 $existingWishlistItem->delete();
                 $this->wishlist = array_values(array_filter($this->wishlist, fn($id) => $id !== $artworkId));
             } else {
-                // Add to database wishlist
                 $user->wishlist()->create(['artwork_id' => $artworkId]);
                 $this->wishlist[] = $artworkId;
             }
         } else {
-            // Guest user - manage wishlist in session
             if (in_array($artworkId, $this->wishlist)) {
                 $this->wishlist = array_values(array_filter($this->wishlist, fn($id) => $id !== $artworkId));
             } else {

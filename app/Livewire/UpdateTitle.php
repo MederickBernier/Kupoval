@@ -5,6 +5,20 @@ namespace App\Livewire;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Class UpdateTitle
+ *
+ * This Livewire component handles the updating of a user's title.
+ *
+ * @property string $title The current title of the user.
+ * @property array $titles The list of valid titles.
+ * @property bool $isEditing Flag to determine if the user is in editing mode.
+ *
+ * @method void mount() Initializes the component and sets the user's title.
+ * @method void edit() Enables the editing mode.
+ * @method void save() Saves the updated title to the user's profile.
+ * @method \Illuminate\View\View render() Renders the Livewire component view.
+ */
 class UpdateTitle extends Component
 {
     public $title;
@@ -15,12 +29,10 @@ class UpdateTitle extends Component
     {
         $user = Auth::user();
 
-        // Ensure the profile exists and create if necessary
         if (!$user->profile) {
             $user->profile()->create(['title' => '']);
         }
 
-        // Load the title only if it's valid
         $this->title = in_array(optional($user->profile)->title, $this->titles)
             ? $user->profile->title
             : '';

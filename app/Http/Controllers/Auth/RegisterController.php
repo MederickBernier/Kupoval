@@ -20,7 +20,9 @@ use Exception;
 class RegisterController extends Controller
 {
     /**
-     * Show the registration form.
+     * Display the registration form.
+     *
+     * @return \Illuminate\View\View
      */
     public function showRegistrationForm()
     {
@@ -28,13 +30,20 @@ class RegisterController extends Controller
     }
 
     /**
-     * Handle user registration.
+     * Handle the registration request.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * Logs the registration attempt, validates the request data, creates a new user and profile,
+     * generates a verification URL, sends a verification email, and handles any errors that occur.
+     *
+     * @throws \Throwable
      */
     public function register(Request $request)
     {
         Log::info('📩 Registration attempt', ['email' => $request->email]);
 
-        // ✅ Validate Input
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
@@ -48,7 +57,6 @@ class RegisterController extends Controller
 
         DB::beginTransaction();
         try {
-            // ✅ Create user
             $user = User::create([
                 'username' => $request->username,
                 'email' => $request->email,
@@ -57,7 +65,6 @@ class RegisterController extends Controller
 
             Log::info("✅ User created: {$user->email} (ID: {$user->id})");
 
-            // ✅ Ensure the user has a profile
             $user->profile()->create([
                 'first_name' => '',
                 'last_name' => '',
@@ -65,7 +72,6 @@ class RegisterController extends Controller
             ]);
             Log::info("✅ Profile created for user ID: {$user->id}");
 
-            // ✅ Generate verification URL
             $verificationUrl = URL::signedRoute(
                 'verification.verify',
                 ['id' => $user->id, 'hash' => sha1($user->email)],
@@ -74,14 +80,12 @@ class RegisterController extends Controller
 
             Log::info("🔗 Verification URL generated for {$user->email}");
 
-            // ✅ Send verification email
             Mail::to($user->email)->send(new AccountVerificationMail($user, $verificationUrl));
             Log::info("📧 Verification email sent to: {$user->email}");
 
             DB::commit();
             Log::info("✅ Registration completed successfully for: {$user->email}");
 
-            // ✅ Redirect with success message
             return redirect()->route('user.profile')->with('success', __('Registration successful. Please check your email to verify your account.'));
         } catch (Throwable $e) {
             DB::rollBack();

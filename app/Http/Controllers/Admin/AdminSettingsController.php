@@ -11,7 +11,10 @@ use Throwable;
 class AdminSettingsController extends Controller
 {
     /**
-     * Display the list of settings.
+     * Display a listing of the settings.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request)
     {
@@ -27,7 +30,10 @@ class AdminSettingsController extends Controller
     }
 
     /**
-     * Store a new setting.
+     * Store a newly created setting in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -49,7 +55,11 @@ class AdminSettingsController extends Controller
     }
 
     /**
-     * Update an existing setting.
+     * Update the specified setting in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
@@ -71,7 +81,11 @@ class AdminSettingsController extends Controller
     }
 
     /**
-     * Delete a setting.
+     * Remove the specified setting from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Setting  $setting
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, Setting $setting)
     {

@@ -10,12 +10,21 @@ use Illuminate\Support\Facades\Log;
 class OrderController extends Controller
 {
     /**
-     * Display the details of an order.
+     * Display the specified order.
+     *
+     * @param  \App\Models\Order  $order
+     * @return \Illuminate\Http\Response
+     *
+     * @throws \Exception If an error occurs while loading the order.
+     *
+     * Logs:
+     * - Warning: Unauthorized access attempt to the order.
+     * - Info: Successful access to the order.
+     * - Error: Failure to load the order.
      */
     public function show(Order $order)
     {
         try {
-            // 🔹 Ensure the order belongs to the authenticated user
             if ($order->user_id !== Auth::id()) {
                 Log::warning("⚠️ Unauthorized access attempt to Order #{$order->id}", [
                     'user_id' => Auth::id(),

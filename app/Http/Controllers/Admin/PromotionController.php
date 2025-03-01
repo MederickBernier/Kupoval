@@ -10,6 +10,12 @@ use Throwable;
 
 class PromotionController extends Controller
 {
+    /**
+     * Display a listing of the promotions.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function index(Request $request)
     {
         try {
@@ -24,6 +30,12 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Display the form for creating a new promotion.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function create(Request $request)
     {
         try {
@@ -35,6 +47,13 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Display the form for editing the specified promotion.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Promotion $promotion
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     */
     public function edit(Request $request, Promotion $promotion)
     {
         try {
@@ -46,6 +65,13 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Display the specified promotion.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Promotion $promotion
+     * @return \Illuminate\Http\Response
+     */
     public function show(Request $request, Promotion $promotion)
     {
         try {
@@ -58,6 +84,15 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Store a newly created promotion in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
+     */
     public function store(Request $request)
     {
         try {
@@ -84,6 +119,16 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Update the specified promotion in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Promotion $promotion
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
+     */
     public function update(Request $request, Promotion $promotion)
     {
         try {
@@ -106,6 +151,15 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Remove the specified promotion from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\Promotion  $promotion
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Throwable
+     */
     public function destroy(Request $request, Promotion $promotion)
     {
         try {
@@ -120,6 +174,12 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Display a listing of the trashed promotions.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     */
     public function trashed(Request $request)
     {
         try {
@@ -134,6 +194,15 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Restore a trashed promotion.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @param int $id The ID of the promotion to restore.
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the promotion is not found.
+     * @throws \Throwable If any other error occurs during the restoration process.
+     */
     public function restore(Request $request, $id)
     {
         try {
@@ -149,6 +218,15 @@ class PromotionController extends Controller
         }
     }
 
+    /**
+     * Permanently delete a promotion.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @param int $id The ID of the promotion to be deleted.
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the promotion is not found.
+     * @throws \Throwable If any other error occurs during deletion.
+     */
     public function forceDelete(Request $request, $id)
     {
         try {

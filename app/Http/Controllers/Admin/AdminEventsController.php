@@ -13,7 +13,10 @@ use Throwable;
 class AdminEventsController extends Controller
 {
     /**
-     * Display a list of events.
+     * Display a listing of the events.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request)
     {
@@ -30,7 +33,13 @@ class AdminEventsController extends Controller
     }
 
     /**
-     * Store a newly created event.
+     * Store a newly created event in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function store(Request $request)
     {
@@ -62,7 +71,14 @@ class AdminEventsController extends Controller
     }
 
     /**
-     * Update an existing event.
+     * Update the specified event in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Event $event
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function update(Request $request, Event $event)
     {
@@ -94,7 +110,11 @@ class AdminEventsController extends Controller
     }
 
     /**
-     * Soft delete an event.
+     * Remove the specified event from storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Event $event
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, Event $event)
     {
@@ -111,7 +131,12 @@ class AdminEventsController extends Controller
     }
 
     /**
-     * Display a list of soft-deleted events.
+     * Display a listing of the trashed events.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     *
+     * @throws \Throwable
      */
     public function trashed(Request $request)
     {
@@ -128,7 +153,11 @@ class AdminEventsController extends Controller
     }
 
     /**
-     * Restore a soft-deleted event.
+     * Restore a trashed event.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request instance.
+     * @param int $id The ID of the event to restore.
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function restore(Request $request, $id)
     {
@@ -146,7 +175,13 @@ class AdminEventsController extends Controller
     }
 
     /**
-     * Permanently delete an event.
+     * Permanently delete a trashed event.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @param int $id The ID of the event to be permanently deleted.
+     * @return \Illuminate\Http\RedirectResponse
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the event is not found.
+     * @throws \Throwable If any other error occurs during deletion.
      */
     public function forceDelete(Request $request, $id)
     {

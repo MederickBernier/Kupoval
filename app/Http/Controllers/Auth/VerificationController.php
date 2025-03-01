@@ -12,16 +12,21 @@ use Exception;
 
 class VerificationController extends Controller
 {
-    /**
-     * Show the email verification notice page.
-     */
     public function notice()
     {
         return view('public.auth.verify-email');
     }
 
     /**
-     * Handle email verification.
+     * Verify the user's email address.
+     *
+     * This method handles the email verification process. It logs the request,
+     * checks if the user is authenticated, and verifies the email if not already verified.
+     * If the email is successfully verified, it triggers the Verified event.
+     * In case of any errors, it logs the error and redirects the user to the login page.
+     *
+     * @param \Illuminate\Foundation\Auth\EmailVerificationRequest $request
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function verify(EmailVerificationRequest $request)
     {
@@ -46,7 +51,7 @@ class VerificationController extends Controller
 
             $request->fulfill();
 
-            event(new Verified($user)); // Fire verification event
+            event(new Verified($user));
 
             Log::info('✅ Email verification successful for user ID: ' . $user->id);
             return redirect()->route('user.profile')->with('success', __('Email verified successfully.'));
@@ -58,7 +63,15 @@ class VerificationController extends Controller
     }
 
     /**
-     * Resend the email verification notification.
+     * Send a verification email to the authenticated user.
+     *
+     * This method checks if the user's email is already verified. If it is, it logs a warning
+     * and returns a response indicating that the email is already verified. If the email is not
+     * verified, it sends a verification email, logs the action, and returns a success response.
+     * In case of any exception, it logs the error and returns an error response.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @return \Illuminate\Http\RedirectResponse A redirect response with a status message.
      */
     public function send(Request $request)
     {

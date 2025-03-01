@@ -12,7 +12,27 @@ use App\Models\UserProfile;
 use App\Models\Order;
 
 /**
- * @property-read \Illuminate\Database\Eloquent\Collection|Wishlist[] $wishlist
+ * Class User
+ *
+ * This class represents a user in the application and extends the Authenticatable class.
+ * It implements the MustVerifyEmail interface and uses the HasFactory, Notifiable, and SoftDeletes traits.
+ *
+ * @property string $email
+ * @property string $username
+ * @property string $password
+ * @property \Carbon\Carbon|null $email_verified_at
+ * @property string $role
+ * @property \Carbon\Carbon|null $deleted_at
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereNull(string $column)
+ * @method static \Illuminate\Database\Eloquent\Builder|User get()
+ *
+ * @method bool isAdmin() Check if the user has an admin role.
+ * @method \Illuminate\Database\Eloquent\Relations\HasOne profile() Get the user's profile.
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany orders() Get the user's orders.
+ * @method \Illuminate\Database\Eloquent\Relations\HasMany wishlist() Get the user's wishlist items that have associated artwork.
+ * @method \Illuminate\Database\Eloquent\Collection activeUsers() Get all active users (not soft deleted).
+ * @method \Illuminate\Database\Eloquent\Relations\HasOne cart() Get the user's cart.
  */
 class User extends Authenticatable implements MustVerifyEmail
 {

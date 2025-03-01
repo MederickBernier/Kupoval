@@ -11,7 +11,17 @@ use Illuminate\Support\Facades\Log;
 class UserProfileController extends Controller
 {
     /**
-     * Display user profile.
+     * Display the user's profile page.
+     *
+     * This method retrieves the authenticated user's profile information,
+     * including addresses and wishlist items, and displays it on the profile page.
+     * If the user is not authenticated, they are redirected to the login page.
+     * If the user does not have a profile, a new profile is automatically created.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     *   Redirects to the login page if the user is not authenticated,
+     *   or to the home page if an error occurs while loading the profile.
+     *   Otherwise, returns the profile view with user data.
      */
     public function profile()
     {
@@ -21,7 +31,6 @@ class UserProfileController extends Controller
                 return redirect()->route('login')->with('error', __('auth.not_authenticated'));
             }
 
-            // ✅ Ensure the user has a profile (create if missing)
             if (!$user->profile) {
                 $user->profile()->create([
                     'first_name' => '',
@@ -31,7 +40,6 @@ class UserProfileController extends Controller
                 Log::info("✅ Auto-created missing profile for user ID: {$user->id}");
             }
 
-            // ✅ Load necessary relationships
             $addresses = $user->profile->addresses ?? collect();
             $wishlist = $user->wishlist()->with('artwork')->get();
 
@@ -48,7 +56,14 @@ class UserProfileController extends Controller
     }
 
     /**
-     * Update an address.
+     * Update the specified address for the authenticated user.
+     *
+     * @param \Illuminate\Http\Request $request The request instance containing the address data.
+     * @param int $addressId The ID of the address to be updated.
+     * @return \Illuminate\Http\JsonResponse A JSON response indicating the result of the update operation.
+     *
+     * @throws \Illuminate\Validation\ValidationException If the request validation fails.
+     * @throws \Exception If an unexpected error occurs during the update process.
      */
     public function Address(Request $request, $addressId)
     {
@@ -89,7 +104,16 @@ class UserProfileController extends Controller
     }
 
     /**
-     * Update user profile.
+     * Update the user's profile.
+     *
+     * This method handles the request to update the authenticated user's profile.
+     * It validates the input data, updates the user's profile, and logs the outcome.
+     *
+     * @param \Illuminate\Http\Request $request The incoming request containing profile data.
+     * @return \Illuminate\Http\RedirectResponse A redirect response to the user profile route with a success or error message.
+     *
+     * @throws \Illuminate\Validation\ValidationException If the validation of the input data fails.
+     * @throws \Exception If any other error occurs during the profile update process.
      */
     public function updateProfile(Request $request)
     {
@@ -125,7 +149,15 @@ class UserProfileController extends Controller
     }
 
     /**
-     * Load field editor.
+     * Edit a specific user profile field.
+     *
+     * This method retrieves the authenticated user and attempts to load the view
+     * for editing a specific profile field. If the user is not authenticated, it
+     * redirects to the login page with an error message. If an exception occurs
+     * during the process, it logs the error and returns a 500 error response.
+     *
+     * @param string $field The profile field to be edited.
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View|\Illuminate\Http\Response
      */
     public function editField($field)
     {
@@ -146,7 +178,14 @@ class UserProfileController extends Controller
     }
 
     /**
-     * Update a single profile field.
+     * Update a specific field in the user's profile.
+     *
+     * @param \Illuminate\Http\Request $request The incoming request instance.
+     * @param string $field The profile field to be updated (must be 'first_name', 'last_name', or 'email').
+     * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure.
+     *
+     * @throws \Illuminate\Validation\ValidationException If the validation fails.
+     * @throws \Exception If any other error occurs during the update process.
      */
     public function updateField(Request $request, $field)
     {

@@ -10,33 +10,43 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * Middleware to set the application's locale based on various sources.
+ *
+ * This middleware checks for the locale in the following order:
+ * 1. Session
+ * 2. Authenticated user's profile
+ * 3. Cookie
+ * 4. Application default configuration
+ *
+ * Once the locale is determined, it sets the application's locale and Carbon's locale,
+ * and stores the locale in the session.
+ *
+ * @param \Illuminate\Http\Request $request The incoming request instance.
+ * @param \Closure $next The next middleware to call.
+ * @return mixed The response from the next middleware.
+ */
 class SetLocale
 {
     public function handle(Request $request, Closure $next)
     {
-        // 1️⃣ Check if locale is already set in session
         $locale = Session::get('locale');
 
-        // 2️⃣ If not in session, check for an authenticated user
         if (!$locale && Auth::check() && Auth::user()->profile) {
             $locale = Auth::user()->profile->language;
         }
 
-        // 3️⃣ If not in DB, check the user's cookie
         if (!$locale) {
             $locale = Cookie::get('locale');
         }
 
-        // 4️⃣ Default to the app's config locale if nothing is found
         if (!$locale) {
-            $locale = config('app.locale', 'frca'); // Default fallback to fr_CA
+            $locale = config('app.locale', 'frca');
         }
 
-        // 5️⃣ Set the locale globally in Laravel & Carbon
         App::setLocale($locale);
         Carbon::setLocale($locale);
 
-        // 6️⃣ Store in session for persistency
         Session::put('locale', $locale);
 
         return $next($request);

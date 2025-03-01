@@ -16,11 +16,16 @@ use App\Models\User;
 class ForgotPasswordController extends Controller
 {
     /**
-     * Handle sending the password reset link via email.
+     * Handle the sending of a password reset link email.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function sendResetLinkEmail(Request $request)
     {
-        // ✅ Validate Input
         $request->validate([
             'email' => ['required', 'email', 'exists:users,email'],
         ]);
@@ -28,7 +33,6 @@ class ForgotPasswordController extends Controller
         try {
             Log::info("📩 Password reset request received for: {$request->email}");
 
-            // ✅ Attempt to send reset link
             $status = Password::sendResetLink($request->only('email'));
 
             if ($status !== Password::RESET_LINK_SENT) {
@@ -36,14 +40,12 @@ class ForgotPasswordController extends Controller
                 return back()->withErrors(['email' => __('Unable to send password reset email.')]);
             }
 
-            // ✅ Retrieve User
             $user = User::where('email', $request->email)->first();
             if (!$user) {
                 Log::error("❌ User not found in database after password reset request: {$request->email}");
                 return back()->withErrors(['email' => __('Unable to process request. Please try again.')]);
             }
 
-            // ✅ Retrieve Reset Token
             $tokenData = DB::table('password_resets')->where('email', $user->email)->first();
             $token = $tokenData->token ?? null;
 
@@ -52,12 +54,10 @@ class ForgotPasswordController extends Controller
                 return back()->withErrors(['email' => __('Unable to generate reset token. Please try again.')]);
             }
 
-            // ✅ Generate Reset URL
             $resetUrl = url(route('password.reset', ['token' => $token, 'email' => $user->email]));
 
             Log::info("🔗 Password reset URL generated for: {$user->email}");
 
-            // ✅ Send Reset Email
             Mail::to($user->email)->send(new PasswordResetMail($user, $resetUrl));
 
             Log::info("✅ Password reset email sent successfully to: {$user->email}");

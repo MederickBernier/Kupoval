@@ -9,6 +9,15 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * Class ContactArtistMail
+ *
+ * This class is responsible for creating and sending an email to contact an artist.
+ * It extends the Mailable class provided by Laravel and uses the Queueable and SerializesModels traits.
+ *
+ * @property array $details The details of the email, including name, email, subject, and message content.
+ * @property string $lang The current locale of the application.
+ */
 class ContactArtistMail extends Mailable
 {
     use Queueable, SerializesModels;

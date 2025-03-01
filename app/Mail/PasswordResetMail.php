@@ -7,6 +7,51 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * Class PasswordResetMail
+ *
+ * This class is responsible for sending password reset emails to users.
+ * It extends the Mailable class and implements the ShouldQueue interface
+ * to allow the email to be queued for sending.
+ *
+ * @package App\Mail
+ */
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
+
+/**
+ * PasswordResetMail constructor.
+ *
+ * @param \App\Models\User $user The user who requested the password reset.
+ * @param string $resetUrl The URL for resetting the password.
+ */
+public function __construct($user, $resetUrl)
+{
+    // ...
+}
+
+/**
+ * Build the message.
+ *
+ * @return $this
+ */
+public function build()
+{
+    // ...
+}
+
+/**
+ * Get the subject line for the email based on the locale.
+ *
+ * @return string
+ */
+private function getSubject()
+{
+    // ...
+}
 class PasswordResetMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
@@ -25,7 +70,7 @@ class PasswordResetMail extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->subject($this->getSubject())
-            ->view("emails.{$this->lang}.auth.password_reset") // Load the email template based on locale
+            ->view("emails.{$this->lang}.auth.password_reset")
             ->with([
                 'name' => $this->user->username,
                 'resetUrl' => $this->resetUrl,

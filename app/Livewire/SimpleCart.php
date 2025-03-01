@@ -9,6 +9,32 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Livewire\Component;
 
+/**
+ * Class SimpleCart
+ *
+ * A Livewire component that manages a simple shopping cart.
+ *
+ * Properties:
+ * @property array $cartItems - The items in the cart.
+ * @property int $cartItemCount - The total number of items in the cart.
+ * @property float $totalPrice - The total price of the items in the cart.
+ * @property bool $showCart - Flag to show or hide the cart.
+ *
+ * Listeners:
+ * @property array $listeners - The event listeners for the component.
+ *
+ * Methods:
+ * @method void mount() - Initializes the component and loads the cart.
+ * @method void loadCart() - Loads the cart items and calculates the total price.
+ * @method void toggleCart() - Toggles the visibility of the cart.
+ * @method void incrementQuantity(int $id) - Increments the quantity of a cart item.
+ * @method void decrementQuantity(int $id) - Decrements the quantity of a cart item.
+ * @method void removeFromCart(int $id) - Removes an item from the cart.
+ * @method void recalculateTotal() - Recalculates the total price of the cart.
+ * @method void cartUpdated() - Updates the cart items and refreshes the component.
+ * @method \Illuminate\Http\RedirectResponse goToConfirmation() - Redirects to the checkout confirmation page.
+ * @method \Illuminate\View\View render() - Renders the Livewire component view.
+ */
 class SimpleCart extends Component
 {
     public $cartItems = [];
@@ -32,31 +58,26 @@ class SimpleCart extends Component
         if (Auth::check()) {
             $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
 
-            // Load items
             $this->cartItems = $cart->items()->with('artwork')->get()->mapWithKeys(function ($item) {
                 return [
                     $item->artwork_id => [
                         'id' => $item->artwork_id,
-                        'name' => $item->artwork->name, // Fix: Include artwork name
+                        'name' => $item->artwork->name,
                         'price' => $item->price,
                         'quantity' => $item->quantity,
                     ]
                 ];
             })->toArray();
 
-            // ✅ Recalculate and store total price
             $this->totalPrice = CartItem::where('cart_id', $cart->id)
                 ->sum(DB::raw('quantity * price'));
         } else {
-            // Guest cart in session
             $this->cartItems = session()->get('cart', []);
             $this->totalPrice = session()->get('cart_total', 0);
         }
 
-        // ✅ Update count
         $this->cartItemCount = array_sum(array_column($this->cartItems, 'quantity'));
 
-        // ✅ Store total in session for guests
         session()->put('cart_total', $this->totalPrice);
     }
 
@@ -82,7 +103,6 @@ class SimpleCart extends Component
             }
         }
 
-        // ✅ Recalculate total
         $this->recalculateTotal();
     }
 
@@ -103,7 +123,6 @@ class SimpleCart extends Component
             }
         }
 
-        // ✅ Recalculate total
         $this->recalculateTotal();
     }
 
@@ -123,13 +142,11 @@ class SimpleCart extends Component
             }
         }
 
-        // ✅ Recalculate total
         $this->recalculateTotal();
 
-        // ✅ Refresh Livewire component dynamically
-        $this->cartItems = []; // Clear local cart items before reload
+        $this->cartItems = [];
         $this->cartItemCount = 0;
-        $this->dispatch('cartUpdated'); // Dispatch event
+        $this->dispatch('cartUpdated');
     }
 
     public function recalculateTotal()
@@ -143,10 +160,8 @@ class SimpleCart extends Component
             $this->totalPrice = array_sum(array_map(fn($item) => $item['price'] * $item['quantity'], $cart));
         }
 
-        // ✅ Store in session for guests
         session()->put('cart_total', $this->totalPrice);
 
-        // ✅ Refresh UI
         $this->cartItems = [];
         $this->loadCart();
         $this->dispatch('$refresh');

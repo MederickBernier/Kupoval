@@ -13,7 +13,10 @@ use Throwable;
 class AdminCategoriesController extends Controller
 {
     /**
-     * Display a list of categories.
+     * Display a listing of the categories.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function index(Request $request)
     {
@@ -29,7 +32,13 @@ class AdminCategoriesController extends Controller
     }
 
     /**
-     * Store a newly created category.
+     * Store a newly created category in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function store(Request $request)
     {
@@ -64,7 +73,11 @@ class AdminCategoriesController extends Controller
     }
 
     /**
-     * Show the category edit page.
+     * Display the form for editing the specified category.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Category $category
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
      */
     public function edit(Request $request, Category $category)
     {
@@ -79,7 +92,14 @@ class AdminCategoriesController extends Controller
     }
 
     /**
-     * Update a category.
+     * Update the specified category in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Category $category
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     * @throws \Throwable
      */
     public function update(Request $request, Category $category)
     {
@@ -114,7 +134,11 @@ class AdminCategoriesController extends Controller
     }
 
     /**
-     * Soft delete a category.
+     * Remove the specified category from storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Category $category
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, Category $category)
     {
@@ -136,7 +160,10 @@ class AdminCategoriesController extends Controller
     }
 
     /**
-     * Display a list of trashed (soft deleted) categories.
+     * Display a listing of the trashed categories.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
     public function trashed(Request $request)
     {
@@ -153,6 +180,10 @@ class AdminCategoriesController extends Controller
 
     /**
      * Restore a soft-deleted category.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function restore(Request $request, $id)
     {
@@ -161,7 +192,6 @@ class AdminCategoriesController extends Controller
 
             $category = Category::withTrashed()->findOrFail($id);
 
-            // Prevent restoring if a category with the same name already exists
             if (Category::where('name', $category->name)->whereNull('deleted_at')->exists()) {
                 return back()->with('error', __('A category with the same name already exists.'));
             }
@@ -178,6 +208,16 @@ class AdminCategoriesController extends Controller
 
     /**
      * Permanently delete a category.
+     *
+     * This method attempts to permanently delete a category identified by its ID.
+     * It first checks if the user has the necessary permissions to perform this action.
+     * If the category is linked to any artworks, it cannot be deleted and an error message is returned.
+     * If the deletion is successful, the user is redirected to the trashed categories list with a success message.
+     * In case of any errors during the process, an error message is logged and returned.
+     *
+     * @param \Illuminate\Http\Request $request The current request instance.
+     * @param int $id The ID of the category to be permanently deleted.
+     * @return \Illuminate\Http\RedirectResponse A redirect response to the previous page or the trashed categories list.
      */
     public function forceDelete(Request $request, $id)
     {

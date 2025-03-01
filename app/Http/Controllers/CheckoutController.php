@@ -25,7 +25,15 @@ use Illuminate\Validation\ValidationException;
 class CheckoutController extends Controller
 {
     /**
-     * Step 1: Create an order and pending payment.
+     * Creates a new order for the authenticated user.
+     *
+     * This method retrieves the user's cart, calculates the total amount,
+     * applies any discounts and shipping fees, and creates a new order
+     * with the corresponding order items and pending payment.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\App\Models\Order
+     *         Redirects to the shop route with an error message if the cart is empty
+     *         or if an exception occurs during order creation. Otherwise, returns the created order.
      */
     private function createOrder()
     {
@@ -80,7 +88,16 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Step 2: Create Stripe Checkout Session.
+     * Create a Stripe checkout session for the authenticated user.
+     *
+     * This method checks if the user is authenticated. If not, it redirects to the login page with an error message.
+     * If the user is authenticated, it creates an order and calculates the final total.
+     * It then creates line items for the Stripe checkout session based on the cart items.
+     * A Stripe checkout session is created with the specified payment method types, line items, success and cancel URLs, locale, customer email, and metadata.
+     * The Stripe session ID is saved to the order, and the user is redirected to the Stripe checkout URL.
+     * If an exception occurs during the process, the transaction is rolled back, an error is logged, and the user is redirected to the checkout confirmation page with an error message.
+     *
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function createCheckoutSession()
     {
@@ -132,7 +149,13 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Step 3: Handle checkout success (POST-Stripe).
+     * Handle the successful payment process.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Exception
      */
     public function success(Request $request)
     {
@@ -173,7 +196,14 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Apply a promo code to the cart.
+     * Apply a promotional code to the user's cart.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request instance containing the promo code.
+     * @return \Illuminate\Http\JsonResponse JSON response indicating success or failure of applying the promo code.
+     *
+     * @throws \Illuminate\Validation\ValidationException If the promo code format is invalid.
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the promo code is invalid or expired.
+     * @throws \Exception If an error occurs while applying the promo code.
      */
     public function applyPromoCode(Request $request)
     {
@@ -206,7 +236,11 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Store session data for checkout.
+     * Store the final total and shipping address in the session.
+     *
+     * @param \Illuminate\Http\Request $request The incoming request instance.
+     *
+     * @return \Illuminate\Http\JsonResponse A JSON response indicating success.
      */
     public function storeSession(Request $request)
     {
@@ -219,7 +253,10 @@ class CheckoutController extends Controller
     }
 
     /**
-     * Update shipping information during checkout.
+     * Update the shipping information in the session based on the provided shipping ID.
+     *
+     * @param \Illuminate\Http\Request $request The HTTP request object containing the shipping ID.
+     * @return \Illuminate\Http\JsonResponse A JSON response indicating success or failure, along with the shipping fee and final total.
      */
     public function updateShipping(Request $request)
     {
@@ -239,6 +276,15 @@ class CheckoutController extends Controller
         ]);
     }
 
+    /**
+     * Display the checkout confirmation page.
+     *
+     * This method checks if the user is authenticated. If not, it redirects to the login page.
+     * It then retrieves the user's cart and profile information, including billing and shipping addresses.
+     * Finally, it calculates the cart total and final total, and returns the checkout confirmation view.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
+     */
     public function confirmation()
     {
         if (!Auth::check()) {
@@ -279,6 +325,15 @@ class CheckoutController extends Controller
         ]);
     }
 
+    /**
+     * Calculate the final total amount for the user's cart.
+     *
+     * This method retrieves the user's cart, calculates the subtotal, applies any promotional discounts,
+     * adds the shipping amount, and then calculates the final total. The calculated values are stored
+     * in the session for later use.
+     *
+     * @return float The final total amount for the user's cart.
+     */
     private function calculateFinalTotal()
     {
         $cart = Cart::where('user_id', Auth::id())->with('items.artwork')->first();
@@ -288,14 +343,12 @@ class CheckoutController extends Controller
         $promo = session('promo', ['code' => '', 'percent' => 0, 'amount' => 0]);
         $shippingAmount = session('shippingAmount', 0);
 
-        // Calculate promo discount amount
         $discountAmount = ($promo['percent'] > 0) ? round($subtotal * ($promo['percent'] / 100), 2) : 0;
 
         $promo['amount'] = $discountAmount;
 
         $finalTotal = max($subtotal - $discountAmount + $shippingAmount, 0);
 
-        // Store values in session
         session([
             'subtotal' => $subtotal,
             'promo' => $promo,
@@ -306,6 +359,17 @@ class CheckoutController extends Controller
         return $finalTotal;
     }
 
+    /**
+     * Remove the applied promo code from the session.
+     *
+     * This method forgets the 'promo', 'discount_amount', and 'applied_promo'
+     * session variables, effectively removing any applied promo code and its
+     * associated discount.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *   A JSON response indicating the success of the operation, a message,
+     *   and the final total after removing the promo code.
+     */
     public function removePromoCode()
     {
         session()->forget('promo');

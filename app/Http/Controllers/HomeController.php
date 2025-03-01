@@ -18,22 +18,27 @@ class HomeController extends Controller
 {
     /**
      * Display the homepage.
+     *
+     * This method loads featured and recent artworks, as well as upcoming events,
+     * and passes them to the 'public.home' view. If a database error occurs, it logs
+     * the error and redirects to the home page with an error message. If any other
+     * exception occurs, it logs the error and redirects to the home page with a generic
+     * error message.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function index()
     {
         try {
             Log::info("🔹 Loading homepage data");
 
-            // ✅ Get featured artworks
             $featuredArtworks = Artwork::where('is_featured', true)->latest()->take(6)->get();
 
-            // ✅ Fill missing slots with non-featured artworks
             $remainingSlots = 6 - $featuredArtworks->count();
             $recentArtworks = ($remainingSlots > 0)
                 ? $featuredArtworks->merge(Artwork::where('is_featured', false)->latest()->take($remainingSlots)->get())
                 : $featuredArtworks;
 
-            // ✅ Get upcoming events
             $events = Event::where('start_date', '>=', now())->orderBy('start_date')->take(3)->get();
 
             Log::info("✅ Homepage data loaded successfully");
@@ -50,17 +55,22 @@ class HomeController extends Controller
 
     /**
      * Display the About page.
+     *
+     * This method loads the static content for the About page and the first artist record,
+     * then passes them to the 'public.about' view. If an exception occurs, it logs the error
+     * and redirects to the home page with an error message.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function about()
     {
         try {
             Log::info("🔹 Loading About page");
 
-            $locale = app()->getLocale(); // Get current language (e.g., 'enca', 'frca')
+            $locale = app()->getLocale();
             $page = StaticPage::where('slug', 'about')->first();
             $artist = Artist::first();
 
-            // Use helper to extract content dynamically
             $pageData = extractStaticContent($page, $locale);
 
             Log::info("✅ About page loaded successfully");
@@ -76,7 +86,16 @@ class HomeController extends Controller
     }
 
     /**
-     * Display the Contact page.
+     * Display the contact page.
+     *
+     * This method attempts to load the contact page by retrieving site settings
+     * such as address, phone, and email from the database. If successful, it
+     * returns the contact view with the settings. If a database error occurs,
+     * it logs the error and redirects to the home page with an error message.
+     * If any other exception occurs, it logs the error and redirects to the
+     * home page with a generic error message.
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\View\View
      */
     public function contact()
     {
@@ -99,7 +118,12 @@ class HomeController extends Controller
     }
 
     /**
-     * Display the Gallery page.
+     * Display the gallery page.
+     *
+     * This method attempts to load the gallery page view. If an exception occurs during the process,
+     * it logs the error and redirects the user to the home page with an error message.
+     *
+     * @return \Illuminate\Http\Response
      */
     public function gallery()
     {
@@ -114,7 +138,20 @@ class HomeController extends Controller
     }
 
     /**
-     * Display the Events page.
+     * Display a listing of upcoming events grouped by month and year.
+     *
+     * This method retrieves events from the database that have a start date
+     * greater than or equal to the current date. The events are then grouped
+     * by their start date's month and year, and passed to the 'public.events' view.
+     *
+     * @return \Illuminate\View\View|\Illuminate\Http\RedirectResponse
+     *         Returns the events view if successful, or redirects to the home page
+     *         with an error message if an exception occurs.
+     *
+     * @throws \Illuminate\Database\QueryException
+     *         If a database error occurs while retrieving the events.
+     * @throws \Exception
+     *         If any other error occurs while loading the events page.
      */
     public function events()
     {

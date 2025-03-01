@@ -11,6 +11,23 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 
+/**
+ * Class AccountVerificationMail
+ *
+ * This class is responsible for sending account verification emails to users.
+ * It extends the Mailable class and implements the ShouldQueue interface to allow queuing of the email.
+ *
+ * @package App\Mail
+ *
+ * @property User $user The user to whom the verification email is sent.
+ * @property string $verificationUrl The signed verification URL.
+ * @property string $fullName The full name of the user.
+ * @property string $lang The language locale for the email.
+ *
+ * @method __construct(User $user) Initializes the mail instance with the user and sets the language and full name.
+ * @method build() Builds the email message, including generating the signed verification URL and setting the email subject and view.
+ * @method getSubject() Returns the email subject based on the language locale.
+ */
 class AccountVerificationMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
@@ -31,14 +48,12 @@ class AccountVerificationMail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        // Generate signed verification URL valid for 60 minutes
         $this->verificationUrl = URL::signedRoute(
             'verification.verify',
             ['id' => $this->user->id, 'hash' => sha1($this->user->email)],
             Carbon::now()->addMinutes(60)
         );
 
-        // Debug log
         Log::info('🔍 Sending Account Verification Email:', [
             'User ID' => $this->user->id,
             'Email' => $this->user->email,

@@ -8,6 +8,15 @@ use Illuminate\Support\Facades\Log;
 
 class WishlistController extends Controller
 {
+    /**
+     * Remove a wishlist item for the authenticated user.
+     *
+     * @param int $id The ID of the wishlist item to remove.
+     * @return \Illuminate\Http\RedirectResponse
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException If the wishlist item is not found.
+     * @throws \Exception If there is an error during the removal process.
+     */
     public function remove($id)
     {
         try {
