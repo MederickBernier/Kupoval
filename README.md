@@ -1,66 +1,129 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Kupoval - Online Art Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## About the Project
+Kupoval is an e-commerce platform developed for an independent artist specializing in paintings and art prints inspired by pop culture. This project aims to provide a complete solution for managing online art sales, replacing a previously manual process based on social media.
 
-## About Laravel
+![Laravel](https://img.shields.io/badge/Laravel-11-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Alpine.js](https://img.shields.io/badge/Alpine.js-8BC0D0?style=for-the-badge&logo=alpine.js&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### For Customers
+- Browse and purchase artwork
+- Secure shopping cart and payment system
+- Account creation and order history
+- Discover upcoming events and exhibitions
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### For Artist/Administrator
+- Complete artwork management (CRUD)
+- Sales dashboard and statistics
+- Order and shipping management
+- Event and promotion organization
+- Intuitive administrative interface
 
-## Learning Laravel
+## Technologies Used
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Backend
+- Laravel 11
+- PostgreSQL
+- Laravel Sail (Docker)
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Frontend
+- Blade
+- Livewire
+- TailwindCSS
+- Alpine.js
+- CKEditor 5
+- Bootstrap Icons
+- SimpleLightbox
+- Glide.js
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Payment and Infrastructure
+- Stripe for payment processing
+- Docker for containerization
+- PgAdmin for database management
 
-## Laravel Sponsors
+## Site Structure
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+The application is divided into three main sections:
 
-### Premium Partners
+1. **Public Section**: Art showcase and online store
+2. **Customer Area**: Account management and order tracking
+3. **Administration**: Complete platform management
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## Installation and Configuration
 
-## Contributing
+This repository is primarily for demonstration purposes. For a complete installation with sensitive data, please refer to the `INSTALLATION.md` file (not included in the public repository).
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Option 1: Complete Setup (All-in-one command)
+Run this command to install all dependencies and start the application:
 
-## Code of Conduct
+```bash
+npm install && composer install && ./vendor/bin/sail build && ./vendor/bin/sail up -d
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Option 2: Step-by-Step Setup
+If you prefer to run commands individually:
 
-## Security Vulnerabilities
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/username/kupoval.git
+   cd kupoval
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+2. Install JavaScript dependencies:
+   ```bash
+   npm install
+   ```
 
-## License
+3. Install PHP dependencies:
+   ```bash
+   composer install
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+4. Build the Docker containers:
+   ```bash
+   ./vendor/bin/sail build
+   ```
+
+5. Start the application:
+   ```bash
+   ./vendor/bin/sail up -d
+   ```
+
+### Managing the Application
+- Restart the application: `./vendor/bin/sail up -d`
+- Stop the application: `./vendor/bin/sail down`
+- View application logs: `./vendor/bin/sail logs`
+
+**Note:** You'll need to set up your own environment variables in the `.env` file for the application to function correctly. See `.env.example` for required variables.
+
+### Database Administration with pgAdmin
+- pgAdmin is accessible at: http://localhost:5050
+- Database connection settings can be found in the `docker/pgadmin/servers.json` file
+- You'll need to customize these settings for your own environment
+
+## Screenshots
+
+*Screenshots will be added soon*
+
+## Development
+
+This project was developed as part of an integrated project at Collège Multihexa. It addresses a real need for an artist looking to improve their online presence and automate sales management.
+
+## Privacy
+
+All sensitive data has been removed from this public repository. Access information, API keys, and other configurations are managed separately for security reasons.
+
+## Future Development
+
+- Integration of automated marketing features
+- Advanced sales data analysis
+- Enhanced customer experience personalization
+
+---
+
+Project developed by Médérick Bernier
