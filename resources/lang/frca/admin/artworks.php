@@ -42,4 +42,41 @@ return [
     'delete_title' => 'Supprimer l\'œuvre',
     'delete_confirmation' => 'Êtes-vous sûr de vouloir supprimer cette œuvre?',
     'delete_instruction' => 'Entrez le nom de l\'œuvre dans le champ ci-dessous pour confirmer',
+    
+    // Détails de l'œuvre et série
+    'artwork_details' => 'Détails de l\'œuvre et série',
+    'series_name' => 'Nom de la série',
+    'series_name_placeholder' => 'ex., Paysages urbains, Collection abstraite',
+    'creation_year' => 'Année de création',
+    'medium' => 'Technique',
+    'medium_placeholder' => 'ex., Huile sur toile, Acrylique, Technique mixte',
+    'condition' => 'État',
+    'select_condition' => '-- Sélectionner l\'état --',
+    'excellent' => 'Excellent',
+    'very_good' => 'Très bon',
+    'good' => 'Bon',
+    'fair' => 'Acceptable',
+    'technique_notes' => 'Notes techniques',
+    'technique_notes_placeholder' => 'Décrivez les techniques artistiques, processus ou méthodes spéciales utilisées...',
+    
+    // Détails physiques
+    'physical_details' => 'Détails physiques',
+    'dimensions' => 'Dimensions',
+    'dimensions_placeholder' => 'ex., 24 x 36 pouces ou 61 x 91,4 cm',
+    'depth' => 'Profondeur',
+    'depth_placeholder' => 'ex., 2 pouces, 5 cm',
+    'weight' => 'Poids',
+    'weight_placeholder' => 'ex., 5 livres, 2,3 kg',
+    'edition_info' => 'Information d\'édition',
+    'edition_info_placeholder' => 'ex., 1/10, Édition limitée, Épreuve d\'artiste',
+    'is_framed' => 'Œuvre encadrée',
+    
+    // Informations supplémentaires
+    'additional_info' => 'Informations supplémentaires',
+    'framing_details' => 'Détails d\'encadrement',
+    'framing_details_placeholder' => 'Décrivez les matériaux du cadre, style, méthodes de conservation...',
+    'provenance' => 'Provenance',
+    'provenance_placeholder' => 'Historique de propriété, expositions, publications...',
+    'care_instructions' => 'Instructions d\'entretien',
+    'care_instructions_placeholder' => 'Directives pour la manipulation, l\'exposition et la préservation...',
 ];

@@ -42,4 +42,41 @@ return [
     'delete_title' => 'Delete Artwork',
     'delete_confirmation' => 'Are you sure you want to delete this artwork?',
     'delete_instruction' => 'Enter the name of the artwork in the field below to confirm.',
+    
+    // Artwork Details & Series
+    'artwork_details' => 'Artwork Details & Series',
+    'series_name' => 'Series Name',
+    'series_name_placeholder' => 'e.g., Urban Landscapes, Abstract Collection',
+    'creation_year' => 'Creation Year',
+    'medium' => 'Medium',
+    'medium_placeholder' => 'e.g., Oil on Canvas, Acrylic, Mixed Media',
+    'condition' => 'Condition',
+    'select_condition' => '-- Select Condition --',
+    'excellent' => 'Excellent',
+    'very_good' => 'Very Good',
+    'good' => 'Good',
+    'fair' => 'Fair',
+    'technique_notes' => 'Technique Notes',
+    'technique_notes_placeholder' => 'Describe the artistic techniques, processes, or special methods used...',
+    
+    // Physical Details
+    'physical_details' => 'Physical Details',
+    'dimensions' => 'Dimensions',
+    'dimensions_placeholder' => 'e.g., 24 x 36 inches or 61 x 91.4 cm',
+    'depth' => 'Depth',
+    'depth_placeholder' => 'e.g., 2 inches, 5 cm',
+    'weight' => 'Weight',
+    'weight_placeholder' => 'e.g., 5 lbs, 2.3 kg',
+    'edition_info' => 'Edition Information',
+    'edition_info_placeholder' => 'e.g., 1/10, Limited Edition, Artist Proof',
+    'is_framed' => 'Framed Artwork',
+    
+    // Additional Information
+    'additional_info' => 'Additional Information',
+    'framing_details' => 'Framing Details',
+    'framing_details_placeholder' => 'Describe frame materials, style, conservation methods...',
+    'provenance' => 'Provenance',
+    'provenance_placeholder' => 'History of ownership, exhibitions, publications...',
+    'care_instructions' => 'Care Instructions',
+    'care_instructions_placeholder' => 'Guidelines for handling, display, and preservation...',
 ];
