@@ -71,6 +71,14 @@ class AdminArtistsController extends Controller
                 $validated['photo'] = $request->file('photo')->store('artists', 'public');
             }
 
+            // Handle array fields - convert comma-separated strings to arrays if needed
+            if (isset($validated['specialties']) && is_string($validated['specialties'])) {
+                $validated['specialties'] = array_filter(array_map('trim', explode(',', $validated['specialties'])));
+            }
+            if (isset($validated['techniques']) && is_string($validated['techniques'])) {
+                $validated['techniques'] = array_filter(array_map('trim', explode(',', $validated['techniques'])));
+            }
+
             Artist::create($validated);
 
             return redirect()->route('admin.artists.index')->with('success', __('Artist created successfully.'));
@@ -123,6 +131,14 @@ class AdminArtistsController extends Controller
                     Storage::disk('public')->delete($artist->photo);
                 }
                 $validated['photo'] = $request->file('photo')->store('artists', 'public');
+            }
+
+            // Handle array fields - convert comma-separated strings to arrays if needed
+            if (isset($validated['specialties']) && is_string($validated['specialties'])) {
+                $validated['specialties'] = array_filter(array_map('trim', explode(',', $validated['specialties'])));
+            }
+            if (isset($validated['techniques']) && is_string($validated['techniques'])) {
+                $validated['techniques'] = array_filter(array_map('trim', explode(',', $validated['techniques'])));
             }
 
             $artist->update($validated);
@@ -251,13 +267,24 @@ class AdminArtistsController extends Controller
             'last_name' => 'required|string|max:255',
             'name' => 'required|string|max:255|unique:artists,name' . ($id ? ",$id" : ''),
             'bio' => 'nullable|string',
+            'artist_statement' => 'nullable|string|max:5000',
+            'exhibition_history' => 'nullable|string|max:10000',
+            'awards' => 'nullable|string|max:5000',
+            'studio_location' => 'nullable|string|max:255',
+            'profile_video_url' => 'nullable|url|max:500',
+            'specialties' => 'nullable|array',
+            'specialties.*' => 'string|max:100',
+            'techniques' => 'nullable|array',
+            'techniques.*' => 'string|max:100',
+            'experience_years' => 'nullable|integer|min:0|max:100',
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'email' => 'nullable|email|max:255',
-            'website' => 'nullable|url|max:255',
-            'facebook' => 'nullable|url|max:255',
-            'twitter' => 'nullable|url|max:255',
-            'instagram' => 'nullable|url|max:255',
-            'tiktok' => 'nullable|url|max:255',
+            'website' => 'nullable|url|max:500',
+            'facebook' => 'nullable|url|max:500',
+            'twitter' => 'nullable|url|max:500',
+            'instagram' => 'nullable|url|max:500',
+            'tiktok' => 'nullable|url|max:500',
+            'youtube' => 'nullable|url|max:500',
         ];
     }
 

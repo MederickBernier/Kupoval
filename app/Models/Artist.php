@@ -19,6 +19,14 @@ use Illuminate\Support\Str;
  * @property string $last_name The last name of the artist.
  * @property string $name The full name of the artist.
  * @property string $bio A short biography of the artist.
+ * @property string $artist_statement Professional artist statement.
+ * @property string $exhibition_history History of exhibitions and shows.
+ * @property string $awards Awards and recognitions received.
+ * @property string $studio_location Location of the artist's studio.
+ * @property string $profile_video_url URL to artist's profile video.
+ * @property array $specialties Array of artistic specialty areas.
+ * @property array $techniques Array of artistic techniques used.
+ * @property int $experience_years Years of artistic experience.
  * @property string $photo The URL to the artist's photo.
  * @property string $email The email address of the artist.
  * @property string $website The website URL of the artist.
@@ -47,6 +55,14 @@ class Artist extends Model
         'last_name',
         'name',
         'bio',
+        'artist_statement',
+        'exhibition_history',
+        'awards',
+        'studio_location',
+        'profile_video_url',
+        'specialties',
+        'techniques',
+        'experience_years',
         'photo',
         'email',
         'website',
@@ -56,6 +72,12 @@ class Artist extends Model
         'tiktok',
         'youtube',
         'slug',
+    ];
+
+    protected $casts = [
+        'specialties' => 'array',
+        'techniques' => 'array',
+        'experience_years' => 'integer',
     ];
 
     public function artworks()

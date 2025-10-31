@@ -15,9 +15,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $id
  * @property int $artist_id
  * @property string $name
+ * @property string $series_name
+ * @property int $creation_year
  * @property string $description
  * @property float $height
  * @property float $width
+ * @property string $medium
+ * @property string $technique_notes
+ * @property string $dimensions
+ * @property string $depth
+ * @property string $weight
+ * @property string $edition_info
+ * @property string $condition
+ * @property string $provenance
+ * @property bool $is_framed
+ * @property string $framing_details
+ * @property string $care_instructions
  * @property string $image
  * @property float $initial_price
  * @property bool $is_on_sale
@@ -63,9 +76,22 @@ class Artwork extends Model
     protected $fillable = [
         'artist_id',
         'name',
+        'series_name',
+        'creation_year',
         'description',
         'height',
         'width',
+        'medium',
+        'technique_notes',
+        'dimensions',
+        'depth',
+        'weight',
+        'edition_info',
+        'condition',
+        'provenance',
+        'is_framed',
+        'framing_details',
+        'care_instructions',
         'image',
         'initial_price',
         'is_on_sale',
@@ -73,6 +99,17 @@ class Artwork extends Model
         'is_for_event',
         'event_id',
         'slug',
+    ];
+
+    protected $casts = [
+        'creation_year' => 'integer',
+        'height' => 'decimal:2',
+        'width' => 'decimal:2',
+        'initial_price' => 'decimal:2',
+        'is_on_sale' => 'boolean',
+        'is_featured' => 'boolean',
+        'is_for_event' => 'boolean',
+        'is_framed' => 'boolean',
     ];
 
     public function artist()

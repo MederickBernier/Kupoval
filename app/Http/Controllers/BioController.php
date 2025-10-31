@@ -52,6 +52,13 @@ class BioController extends Controller
     public function show(Artist $artist)
     {
         try {
+            // Load the artist with their artworks for the profile display
+            $artist->load(['artworks' => function($query) {
+                $query->where('is_on_sale', true)
+                      ->orderBy('is_featured', 'desc')
+                      ->orderBy('created_at', 'desc');
+            }]);
+            
             return view('public.bio.show', compact('artist'));
         } catch (ModelNotFoundException $e) {
             Log::error('❌ Artist not found: ' . $e->getMessage());
