@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_','-',app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link href="https://fonts.googleapis.com/css2?family=Bona+Nova+SC&family=Old+Standard+TT&family=Signika:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bona+Nova+SC&family=Old+Standard+TT&family=Signika:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@glidejs/glide/dist/css/glide.core.min.css">
@@ -28,10 +30,10 @@
 
     <title>@yield('title', 'Kupoval')</title>
     @livewireStyles
-    @vite(['resources/css/app.css','resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-page text-body font-body min-h-screen flex flex-col">
+<body class="page-background text-body font-body min-h-screen flex flex-col">
 
     <x-toast-notification /> <!-- Include Toast Component -->
 
@@ -56,20 +58,20 @@
         });
 
         document.addEventListener('DOMContentLoaded', function() {
-            @if(session('success'))
-            showToast("{{ session('success') }}", "success");
+            @if (session('success'))
+                showToast("{{ session('success') }}", "success");
             @endif
 
-            @if(session('error'))
-            showToast("{{ session('error') }}", "error");
+            @if (session('error'))
+                showToast("{{ session('error') }}", "error");
             @endif
 
-            @if(session('warning'))
-            showToast("{{ session('warning') }}", "warning");
+            @if (session('warning'))
+                showToast("{{ session('warning') }}", "warning");
             @endif
 
-            @if(session('info'))
-            showToast("{{ session('info') }}", "info");
+            @if (session('info'))
+                showToast("{{ session('info') }}", "info");
             @endif
         });
     </script>
