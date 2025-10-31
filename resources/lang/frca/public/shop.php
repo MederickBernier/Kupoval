@@ -32,4 +32,15 @@ return [
     'only_featured' => 'Uniquement en vedette',
     'no_artworks_found' => 'Aucune œuvre d\'art trouvée.',
     'only_wishlisted' => 'Uniquement dans la liste de souhaits',
+    'try_different_filters' => 'Essayez d\'ajuster vos filtres pour trouver ce que vous cherchez.',
+    'reset_all_filters' => 'Réinitialiser tous les filtres',
+
+    // Notifications flash
+    'cart_item_added' => ':name a été ajouté à votre panier !',
+    'cart_quantity_updated' => 'Quantité de :name mise à jour dans votre panier !',
+    'cart_error' => 'Une erreur s\'est produite lors de l\'ajout au panier. Veuillez réessayer.',
+    'wishlist_added' => ':name a été ajouté à votre liste de souhaits !',
+    'wishlist_removed' => ':name a été retiré de votre liste de souhaits !',
+    'wishlist_error' => 'Une erreur s\'est produite avec votre liste de souhaits. Veuillez réessayer.',
+    'artwork_not_found' => 'Œuvre d\'art introuvable.',
 ];

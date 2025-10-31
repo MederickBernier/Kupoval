@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +20,7 @@
 
     <script src="https://cdn.ckeditor.com/ckeditor5/41.3.1/classic/ckeditor.js"></script>
 </head>
+
 <body class="bg-gray-100 font-sans antialiased" x-data="{ open: false }">
 
     <x-toast-notification /> <!-- Include Toast Component -->
@@ -50,18 +52,23 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             @if(session('success'))
-                window.Alpine.store('toastHandler').addToast("{{ session('success') }}", "success");
+            showToast("{{ session('success') }}", "success");
             @endif
 
             @if(session('error'))
-                window.Alpine.store('toastHandler').addToast("{{ session('error') }}", "error");
+            showToast("{{ session('error') }}", "error");
             @endif
 
             @if(session('warning'))
-                window.Alpine.store('toastHandler').addToast("{{ session('warning') }}", "warning");
+            showToast("{{ session('warning') }}", "warning");
+            @endif
+
+            @if(session('info'))
+            showToast("{{ session('info') }}", "info");
             @endif
         });
     </script>
 
 </body>
+
 </html>

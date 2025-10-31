@@ -88,65 +88,103 @@ class SimpleCart extends Component
 
     public function incrementQuantity($id)
     {
-        if (Auth::check()) {
-            $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-            $cartItem = CartItem::where('cart_id', $cart->id)->where('artwork_id', $id)->first();
+        try {
+            if (Auth::check()) {
+                $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+                $cartItem = CartItem::where('cart_id', $cart->id)->where('artwork_id', $id)->first();
 
-            if ($cartItem) {
-                $cartItem->increment('quantity');
+                if ($cartItem) {
+                    $cartItem->increment('quantity');
+                }
+            } else {
+                $cart = session()->get('cart', []);
+                if (isset($cart[$id])) {
+                    $cart[$id]['quantity']++;
+                    session()->put('cart', $cart);
+                }
             }
-        } else {
-            $cart = session()->get('cart', []);
-            if (isset($cart[$id])) {
-                $cart[$id]['quantity']++;
-                session()->put('cart', $cart);
-            }
+
+            $this->recalculateTotal();
+
+            $this->dispatch('showToast', [
+                'message' => __('public/cart.quantity_updated'),
+                'type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('showToast', [
+                'message' => __('public/cart.remove_error'),
+                'type' => 'error'
+            ]);
         }
-
-        $this->recalculateTotal();
     }
 
     public function decrementQuantity($id)
     {
-        if (Auth::check()) {
-            $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
-            $cartItem = CartItem::where('cart_id', $cart->id)->where('artwork_id', $id)->first();
+        try {
+            if (Auth::check()) {
+                $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+                $cartItem = CartItem::where('cart_id', $cart->id)->where('artwork_id', $id)->first();
 
-            if ($cartItem && $cartItem->quantity > 1) {
-                $cartItem->decrement('quantity');
+                if ($cartItem && $cartItem->quantity > 1) {
+                    $cartItem->decrement('quantity');
+                }
+            } else {
+                $cart = session()->get('cart', []);
+                if (isset($cart[$id]) && $cart[$id]['quantity'] > 1) {
+                    $cart[$id]['quantity']--;
+                    session()->put('cart', $cart);
+                }
             }
-        } else {
-            $cart = session()->get('cart', []);
-            if (isset($cart[$id]) && $cart[$id]['quantity'] > 1) {
-                $cart[$id]['quantity']--;
-                session()->put('cart', $cart);
-            }
+
+            $this->recalculateTotal();
+
+            $this->dispatch('showToast', [
+                'message' => __('public/cart.quantity_updated'),
+                'type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('showToast', [
+                'message' => __('public/cart.remove_error'),
+                'type' => 'error'
+            ]);
         }
-
-        $this->recalculateTotal();
     }
 
     public function removeFromCart($id)
     {
-        if (Auth::check()) {
-            $cart = Cart::where('user_id', Auth::id())->first();
+        $itemName = $this->cartItems[$id]['name'] ?? __('Item');
 
-            if ($cart) {
-                CartItem::where('cart_id', $cart->id)->where('artwork_id', $id)->delete();
+        try {
+            if (Auth::check()) {
+                $cart = Cart::where('user_id', Auth::id())->first();
+
+                if ($cart) {
+                    CartItem::where('cart_id', $cart->id)->where('artwork_id', $id)->delete();
+                }
+            } else {
+                $cart = session()->get('cart', []);
+                if (isset($cart[$id])) {
+                    unset($cart[$id]);
+                    session()->put('cart', $cart);
+                }
             }
-        } else {
-            $cart = session()->get('cart', []);
-            if (isset($cart[$id])) {
-                unset($cart[$id]);
-                session()->put('cart', $cart);
-            }
+
+            $this->recalculateTotal();
+
+            $this->cartItems = [];
+            $this->cartItemCount = 0;
+            $this->dispatch('cartUpdated');
+
+            $this->dispatch('showToast', [
+                'message' => __('public/cart.item_removed', ['name' => $itemName]),
+                'type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('showToast', [
+                'message' => __('public/cart.remove_error'),
+                'type' => 'error'
+            ]);
         }
-
-        $this->recalculateTotal();
-
-        $this->cartItems = [];
-        $this->cartItemCount = 0;
-        $this->dispatch('cartUpdated');
     }
 
     public function recalculateTotal()

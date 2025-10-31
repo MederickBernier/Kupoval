@@ -63,4 +63,9 @@ return [
     'confirm_new_password' => 'Confirm New Password',
     'cancel' => 'Cancel',
     'save' => 'Save',
+
+    // Wishlist flash messages
+    'wishlist_removed' => 'Item removed from wishlist successfully!',
+    'wishlist_not_found' => 'Wishlist item not found.',
+    'wishlist_remove_error' => 'Failed to remove item from wishlist. Please try again.',
 ];

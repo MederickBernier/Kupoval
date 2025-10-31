@@ -148,29 +148,65 @@ class ShopComponent extends Component
 
         session()->put('cart_total', $totalPrice);
 
+        // Dispatch events for cart update and toast notification
         $this->dispatch('cartUpdated')->to(SimpleCart::class);
+        $this->dispatch('showToast', [
+            'message' => __('public/shop.cart_item_added', ['name' => $artwork->name]),
+            'type' => 'success'
+        ]);
     }
 
     public function toggleWishlist($artworkId)
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-            $existingWishlistItem = $user->wishlist()->where('artwork_id', $artworkId)->first();
+        $artwork = Artwork::find($artworkId);
 
-            if ($existingWishlistItem) {
-                $existingWishlistItem->delete();
-                $this->wishlist = array_values(array_filter($this->wishlist, fn($id) => $id !== $artworkId));
+        if (!$artwork) {
+            $this->dispatch('showToast', [
+                'message' => __('public/shop.artwork_not_found'),
+                'type' => 'error'
+            ]);
+            return;
+        }
+
+        try {
+            if (Auth::check()) {
+                $user = Auth::user();
+                $existingWishlistItem = \App\Models\Wishlist::where('user_id', $user->id)
+                    ->where('artwork_id', $artworkId)
+                    ->first();
+
+                if ($existingWishlistItem) {
+                    $existingWishlistItem->delete();
+                    $this->wishlist = array_values(array_filter($this->wishlist, fn($id) => $id !== $artworkId));
+                    $message = __('public/shop.wishlist_removed', ['name' => $artwork->name]);
+                } else {
+                    \App\Models\Wishlist::create([
+                        'user_id' => $user->id,
+                        'artwork_id' => $artworkId
+                    ]);
+                    $this->wishlist[] = $artworkId;
+                    $message = __('public/shop.wishlist_added', ['name' => $artwork->name]);
+                }
             } else {
-                $user->wishlist()->create(['artwork_id' => $artworkId]);
-                $this->wishlist[] = $artworkId;
+                if (in_array($artworkId, $this->wishlist)) {
+                    $this->wishlist = array_values(array_filter($this->wishlist, fn($id) => $id !== $artworkId));
+                    $message = __('public/shop.wishlist_removed', ['name' => $artwork->name]);
+                } else {
+                    $this->wishlist[] = $artworkId;
+                    $message = __('public/shop.wishlist_added', ['name' => $artwork->name]);
+                }
+                Session::put('wishlist', $this->wishlist);
             }
-        } else {
-            if (in_array($artworkId, $this->wishlist)) {
-                $this->wishlist = array_values(array_filter($this->wishlist, fn($id) => $id !== $artworkId));
-            } else {
-                $this->wishlist[] = $artworkId;
-            }
-            Session::put('wishlist', $this->wishlist);
+
+            $this->dispatch('showToast', [
+                'message' => $message,
+                'type' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            $this->dispatch('showToast', [
+                'message' => __('public/shop.wishlist_error'),
+                'type' => 'error'
+            ]);
         }
 
         $this->dispatch('$refresh');

@@ -32,4 +32,15 @@ return [
     'only_featured' => 'Only Featured',
     'no_artworks_found' => 'No artworks found.',
     'only_wishlisted' => 'Only Wishlisted',
+    'try_different_filters' => 'Try adjusting your filters to find what you\'re looking for.',
+    'reset_all_filters' => 'Reset All Filters',
+
+    // Flash notifications
+    'cart_item_added' => ':name has been added to your cart!',
+    'cart_quantity_updated' => 'Updated :name quantity in your cart!',
+    'cart_error' => 'Something went wrong while adding to cart. Please try again.',
+    'wishlist_added' => ':name has been added to your wishlist!',
+    'wishlist_removed' => ':name has been removed from your wishlist!',
+    'wishlist_error' => 'Something went wrong with your wishlist. Please try again.',
+    'artwork_not_found' => 'Artwork not found.',
 ];

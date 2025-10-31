@@ -63,4 +63,9 @@ return [
     'confirm_new_password' => 'Confirmer le nouveau mot de passe',
     'cancel' => 'Annuler',
     'save' => 'Enregistrer',
+
+    // Messages flash de la liste de souhaits
+    'wishlist_removed' => 'Article retiré de la liste de souhaits avec succès !',
+    'wishlist_not_found' => 'Article de la liste de souhaits introuvable.',
+    'wishlist_remove_error' => 'Échec de la suppression de l\'article de la liste de souhaits. Veuillez réessayer.',
 ];

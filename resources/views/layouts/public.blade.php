@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_','-',app()->getLocale()) }}">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,6 +30,7 @@
     @livewireStyles
     @vite(['resources/css/app.css','resources/js/app.js'])
 </head>
+
 <body class="bg-page text-body font-body min-h-screen flex flex-col">
 
     <x-toast-notification /> <!-- Include Toast Component -->
@@ -48,24 +50,29 @@
     </footer>
 
     <script>
-        window.addEventListener('reload-page', function () {
+        window.addEventListener('reload-page', function() {
             console.log('🔄 Rechargement forcé après changement de langue');
             location.reload();
         });
 
         document.addEventListener('DOMContentLoaded', function() {
             @if(session('success'))
-                window.Alpine.store('toastHandler').addToast("{{ session('success') }}", "success");
+            showToast("{{ session('success') }}", "success");
             @endif
 
             @if(session('error'))
-                window.Alpine.store('toastHandler').addToast("{{ session('error') }}", "error");
+            showToast("{{ session('error') }}", "error");
             @endif
 
             @if(session('warning'))
-                window.Alpine.store('toastHandler').addToast("{{ session('warning') }}", "warning");
+            showToast("{{ session('warning') }}", "warning");
+            @endif
+
+            @if(session('info'))
+            showToast("{{ session('info') }}", "info");
             @endif
         });
     </script>
 </body>
+
 </html>
