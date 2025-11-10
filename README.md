@@ -5,6 +5,8 @@
 Kupoval is a full-stack web application built with **Laravel**, **Livewire**, **Alpine.js**, **Tailwind CSS**, and **PostgreSQL**.  
 It provides a **server-driven UI** for managing and displaying artwork, handling customer orders, and processing payments through **Stripe**.
 
+Kupoval is designed for independent artists and small boutiques who need a streamlined way to publish artworks, manage orders, and accept secure payments without relying on external marketplaces.
+
 The application includes both the **public-facing portfolio/shop** and a **secured administration dashboard** for managing artworks, users, orders, and shipping details.
 
 This project was completed over a 12-week delivery cycle, covering requirements analysis, data modeling, UX workflow planning, and full application implementation. The original scope was structured for a small team; here, analysis and development were completed independently.
@@ -102,6 +104,19 @@ Artwork
 
 ---
 
+## My Role
+
+This project was fully designed and implemented by me, including:
+
+- Requirements analysis and workflow definition
+- Database schema and relational model design
+- UI / UX flows and component interactions (Livewire + Tailwind)
+- Stripe payment flow and checkout integration
+- Administration dashboard and CRUD features
+- Docker / Sail development environment setup
+
+---
+
 ## Local Development Setup
 
 ```bash
@@ -131,14 +146,26 @@ npm run dev
 
 ## Screenshots
 
-| Page | Screenshot |
-|------|------------|
-| Home / Gallery |  | !["Home"](screenshots/Home.jpg) <br/> !["Gallery"](screenshots/Gallery.jpg) |
-| Shop           | !["Shop"](screenshots/Shop.jpg) |
-| Artwork Detail | !["Artwork Details](screenshots/ArtworkDetails.jpg) |
-| Cart / Checkout | !["Cart"](screenshots/Cart.jpg) <br/> !["Checkout"](screenshots/Checkout.jpg) |
-| Admin Dashboard | !["Admin Dashboard"](screenshots/Dashboard.jpg) |
-| Order View | !["Orders View"](screenshots/OrdersView.jpg) <br/> !["Order View"](screenshots/OrderView.jpg) |
+### Home / Gallery
+![Home](screenshots/Home.jpg)
+![Gallery](screenshots/Gallery.jpg)
+
+### Shop
+![Shop](screenshots/Shop.jpg)
+
+### Artwork Detail
+![Artwork Details](screenshots/ArtworkDetails.jpg)
+
+### Cart / Checkout
+![Cart](screenshots/Cart.jpg)
+![Checkout](screenshots/Checkout.jpg)
+
+### Administration Dashboard
+![Admin Dashboard](screenshots/Dashboard.jpg)
+
+### Order Management
+![Orders View](screenshots/OrdersView.jpg)
+![Order View](screenshots/OrderView.jpg)
 
 To capture:
 ```
@@ -156,7 +183,7 @@ open http://localhost
 ---
 
 ## License
-Private academic and client project. Not licensed for redistribution.
+Private academic/client project — not licensed for redistribution.
 
 ---
 
@@ -165,6 +192,8 @@ Private academic and client project. Not licensed for redistribution.
 
 Kupoval est une application web **full‑stack** construite avec **Laravel**, **Livewire**, **Alpine.js**, **Tailwind CSS** et **PostgreSQL**.  
 Elle offre une **interface pilotée côté serveur** pour présenter des œuvres, gérer les commandes clientes et traiter les paiements via **Stripe**.
+
+Kupoval est conçu pour les artistes indépendants et petites boutiques souhaitant présenter leurs œuvres, gérer les commandes et accepter des paiements sécurisés sans dépendre de plateformes tierces.
 
 L'application comprend à la fois le **site public (portfolio/boutique)** et un **tableau de bord d'administration sécurisé** pour gérer les œuvres, les utilisateurs, les commandes et l'expédition.
 
@@ -263,6 +292,19 @@ Utilisateur
 
 ---
 
+## Mon rôle
+
+Ce projet a été entièrement conçu et développé par moi, incluant :
+
+- Analyse des besoins et définition des parcours utilisateurs
+- Conception du schéma de base de données et des relations
+- Conception des interfaces et interactions (Livewire + Tailwind)
+- Intégration du flux de paiement Stripe Checkout
+- Développement du tableau de bord d’administration et des fonctionnalités CRUD
+- Mise en place de l’environnement de développement Docker / Sail
+
+---
+
 ## Démarrage en local
 
 ```bash
@@ -292,14 +334,26 @@ npm run dev
 
 ## Captures d'écran
 
-| Page | Capture |
-|------|--------|
-| Accueil / Galerie | !["Home"](screenshots/Home.jpg) <br/> !["Gallery"](screenshots/Gallery.jpg) |
-| Boutique | !["Shop"](screenshots/Shop.jpg) |
-| Détail d'une œuvre | !["Artwork Details](screenshots/ArtworkDetails.jpg) |
-| Panier / Caisse | !["Cart"](screenshots/Cart.jpg) <br/> !["Checkout"](screenshots/Checkout.jpg) |
-| Tableau de bord (admin) | !["Admin Dashboard"](screenshots/Dashboard.jpg) |
-| Vue de commande | !["Orders View"](screenshots/OrdersView.jpg) <br/> !["Order View"](screenshots/OrderView.jpg) |
+### Accueil / Galerie
+![Accueil](screenshots/Home.jpg)
+![Galerie](screenshots/Gallery.jpg)
+
+### Boutique
+![Boutique](screenshots/Shop.jpg)
+
+### Détail d'une œuvre
+![Détail d'œuvre](screenshots/ArtworkDetails.jpg)
+
+### Panier / Paiement
+![Panier](screenshots/Cart.jpg)
+![Caisse](screenshots/Checkout.jpg)
+
+### Tableau de bord (Admin)
+![Tableau de bord](screenshots/Dashboard.jpg)
+
+### Gestion des commandes
+![Commandes](screenshots/OrdersView.jpg)
+![Détail commande](screenshots/OrderView.jpg)
 
 Pour capturer :
 ```
@@ -316,4 +370,4 @@ ouvrir http://localhost
 ---
 
 ## Licence
-Projet académique et client privé. Non destiné à la redistribution.
+Projet académique/client privé — non destiné à la redistribution.
