@@ -108,8 +108,539 @@ The Kupoval platform has been successfully upgraded with **enterprise-grade arti
 ### **🏆 Phase 2 & 3 Complete: Professional Foundation Established**
 The enhanced artist presentation system is now fully operational with comprehensive professional artwork management capabilities. The platform features enterprise-grade artist profiles and sophisticated artwork administration tools.
 
-### **🚀 Next Priority: Phase 4 - Client Engagement & Marketing Tools**
-With the solid professional foundation in place, the next recommended phase focuses on enhancing client interaction, inquiry management, and marketing automation to drive business growth and sales conversion.
+### **🚀 Next Priority: Phase 4 - Social Media Management System**
+With the solid professional foundation in place, the next recommended phase focuses on implementing a complete social media management system that allows the artist to post to her personal Facebook, Instagram, and TikTok accounts directly from the admin panel.
+
+---
+
+## 📱 **Phase 4: Social Media Management System - READY FOR IMPLEMENTATION**
+
+### **Overview**
+A comprehensive social media management feature that enables the artist to:
+- Connect her personal social media accounts via OAuth
+- Create and publish posts to multiple platforms from one admin interface
+- Schedule posts for optimal timing
+- Track engagement metrics (likes, comments, shares)
+- Use content templates for quick posting
+- Manage all social media activity centrally
+
+### **Implementation Approach: OAuth Authentication**
+
+The system uses **OAuth 2.0** to securely connect the artist's personal social media accounts:
+
+```
+1. Artist clicks "Connect Instagram" in admin panel
+2. Redirected to Instagram for authentication
+3. Instagram asks: "Allow Kupoval to post on your behalf?"
+4. Artist approves authorization
+5. Instagram returns encrypted access token
+6. Kupoval stores token securely in database
+7. Artist can now post to HER Instagram from admin panel
+```
+
+### **Technical Architecture**
+
+#### **Database Schema (4 New Tables)**
+1. **social_media_accounts** - Stores encrypted OAuth tokens for connected accounts
+2. **social_media_posts** - Manages post content, scheduling, and publication status
+3. **social_media_templates** - Pre-built content templates for quick posting
+4. **social_media_interactions** - Tracks engagement metrics and interactions
+
+#### **Key Services**
+- **OAuthService** - Handles platform authentication flows
+- **SocialMediaManagerService** - Coordinates posting across platforms
+- **TokenRefreshService** - Automatically refreshes expiring tokens
+- **Platform Services** - Facebook, Instagram, TikTok-specific API integrations
+
+#### **Security Features**
+- Encrypted token storage using Laravel's encryption
+- Automatic token refresh before expiration
+- Secure OAuth state verification (CSRF protection)
+- Token revocation on account disconnect
+- Platform-specific permission scopes
+
+### **Supported Platforms**
+
+#### **Facebook**
+- **Requirements**: Facebook Page (admin access required)
+- **Features**: Post images, text, albums to Page
+- **API**: Facebook Graph API v18.0
+- **Permissions**: `pages_manage_posts`, `pages_read_engagement`
+
+#### **Instagram**
+- **Requirements**: Instagram Business/Creator Account linked to Facebook Page
+- **Features**: Post images with captions and hashtags
+- **API**: Instagram Graph API (via Facebook)
+- **Permissions**: `instagram_basic`, `instagram_content_publish`
+
+#### **TikTok**
+- **Requirements**: TikTok Business Account
+- **Features**: Upload and publish videos
+- **API**: TikTok for Developers v2
+- **Permissions**: `video.upload`, `video.publish`, `user.info.basic`
+
+### **Admin Panel Features**
+
+#### **1. Account Connections Dashboard**
+- Visual status of connected accounts
+- One-click OAuth connection flow
+- Token expiration warnings
+- Easy reconnect/disconnect options
+- Setup instructions and requirements
+
+#### **2. Post Creation Interface**
+- Multi-platform post composer
+- Artwork integration (auto-attach artwork images)
+- Hashtag management
+- Media upload (images/videos)
+- Caption editor with character limits per platform
+- Template selection for quick posting
+
+#### **3. Scheduling System**
+- Schedule posts for future publication
+- Timezone-aware scheduling
+- Queue management for pending posts
+- Automatic publishing via Laravel scheduler
+
+#### **4. Engagement Tracking**
+- Real-time engagement stats (likes, comments, shares)
+- Post performance analytics
+- Interaction notifications
+- Basic comment viewing
+
+### **Implementation Timeline**
+
+#### **Week 1: Foundation & OAuth**
+- Day 1-2: Database migrations and models
+- Day 3-4: OAuth service implementation
+- Day 5-7: Account connection UI and testing
+
+#### **Week 2: Platform Services**
+- Day 1-3: Facebook/Instagram service implementation
+- Day 4-5: TikTok service implementation
+- Day 6-7: Testing with real accounts
+
+#### **Week 3: Admin Interface & Publishing**
+- Day 1-3: Post creation UI and controller
+- Day 4-5: Scheduling system and queue jobs
+- Day 6-7: Template system
+
+#### **Week 4: Polish & Engagement**
+- Day 1-3: Engagement tracking implementation
+- Day 4-5: Analytics dashboard
+- Day 6-7: Final testing and documentation
+
+### **Expected Business Impact**
+
+#### **Time Savings**
+- **Before**: 2-3 hours daily managing 3 platforms separately
+- **After**: 20-30 minutes creating posts for all platforms at once
+- **Efficiency Gain**: 70-80% time reduction
+
+#### **Consistency**
+- Unified posting across all platforms
+- Professional content templates
+- Scheduled posting ensures regular presence
+
+#### **Engagement**
+- Centralized engagement monitoring
+- Faster response to audience interactions
+- Better audience growth through consistency
+
+### **Technical Requirements**
+
+#### **Environment Variables**
+```bash
+# Facebook & Instagram
+FACEBOOK_APP_ID=your_facebook_app_id
+FACEBOOK_APP_SECRET=your_facebook_app_secret
+
+# Twitter/X (Optional future platform)
+TWITTER_CLIENT_ID=your_twitter_client_id
+TWITTER_CLIENT_SECRET=your_twitter_client_secret
+
+# TikTok
+TIKTOK_CLIENT_KEY=your_tiktok_client_key
+TIKTOK_CLIENT_SECRET=your_tiktok_client_secret
+```
+
+#### **Composer Packages**
+```bash
+composer require guzzlehttp/guzzle  # Already included
+# No additional packages required - using Laravel HTTP client
+```
+
+#### **Platform Setup Requirements**
+1. **Meta for Developers** account for Facebook/Instagram
+2. **TikTok for Developers** account
+3. App registration on each platform
+4. OAuth callback URLs configured
+5. API permissions approved (may take 1-2 weeks for some platforms)
+
+### **Success Metrics**
+
+#### **Phase 1 Success Criteria**
+- [ ] Artist can connect all 3 platforms via OAuth
+- [ ] Tokens stored securely and encrypted
+- [ ] Automatic token refresh working
+- [ ] Account connection UI fully functional
+
+#### **Phase 2 Success Criteria**
+- [ ] Single post publishes to all selected platforms
+- [ ] Images from artwork database auto-attach
+- [ ] Posts visible on artist's actual social media accounts
+- [ ] Error handling and user feedback working
+
+#### **Phase 3 Success Criteria**
+- [ ] Post scheduling saves 2+ hours daily
+- [ ] Templates reduce post creation time by 60%
+- [ ] Engagement stats update automatically
+- [ ] Artist comfortable using system independently
+
+### **Post-Implementation**
+
+#### **Maintenance**
+- Monitor API changes and deprecations
+- Keep platform SDK versions updated
+- Review and refresh OAuth permissions annually
+- Monitor token refresh success rates
+
+#### **Future Enhancements (Optional)**
+- Twitter/X integration
+- Pinterest support
+- YouTube community posts
+- Story posting (Instagram/Facebook)
+- Advanced analytics and insights
+- AI-powered caption generation
+- Best time to post recommendations
+
+---
+
+## 📋 **Phase 5: Custom Art Commission System - HIGH VALUE FEATURE**
+
+### **Overview**
+A complete custom commission request and management system that enables clients to request personalized artwork directly from the artist, with built-in workflow management, payment processing, and progress tracking.
+
+### **Business Impact**
+- **High-Margin Revenue**: Custom commissions typically 2-3x standard pricing
+- **Client Engagement**: Personal connection builds loyalty and repeat business
+- **Portfolio Growth**: Each commission creates new showcase pieces
+- **Professional Image**: Shows serious business operation
+- **Recurring Revenue**: Satisfied clients return for more commissions
+
+### **User Journey**
+
+#### **Client Side**
+1. Browse artist portfolio → Click "Request Custom Commission"
+2. Fill detailed commission form:
+   - Subject type and description
+   - Size, medium, style preferences
+   - Upload reference images
+   - Budget range and timeline
+3. Submit request → receive confirmation email
+4. Artist reviews and provides detailed quote
+5. Client accepts quote → pay deposit (typically 50%)
+6. Receive progress updates with photos during creation
+7. Artist marks as completed → client reviews
+8. Pay final balance → receive artwork
+
+#### **Artist Side (Admin Panel)**
+1. Receive commission request notification
+2. Review client details, budget, reference images
+3. Accept/decline or request more information
+4. Provide detailed quote with pricing breakdown and timeline
+5. Client accepts → deposit payment received automatically
+6. Update status to "In Progress"
+7. Upload progress photos at milestones (25%, 50%, 75%)
+8. Mark as completed with final photos
+9. Final payment received automatically
+10. Update to "Delivered" after shipping
+
+### **Database Schema**
+
+**4 New Tables:**
+1. **commission_requests** - Main commission data and workflow
+2. **commission_progress_updates** - Progress photos and milestone updates
+3. **commission_messages** - Built-in messaging between artist and client
+4. **commission_payments** - Payment tracking (deposit, milestones, final)
+
+**Key Fields:**
+- Client specifications (subject, size, medium, colors, style)
+- Reference materials (images and links)
+- Budget range and timeline flexibility
+- Status workflow (11 states from pending → delivered)
+- Quote details from artist
+- Payment tracking (deposit + final)
+- Progress percentage tracking
+
+### **Commission Workflow States**
+
+```
+1. pending          → Client submitted, awaiting artist review
+2. under_review     → Artist reviewing request
+3. quote_provided   → Artist sent detailed quote
+4. negotiating      → Discussion on details/pricing
+5. accepted         → Client accepted quote
+6. deposit_paid     → Deposit received, ready to start
+7. in_progress      → Artist actively working
+8. completed        → Work finished, awaiting final payment
+9. delivered        → Final payment received, artwork delivered
+10. declined        → Artist declined request
+11. cancelled       → Either party cancelled
+```
+
+### **Key Features**
+
+#### **1. Commission Request Form**
+- Subject type selection (portrait, landscape, abstract, etc.)
+- Detailed description (minimum 50 characters)
+- Preferred mediums (multiple selection)
+- Desired size specification
+- Color preferences
+- Style notes
+- Reference image uploads (up to 10 images, 5MB each)
+- Reference links to inspiration
+- Budget range (min/max)
+- Desired completion date
+- Timeline flexibility indicator
+
+#### **2. Admin Commission Management**
+- Dashboard showing all commissions by status
+- Quick filters (pending, active, completed)
+- Commission detail view with all client specifications
+- Quote creation interface with pricing calculator
+- Progress update system with photo uploads
+- Progress percentage tracking (0-100%)
+- Status management with automatic notifications
+- Payment status tracking
+- Client communication history
+
+#### **3. Payment Integration**
+- **Deposit Payment** (typically 50% upfront)
+  - Automatic Stripe payment intent creation
+  - Email confirmation to both parties
+  - Status auto-update on successful payment
+  
+- **Milestone Payments** (optional)
+  - Artist can request milestone payments at 25%, 50%, 75%
+  - Client approves milestone before payment
+  
+- **Final Payment** (remaining balance)
+  - Triggered when artist marks as completed
+  - Client reviews final work
+  - Payment released on approval
+
+- **Refund System**
+  - Full/partial refunds through Stripe
+  - Automatic status updates
+  - Refund reason tracking
+
+#### **4. Progress Tracking**
+- Artist uploads photos at key milestones
+- Progress percentage updates (25%, 50%, 75%, 100%)
+- Timeline with all updates chronologically
+- Email notifications to client on each update
+- Client can comment on progress
+- "Behind the scenes" feel builds excitement
+
+#### **5. Built-in Messaging**
+- Secure in-platform messaging
+- File/image attachments support
+- Unread message indicators
+- Email notifications for new messages
+- Full conversation history
+- Searchable message archive
+
+#### **6. Notification System**
+- **Client Notifications**:
+  - Commission request received confirmation
+  - Artist provided quote
+  - Deposit payment reminder
+  - Progress update received
+  - Commission completed
+  - Final payment reminder
+  
+- **Artist Notifications**:
+  - New commission request
+  - Client accepted quote
+  - Deposit received
+  - Client message received
+  - Final payment received
+
+### **Implementation Timeline**
+
+#### **Week 1: Foundation**
+- Database migrations for 4 tables
+- Commission models with relationships
+- Basic routes and policies
+- Commission request form (public)
+
+#### **Week 2: Admin Interface**
+- Admin commission dashboard
+- Commission detail view
+- Quote creation interface
+- Status management
+
+#### **Week 3: Payment Integration**
+- Stripe deposit payment flow
+- Payment tracking system
+- Final payment processing
+- Email confirmations
+
+#### **Week 4: Progress & Communication**
+- Progress update system
+- Image upload for updates
+- Built-in messaging
+- Notification system
+
+### **Commission Pricing Calculator (Admin Tool)**
+
+```php
+// Suggested pricing formula in admin interface
+Base Price = (Width × Height) × Medium Rate
++ Complexity Factor (Simple: 1x, Medium: 1.5x, Complex: 2x)
++ Rush Fee (if timeline < 30 days: +25%)
++ Reference Complexity (Multiple refs: +10%)
+= Total Quoted Price
+
+Deposit = 50% of Total
+Final Payment = 50% of Total
+```
+
+### **Technical Requirements**
+
+**Services:**
+```php
+CommissionService
+├─ notifyArtistNewRequest()
+├─ provideQuote()
+├─ processDepositPayment()
+├─ updateProgress()
+├─ processFinalPayment()
+└─ handleCancellation()
+
+CommissionPaymentService
+├─ createPaymentIntent()
+├─ processPayment()
+├─ processRefund()
+└─ trackPaymentStatus()
+```
+
+**Policies:**
+```php
+CommissionRequestPolicy
+├─ view (user is requester or artist)
+├─ create (authenticated user)
+├─ update (user is requester)
+├─ delete (user is requester, status is pending)
+├─ manage (user is artist)
+└─ provideQuote (user is artist)
+```
+
+### **Admin Panel Views**
+
+1. **Commission Dashboard**
+   - Stats cards (pending, active, completed, total revenue)
+   - Commission list with filters
+   - Quick actions (view, quote, update status)
+   - Revenue tracking chart
+
+2. **Commission Detail Page**
+   - Client information and contact
+   - Full specification display with reference images
+   - Quote form (if not yet quoted)
+   - Progress update form
+   - Message thread
+   - Payment history
+   - Status timeline
+
+3. **Quote Creation Interface**
+   - Pricing calculator tool
+   - Estimated hours input
+   - Material costs
+   - Timeline estimation
+   - Quote notes to client
+   - Accept/Decline option
+
+### **Client Views**
+
+1. **Request Commission Form**
+   - Multi-step form with validation
+   - Image upload with preview
+   - Budget range slider
+   - Timeline calendar picker
+   - Reference links input
+
+2. **My Commissions Page**
+   - List of all commission requests
+   - Status badges with colors
+   - Quick actions (view, pay, message)
+   - Filter by status
+
+3. **Commission Detail Page**
+   - Specification summary
+   - Quote details (if provided)
+   - Payment buttons (deposit/final)
+   - Progress timeline with photos
+   - Message artist button
+   - Download final images
+
+### **Email Templates Required**
+
+- Commission request received (client)
+- New commission request (artist)
+- Quote provided (client)
+- Quote accepted (artist)
+- Deposit payment confirmation (both)
+- Progress update notification (client)
+- Commission completed (client)
+- Final payment received (artist)
+- Commission delivered (client)
+
+### **Success Metrics**
+
+- [ ] Clients can submit commission requests in < 5 minutes
+- [ ] Artist can provide quotes in < 10 minutes
+- [ ] Deposit payments process automatically
+- [ ] Progress updates notify client within 1 minute
+- [ ] Final payments complete within 24 hours
+- [ ] 80%+ commission acceptance rate
+- [ ] Average commission value 3x standard artwork price
+
+### **Future Enhancements (Optional)**
+
+- **Contract Generation**: Auto-generate commission agreements
+- **Portfolio Addition**: Completed commissions auto-add to portfolio
+- **Testimonial Request**: Auto-request review after delivery
+- **Commission Gallery**: Public showcase of past commissions (with permission)
+- **AI Quote Estimation**: Machine learning for pricing recommendations
+- **Video Updates**: Allow video progress updates
+- **3D Preview**: AR preview for sculpture commissions
+- **Commission Templates**: Save common commission types for faster setup
+
+### **Expected Business Impact**
+
+**Revenue:**
+- Custom commissions typically $500-$5,000+ each
+- Higher profit margins than standard sales
+- Recurring clients (satisfied customers return)
+
+**Time Investment:**
+- Artist time: ~15 min per quote, 5 min per update
+- Revenue per hour significantly higher than standard sales
+- Automated payment processing saves administrative time
+
+**Client Satisfaction:**
+- Personal connection builds loyalty
+- Progress visibility builds excitement
+- Professional process builds trust
+- Higher perceived value
+
+---
+
+## 📋 **Phase 6: Additional Client Engagement & Marketing Tools (Future)**
+
+After commission system is operational, future enhancements could include:
 
 ---
 
